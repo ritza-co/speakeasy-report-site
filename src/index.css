@@ -1,0 +1,145 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: #fafafa;
+  color: #000000;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Dark mode overrides ─── */
+.dark body {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.dark .dot-grid {
+  background-image: radial-gradient(circle, #242424 1px, transparent 1px);
+}
+
+.dark ::-webkit-scrollbar-track { background: #000; }
+.dark ::-webkit-scrollbar-thumb { background: #242424; }
+
+/* CSS variables for Framer Motion animated values & SVG */
+:root {
+  --pill-border: #d6d3d1;
+  --pill-color:  #a8a29e;
+  --scatter-grid:  #e7e5e4;
+  --scatter-tick:  #a8a29e;
+  --scatter-label: #78716c;
+}
+.dark {
+  --pill-border: #242424;
+  --pill-color:  #545454;
+  --scatter-grid:  #242424;
+  --scatter-tick:  #545454;
+  --scatter-label: #545454;
+}
+
+/* ─── Speakeasy rainbow gradient ─── */
+.sp-rainbow {
+  background: linear-gradient(
+    90deg,
+    #c83228 0%,
+    #fb8841 20%,
+    #d3dd92 38%,
+    #59824f 52%,
+    #2874d7 70%,
+    #99c2ff 85%,
+    #c83228 100%
+  );
+}
+
+/* ─── Dot grid background ─── */
+.dot-grid {
+  background-image: radial-gradient(circle, #dbdbdb 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* ─── Orbital particle animations ─── */
+.orbit-anchor {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  transform-origin: center;
+}
+
+.particle-1 {
+  width: 10px;
+  height: 10px;
+  background: #c0392b;
+  margin: -5px 0 0 -5px;
+  opacity: 0.65;
+  animation: orbit1 22s linear infinite;
+}
+
+.particle-2 {
+  width: 7px;
+  height: 7px;
+  background: #c0392b;
+  margin: -3.5px 0 0 -3.5px;
+  opacity: 0.4;
+  animation: orbit2 30s linear infinite;
+}
+
+.particle-3 {
+  width: 9px;
+  height: 9px;
+  background: #c0392b;
+  margin: -4.5px 0 0 -4.5px;
+  opacity: 0.5;
+  animation: orbit3 18s linear infinite;
+}
+
+@keyframes orbit1 {
+  from { transform: rotate(0deg)   translateX(210px) rotate(0deg); }
+  to   { transform: rotate(360deg) translateX(210px) rotate(-360deg); }
+}
+@keyframes orbit2 {
+  from { transform: rotate(120deg) translateX(270px) rotate(-120deg); }
+  to   { transform: rotate(480deg) translateX(270px) rotate(-480deg); }
+}
+@keyframes orbit3 {
+  from { transform: rotate(240deg) translateX(165px) rotate(-240deg); }
+  to   { transform: rotate(600deg) translateX(165px) rotate(-600deg); }
+}
+
+/* ─── Bounce arrow ─── */
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(7px); }
+}
+.bounce-arrow {
+  animation: bounce-down 1.8s ease-in-out infinite;
+}
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fafafa; }
+::-webkit-scrollbar-thumb { background: #dbdbdb; border-radius: 3px; }
