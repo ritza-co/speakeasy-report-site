@@ -1,7 +1,7 @@
 import type { API, Mode, Agent, PromptType } from '../data/benchmarks'
 import { BENCHMARKS, aggregate, MODE_COLORS, API_LABELS, AGENT_LABELS } from '../data/benchmarks'
 
-const APIS: API[]        = ['resend', 'linear', 'docusign']
+const APIS: API[]        = ['resend', 'linear', 'metabase']
 const MODES: Mode[]      = ['bare', 'sdk', 'sdk+mcp']
 const AGENTS: Agent[]    = ['claude-sonnet', 'codex']
 const PROMPTS: PromptType[] = ['lazy', 'detailed']
@@ -42,7 +42,7 @@ export default function TestMatrix() {
     <div className="w-full">
       {/* Variable summary */}
       <div className="flex flex-wrap gap-2 mb-10">
-        <Badge label="APIs" value="Resend · Linear · DocuSign" />
+        <Badge label="APIs" value="Resend · Linear · Metabase" />
         <Badge label="Modes" value="bare · sdk · sdk+mcp" />
         <Badge label="Agents" value="Claude Sonnet · Codex" />
         <Badge label="Prompts" value="lazy · detailed" />

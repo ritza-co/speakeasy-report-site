@@ -1,4 +1,4 @@
-export type API = 'resend' | 'linear' | 'docusign'
+export type API = 'resend' | 'linear' | 'metabase'
 export type Agent = 'claude-sonnet' | 'codex'
 export type Mode = 'bare' | 'sdk' | 'sdk+mcp'
 export type PromptType = 'lazy' | 'detailed'
@@ -34,23 +34,23 @@ interface BaseParams {
 
 const BASE: Record<Mode, Record<PromptType, BaseParams>> = {
   bare: {
-    lazy:     { turns: 13, tokens: 34000, time: 255, successProb: 0.50 },
-    detailed: { turns: 9,  tokens: 24000, time: 185, successProb: 0.68 },
+    lazy:     { turns: 7,  tokens: 37000, time: 67,  successProb: 0.73 },
+    detailed: { turns: 6,  tokens: 32000, time: 72,  successProb: 0.87 },
   },
   sdk: {
-    lazy:     { turns: 8,  tokens: 19000, time: 145, successProb: 0.76 },
-    detailed: { turns: 5,  tokens: 13000, time: 105, successProb: 0.88 },
+    lazy:     { turns: 7,  tokens: 30000, time: 52,  successProb: 0.84 },
+    detailed: { turns: 5,  tokens: 25000, time: 58,  successProb: 0.95 },
   },
   'sdk+mcp': {
-    lazy:     { turns: 4,  tokens: 10500, time: 85,  successProb: 0.83 },
-    detailed: { turns: 3,  tokens: 7200,  time: 58,  successProb: 0.95 },
+    lazy:     { turns: 15, tokens: 54000, time: 91,  successProb: 0.90 },
+    detailed: { turns: 13, tokens: 48000, time: 100, successProb: 0.97 },
   },
 }
 
 const API_MULT: Record<API, number> = {
   resend: 1.0,
-  linear: 1.22,
-  docusign: 1.55,
+  linear: 1.15,
+  metabase: 1.35,
 }
 
 const AGENT_MULT: Record<Agent, number> = {
@@ -63,7 +63,7 @@ export function generateBenchmarks(): BenchmarkRun[] {
   const runs: BenchmarkRun[] = []
   let n = 0
 
-  const apis: API[]        = ['resend', 'linear', 'docusign']
+  const apis: API[]        = ['resend', 'linear', 'metabase']
   const agents: Agent[]    = ['claude-sonnet', 'codex']
   const modes: Mode[]      = ['bare', 'sdk', 'sdk+mcp']
   const prompts: PromptType[] = ['lazy', 'detailed']
@@ -128,7 +128,7 @@ export const MODE_COLORS: Record<Mode, string> = {
 export const API_LABELS: Record<API, string> = {
   resend:   'Resend',
   linear:   'Linear',
-  docusign: 'DocuSign',
+  metabase: 'Metabase',
 }
 
 export const AGENT_LABELS: Record<Agent, string> = {

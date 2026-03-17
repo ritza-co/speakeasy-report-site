@@ -21,7 +21,6 @@ const SECTIONS = [
   { id: 'by-api',          label: 'By API' },
   { id: 'agent-showdown',  label: 'Agent Showdown' },
   { id: 'key-findings',    label: 'Key Findings' },
-  { id: 'methodology',     label: 'Methodology' },
 ]
 
 // Inline mini-stat component for prose sections
@@ -75,33 +74,29 @@ export default function App() {
         >
           <div className="prose-custom space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Over the past year, a confident claim has circulated through every developer conference
-              and changelog announcement: <em>"just point the agent at the docs and it'll figure it
-              out."</em> It's a seductive idea. And it's partially true. Agents can figure things
-              out. They can read documentation, infer API shapes, and generate working integrations
-              from scratch.
+              How well do AI coding agents handle real-world integration tasks, and does giving
+              them better tools help? This report benchmarks Claude Sonnet 4.6 and Codex on
+              adding popular API integrations to a Node.js application, across three tooling
+              configurations and two prompt styles.
             </p>
             <p>
-              But <em>how reliably?</em> At what cost? Over how many turns? And does the answer
-              change when you give the agent an official SDK, or an MCP server with embedded
-              documentation?
+              Three questions drove the benchmark: Does an SDK reduce the effort an agent needs
+              to complete an integration? Does an MCP server on top of an SDK help further,
+              or is it redundant? Do short, vague prompts benefit more from richer tooling than
+              detailed ones?
             </p>
             <p>
               We ran
               <InlineStat value="108" label="runs" />
               integration attempts across
               <InlineStat value="3" label="APIs" />
-              integration modes, two agents, and two prompt styles. The results are unambiguous
-              in some places, and surprisingly nuanced in others.
+              and
+              <InlineStat value="3" label="modes" />
+              , covering two agents, two prompt styles, and three runs per combination.
             </p>
-            <blockquote className="border-l-2 border-crimson pl-5 py-1 my-8 font-serif italic text-stone-600 dark:text-stone-400 text-lg">
-              "Giving an agent the right SDK is not cheating — it's engineering. Giving it an MCP
-              server is not hand-holding — it's infrastructure."
-            </blockquote>
             <p>
-              The data below shows exactly how much each layer of tooling improves outcomes, and
-              under what conditions the improvements are largest. Spoiler: the lazier your prompt,
-              the more tooling matters.
+              For well-known APIs, all three configurations produce working code. What changes is
+              efficiency. For niche APIs, tooling is the difference between success and failure.
             </p>
           </div>
         </Section>
@@ -114,20 +109,29 @@ export default function App() {
         >
           <div className="space-y-6 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
-              For each run, a fresh agent session was started with a standard full-stack React +
-              Node.js application. The agent was asked to integrate a specific API. Each run was
-              isolated: no shared context, no residual tool call history.
+              Each run started from a fresh clone of a standard Node.js Express application,
+              with no shared context or tool call history between runs.
             </p>
             <p>
-              <strong className="text-ink">Three integration modes</strong> were tested: <em>bare</em> (agent
-              uses only its training knowledge), <em>SDK</em> (the official SDK is installed and the
-              agent is told it exists), and <em>SDK + MCP</em> (the SDK is installed and an MCP
-              server provides live documentation context).
+              Two APIs were selected: <strong className="text-ink">Resend</strong>, a
+              widely-used email API with clean documentation, and{' '}
+              <strong className="text-ink">Metabase</strong>, a niche analytics platform with
+              sparse public documentation. Resend tests whether tooling adds value when the
+              agent already has good training data. Metabase tests whether tooling compensates
+              for weak training data.
             </p>
             <p>
-              Each combination was run three times to account for non-determinism. A run was marked
-              as <em>successful</em> if the integration produced working code that passed a
-              smoke test (e.g. an email was actually sent, a Linear issue was actually created).
+              Three integration modes were tested:{' '}
+              <em>bare</em> (agent has only training data, no documentation provided),{' '}
+              <em>sdk</em> (the official Software Development Kit is pre-installed), and{' '}
+              <em>sdk+mcp</em> (the SDK is installed and the tool's own MCP server is
+              configured: Resend MCP for Resend,{' '}
+              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">@cognitionai/metabase-mcp-server</code>{' '}
+              for Metabase).
+            </p>
+            <p>
+              Each combination ran three times. A run was marked successful if the integration
+              produced working code that passed an automated smoke test.
             </p>
           </div>
           <TestMatrix />
@@ -153,21 +157,20 @@ export default function App() {
         <Section
           id="prompt-laziness"
           chapterLabel="Results — Prompt Quality"
-          headline="The uncomfortable truth about lazy prompts"
-          subheadline="Detailed prompts help. But good tooling helps lazy prompts even more."
+          headline="Lazy prompts work most of the time"
+          subheadline="Detailed prompts improve accuracy. The difference narrows with better tooling."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
-              We tested two prompt styles. The <em>lazy</em> prompt was a single sentence:
-              <span className="bg-stone-100 dark:bg-stone-850 text-stone-700 dark:text-stone-300 text-[13px] px-3 py-1 rounded font-mono mx-2 inline-block">
-                "Add Resend to this app"
-              </span>
-              — the kind of prompt a busy developer would actually type. The <em>detailed</em>
-              prompt included the specific goal, expected behavior, error handling requirements,
-              and a note about which SDK to use.
+              We tested two prompt styles. The <em>lazy</em> prompt was short and
+              underspecified. The <em>detailed</em> prompt included the specific goal,
+              expected behavior, error handling requirements, and the specific Software
+              Development Kit (SDK) to use.
             </p>
             <p>
-              The gap between them is real — but it narrows significantly as tooling improves.
+              We noticed this: the two runs that moved from fail to pass with sdk+mcp were
+              both low-complexity, vague prompts. When a task is underspecified, searching
+              for specific answers gives the agent something concrete to work from.
             </p>
 
             <div className="grid grid-cols-2 gap-6 my-8">
@@ -198,19 +201,15 @@ export default function App() {
             </div>
 
             <p>
-              The most interesting finding: when using <strong className="text-ink">SDK + MCP</strong>,
-              a lazy prompt achieves a{' '}
+              With sdk+mcp, a lazy prompt achieves{' '}
               <strong className="text-crimson">
                 {Math.round(aggregate(BENCHMARKS.filter(r => r.mode === 'sdk+mcp' && r.promptType === 'lazy'))!.successRate * 100)}%
               </strong>{' '}
-              success rate — higher than a detailed prompt on bare ({' '}
+              success, compared to{' '}
               {Math.round(aggregate(BENCHMARKS.filter(r => r.mode === 'bare' && r.promptType === 'detailed'))!.successRate * 100)}%
-              ). Good tooling effectively compensates for lazy prompting up to a point.
-            </p>
-            <p>
-              This has practical implications for teams: if your developers are going to prompt
-              lazily anyway (and they will), investing in better tooling pays off more than
-              writing a prompt engineering guide.
+              {' '}for a detailed prompt in bare mode. Tooling compensates for prompt quality
+              up to a point. For teams where developers write short prompts, investing in
+              tooling pays off more than writing a prompt engineering guide.
             </p>
           </div>
 
@@ -267,17 +266,24 @@ export default function App() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
-              The progression from bare to SDK to SDK + MCP tells a consistent story: each layer
-              adds meaningful improvement. But the improvements are not equal in size, and they
-              don't affect all metrics the same way.
+              For Resend, all three configurations produced working code. The agent already had
+              sufficient training data, so what changed across configurations was efficiency,
+              not correctness. The sdk configuration ran in half the time of sdk+mcp and cost
+              half as much, at the same pass rate. The sdk+mcp configuration spent extra turns
+              consulting documentation the agent didn't need.
             </p>
             <p>
-              The jump from <strong className="text-ink">bare → SDK</strong> is primarily a
-              reliability improvement: success rates climb and turns decrease. The agent stops
-              guessing at method signatures. The jump from{' '}
-              <strong className="text-ink">SDK → SDK + MCP</strong> is primarily an efficiency
-              improvement: tokens drop sharply because the agent can query the docs directly
-              instead of exploring the API surface through trial and error.
+              For Metabase,{' '}
+              <strong className="text-ink">neither the SDK nor the MCP server made a
+              meaningful difference</strong>. Bare, sdk, and sdk+mcp all produced similar
+              pass rates. The failures came from gaps in training data coverage that no
+              amount of tooling resolved: wrong endpoint, wrong authentication header,
+              wrong request format.
+            </p>
+            <p>
+              The Metabase MCP server exposes tool descriptions the agent can use as
+              documentation, but it didn't help much. The failures came from training data
+              gaps the MCP server could not fill.
             </p>
           </div>
           <ModeComparisonTable />
@@ -307,22 +313,21 @@ export default function App() {
         <Section
           id="by-api"
           chapterLabel="Results — Per API"
-          headline="Resend was easy. DocuSign was not."
+          headline="Agents work well with good documentation"
           subheadline="API complexity amplifies the benefit of better tooling."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
-              Not all APIs are equal. Resend has a flat, well-named REST API with minimal auth
-              requirements. Linear uses OAuth, a GraphQL API, and has enough surface area that
-              agents regularly get lost in schema exploration. DocuSign is an enterprise behemoth:
-              multi-step auth flows, envelope lifecycles, and documentation scattered across
-              multiple guides.
+              Not all APIs are equal. Resend has a flat REST API with minimal auth requirements,
+              a clean baseline for testing agents without tools. Linear uses GraphQL with enough
+              surface area to require careful schema navigation. Metabase presents the hardest
+              challenge: sparse training data coverage, session-based authentication, and
+              endpoints that deviate from what most agents guess by default.
             </p>
             <p>
-              The interesting finding: <strong className="text-ink">the harder the API, the bigger
-              the gain from better tooling.</strong> SDK + MCP lifts DocuSign success by far more
-              than it lifts Resend. Resend is simple enough that a capable agent can figure it out
-              bare. DocuSign is not.
+              The harder the API, the less tooling helps. For Resend, the SDK alone
+              raised the pass rate to 100%. For Metabase, neither the SDK nor the MCP
+              server moved the needle on the core failures.
             </p>
           </div>
           <ApiBreakdown />
@@ -337,19 +342,22 @@ export default function App() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
-              We ran every combination with both Claude Sonnet and Codex, using identical
-              prompts, identical starting codebases, and identical tooling. The results show
-              consistent advantages for Claude Sonnet across all modes and APIs — but the gap
-              narrows as tooling improves.
+              We ran every combination with both Claude Sonnet 4.6 and Codex, using identical
+              prompts, identical starting codebases, and identical tooling.
             </p>
             <p>
-              Notably, Codex with SDK + MCP <em>outperforms</em> Claude Sonnet bare on several
-              APIs. This suggests that for teams without a strong preference, investing in
-              tooling infrastructure matters more than agent selection.
+              On the Linear integration, both Claude models reached for the{' '}
+              <code className="bg-stone-100 dark:bg-stone-850 px-1.5 py-0.5 rounded text-[13px]">@linear/sdk</code>{' '}
+              package. Codex chose to call the GraphQL API directly via fetch, reasoning that
+              a single mutation didn't warrant adding a new dependency. The difference reflects
+              how each agent weighs scope against dependencies.
             </p>
             <p>
-              Both agents show the same trend: better tooling → better outcomes. The underlying
-              pattern is consistent even if the absolute numbers differ.
+              With MCP available, all agents produced working integrations on the first try.
+              The main value was resolving live, account-specific context, specifically the
+              team ID, rather than improving code structure. MCP didn't teach the agents how
+              to integrate Linear. They already knew. Its value was in resolving information
+              training data could not provide.
             </p>
           </div>
           <AgentComparison />
@@ -359,73 +367,9 @@ export default function App() {
         <Section
           id="key-findings"
           chapterLabel="Conclusions"
-          headline="Five numbers that matter"
+          headline="From the analysis, some interesting numbers"
         >
           <KeyFindings />
-        </Section>
-
-        {/* ─── METHODOLOGY ─── */}
-        <Section
-          id="methodology"
-          chapterLabel="Appendix"
-          headline="How we ran this"
-        >
-          <div className="space-y-5 text-stone-600 dark:text-stone-400 text-[14px] leading-relaxed max-w-2xl">
-            <p>
-              <strong className="text-ink">Test environment.</strong> Each run started from a
-              fresh clone of a standard React + Express starter application. No existing API
-              integrations were present. Node.js 20, TypeScript 5.3.
-            </p>
-            <p>
-              <strong className="text-ink">APIs tested.</strong> Resend (v3 REST API), Linear
-              (GraphQL API, OAuth), DocuSign (eSignature REST API v2.1). Each was tested against
-              a sandbox/test account with pre-provisioned credentials available as environment
-              variables.
-            </p>
-            <p>
-              <strong className="text-ink">Bare mode.</strong> Agent session starts with only the
-              task prompt. No SDK installed, no documentation provided beyond what the agent
-              has in training data.
-            </p>
-            <p>
-              <strong className="text-ink">SDK mode.</strong> The official npm SDK for the API
-              is pre-installed. The prompt explicitly names it: <em>"use the resend npm package."</em>
-            </p>
-            <p>
-              <strong className="text-ink">SDK + MCP mode.</strong> SDK is installed. An MCP
-              server providing the API documentation is configured in the agent environment.
-              The agent can query documentation, look up method signatures, and resolve ambiguities
-              without consuming main context tokens.
-            </p>
-            <p>
-              <strong className="text-ink">Success criteria.</strong> Each run was evaluated by
-              an automated smoke test: for Resend, an email was received at a test inbox; for
-              Linear, an issue appeared in the test workspace; for DocuSign, an envelope moved
-              to "sent" status. Partial implementations (code that compiles but doesn't complete
-              the task) were marked as failures.
-            </p>
-            <p>
-              <strong className="text-ink">Token and turn counts.</strong> Captured from the
-              agent session logs. Token counts include all turns in the session including tool
-              call responses. Time is wall-clock from first prompt submission to task completion
-              or abandonment.
-            </p>
-            <p>
-              <strong className="text-ink">Reproducibility.</strong> Each condition was run
-              three times with the same prompt text and environment to account for non-determinism.
-              Data reported is the arithmetic mean across the three runs.
-            </p>
-
-            <div className="mt-8 pt-8 border-t border-stone-200 dark:border-stone-850">
-              <p className="text-[11px] uppercase tracking-widest text-stone-400 mb-3">Data note</p>
-              <p className="text-[13px] text-stone-500">
-                The data on this page is representative benchmark data used to demonstrate the
-                interactive report format. Final figures will be updated when the full benchmark
-                run is complete. The relative patterns and directional findings are consistent
-                with preliminary results.
-              </p>
-            </div>
-          </div>
         </Section>
 
         {/* Footer */}

@@ -51,7 +51,7 @@ export default function Hero() {
           transition={{ delay: 1, duration: 0.9 }}
         >
           SDKs, MCPs, and the anatomy of 108 integration attempts
-          <br />across Resend, Linear and DocuSign.
+          <br />across Resend, Linear and Metabase.
         </motion.p>
 
         <motion.button

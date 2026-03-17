@@ -21,40 +21,39 @@ function buildFindings(): Finding[] {
   const detailedMcp = aggregate(BENCHMARKS.filter(r => r.promptType === 'detailed' && r.mode === 'sdk+mcp'))!
 
   const tokenReduction = Math.round((1 - sdkMcp.avgTokens / bare.avgTokens) * 100)
-  const turnReduction  = Math.round((1 - sdkMcp.avgTurns  / bare.avgTurns)  * 100)
   const successLift    = Math.round((sdkMcp.successRate - bare.successRate)  * 100)
   const promptGap      = Math.round((detailedMcp.successRate - lazyBare.successRate) * 100)
   const sdkSuccessLift = Math.round((sdk.successRate - bare.successRate)     * 100)
 
   return [
     {
-      prefix: '', value: tokenReduction, suffix: '%', decimals: 0,
-      label: 'fewer tokens with SDK + MCP',
-      detail: `From an average of ${(bare.avgTokens / 1000).toFixed(0)}k tokens bare to ${(sdkMcp.avgTokens / 1000).toFixed(0)}k with SDK + MCP. Better tooling means the agent stops hallucinating paths and goes straight to the answer.`,
+      prefix: '', value: Math.abs(tokenReduction), suffix: '%', decimals: 0,
+      label: tokenReduction < 0 ? 'more tokens with sdk+mcp than bare' : 'fewer tokens with sdk+mcp than bare',
+      detail: `Bare averages ${(bare.avgTokens / 1000).toFixed(0)}k tokens vs ${(sdkMcp.avgTokens / 1000).toFixed(0)}k with sdk+mcp. sdk+mcp uses more tokens because the agent actively consults documentation, adding turns and context, but produces better results on niche APIs.`,
       color: '#c0392b',
     },
     {
-      prefix: '', value: turnReduction, suffix: '%', decimals: 0,
-      label: 'fewer turns to complete the task',
-      detail: `Bare agents average ${bare.avgTurns.toFixed(1)} turns. SDK + MCP agents average ${sdkMcp.avgTurns.toFixed(1)}. Fewer wrong turns = fewer corrections = less context bloat.`,
-      color: '#3b82f6',
-    },
-    {
-      prefix: '+', value: successLift, suffix: 'pp', decimals: 0,
-      label: 'higher success rate with SDK + MCP',
-      detail: `${Math.round(bare.successRate * 100)}% success bare vs ${Math.round(sdkMcp.successRate * 100)}% with SDK + MCP. For complex APIs like DocuSign, the gap widens further.`,
+      prefix: '+', value: successLift, suffix: ' pts', decimals: 0,
+      label: 'percentage points higher success rate with sdk+mcp vs bare',
+      detail: `${Math.round(bare.successRate * 100)}% success bare vs ${Math.round(sdkMcp.successRate * 100)}% with sdk+mcp. For Metabase, all three configurations produced similar pass rates. The failures came from gaps training data could not fill.`,
       color: '#059669',
     },
     {
-      prefix: '+', value: sdkSuccessLift, suffix: 'pp', decimals: 0,
-      label: 'just from adding an SDK (no MCP)',
-      detail: `Even without an MCP server, having a typed SDK raises success rate by ${sdkSuccessLift} percentage points over bare. The biggest single improvement comes from structured types alone.`,
+      prefix: '+', value: sdkSuccessLift, suffix: ' pts', decimals: 0,
+      label: 'percentage points lift from SDK alone over bare (well-known APIs)',
+      detail: `For Resend, sdk raised the pass rate to 100% and ran in 41s at $0.127/run, faster and cheaper than bare (65s, $0.188) and sdk+mcp (83s, $0.248). For well-known APIs, sdk is the right choice.`,
       color: '#7c3aed',
     },
     {
-      prefix: '+', value: promptGap, suffix: 'pp', decimals: 0,
-      label: 'gap between lazy + bare vs detailed + MCP',
-      detail: `The best-case scenario (detailed prompt + SDK + MCP) vs worst-case (lazy prompt + bare) shows a ${promptGap}pp success gap. Good tooling partially compensates for lazy prompts — but not fully.`,
+      prefix: '', value: 0, suffix: ' pts', decimals: 0,
+      label: 'SDK improvement over bare on niche APIs',
+      detail: `Static documentation injection made no difference for Metabase. Both bare and sdk achieved 67% pass rate at nearly identical cost and time. The agent absorbed the README and continued making the same errors.`,
+      color: '#3b82f6',
+    },
+    {
+      prefix: '+', value: promptGap, suffix: ' pts', decimals: 0,
+      label: 'percentage points gap: lazy+bare vs detailed+sdk+mcp',
+      detail: `The best-case scenario (detailed prompt + sdk+mcp) vs worst-case (lazy prompt + bare) shows a ${promptGap}-point success gap. MCP raises the ceiling, but the ceiling is bounded by documentation quality.`,
       color: '#d97706',
     },
   ]
@@ -91,20 +90,19 @@ export default function KeyFindings() {
         </motion.div>
       ))}
 
-      {/* Takeaway callout */}
       <motion.div
-        className="border-2 border-crimson bg-crimson/5 dark:bg-crimson/10 p-6 md:col-span-2"
+        className="border border-stone-200 dark:border-stone-850 bg-white dark:bg-stone-900 p-6 md:col-span-2"
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: 0.5, duration: 0.6 }}
       >
-        <p className="text-[10px] uppercase tracking-widest text-crimson mb-3">The takeaway</p>
-        <p className="font-serif text-xl text-ink dark:text-white leading-relaxed">
-          The question isn't whether agents need help — they clearly do. The question is{' '}
-          <em>how much</em> help, and from where. A well-structured SDK gets you 70% of the way.
-          An MCP server covering documentation gets you the rest. The combination makes agents
-          more consistent, faster, and dramatically cheaper to run.
+        <p className="text-[15px] text-stone-700 dark:text-stone-300 leading-relaxed">
+          Moving from bare to SDK and SDK+MCP shows advantages in accuracy, but also higher
+          token consumption. The truth is: APIs need to provide better access to documentation
+          for agents, either through SDK comments or MCP tool descriptions. An agent working
+          against a well-documented API produces reliable results. An agent working against a
+          poorly documented one fails in ways that tooling alone does not fix.
         </p>
       </motion.div>
     </div>

@@ -3,16 +3,16 @@ import { motion, useInView } from 'framer-motion'
 import type { API, Mode } from '../data/benchmarks'
 import { BENCHMARKS, aggregate, MODE_COLORS, API_LABELS } from '../data/benchmarks'
 
-const APIS: API[]   = ['resend', 'linear', 'docusign']
+const APIS: API[]   = ['resend', 'linear', 'metabase']
 const MODES: Mode[] = ['bare', 'sdk', 'sdk+mcp']
 
 const API_DESCRIPTIONS: Record<API, string> = {
-  resend:   'Simple transactional email API. Minimal auth, flat data model — ideal for a clean baseline.',
-  linear:   'Project management API with OAuth, nested resources, and GraphQL. Noticeably harder to navigate cold.',
-  docusign: 'Enterprise e-signature platform. Complex envelope model, multi-step auth, and dense documentation.',
+  resend:   'Modern transactional email API. Clean docs, official Node.js SDK, widely seen in training data — the best-case baseline.',
+  linear:   'Project management GraphQL API. Comparable documentation quality to Resend, but a meaningful step up in schema complexity.',
+  metabase: 'Self-hosted analytics platform with a REST API sparsely covered in training data. Session-based auth, non-obvious endpoints, and several patterns agents get wrong when working from training data alone.',
 }
 
-const API_DIFFICULTY: Record<API, number> = { resend: 1, linear: 2, docusign: 3 }
+const API_DIFFICULTY: Record<API, number> = { resend: 1, linear: 2, metabase: 3 }
 
 function Stars({ n }: { n: number }) {
   return (

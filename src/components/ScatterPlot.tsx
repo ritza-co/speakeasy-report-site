@@ -105,7 +105,7 @@ function Tooltip({ data }: { data: TooltipData }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function ScatterPlot() {
   const [modes,   setModes]   = useState<Mode[]>      (['bare', 'sdk', 'sdk+mcp'])
-  const [apis,    setApis]    = useState<API[]>        (['resend', 'linear', 'docusign'])
+  const [apis,    setApis]    = useState<API[]>        (['resend', 'linear', 'metabase'])
   const [agents,  setAgents]  = useState<Agent[]>      (['claude-sonnet', 'codex'])
   const [prompts, setPrompts] = useState<PromptType[]> (['lazy', 'detailed'])
   const [tip,     setTip]     = useState<TooltipData | null>(null)
@@ -154,7 +154,7 @@ export default function ScatterPlot() {
         <div>
           <p className="text-[9px] uppercase tracking-widest text-stone-400 mb-2">API</p>
           <div className="flex gap-1.5">
-            {(['resend', 'linear', 'docusign'] as API[]).map(a => (
+            {(['resend', 'linear', 'metabase'] as API[]).map(a => (
               <Pill key={a} label={API_LABELS[a]} active={apis.includes(a)}
                 onClick={() => setApis(toggle(apis, a))} />
             ))}
