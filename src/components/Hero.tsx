@@ -32,7 +32,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.9 }}
         >
-          Speakeasy · API Integration Benchmark · 2025
+          Speakeasy · API Integration Benchmark · 2026
         </motion.p>
 
         <motion.h1

@@ -547,7 +547,7 @@ export default function App() {
 
         <footer className="pt-16 pb-24 border-t border-stone-200 dark:border-stone-850 mt-8">
           <div className="flex items-center justify-between text-[11px] text-stone-400 font-sans">
-            <span>© 2025 Speakeasy</span>
+            <span>© 2026 Speakeasy</span>
             <span>Do Agents Need Help with Integrating Popular APIs? — Benchmark Report</span>
           </div>
         </footer>
