@@ -13,15 +13,15 @@ import { BENCHMARKS, METHOD_COLORS, aggregate } from './data/benchmarks'
 import { CountUp } from './components/CountUp'
 
 const SECTIONS = [
-  { id: 'the-question',   label: 'The Question' },
-  { id: 'what-we-tested', label: 'What We Tested' },
-  { id: 'the-numbers',    label: 'The Numbers' },
-  { id: 'by-api',         label: 'Results by API' },
-  { id: 'by-sdk',         label: 'Results by SDK' },
-  { id: 'mcp-section',    label: 'SDK + MCP' },
-  { id: 'model-compare',  label: 'Model Comparison' },
-  { id: 'key-findings',   label: 'Key Findings' },
-  { id: 'how-to-use-mcp', label: 'How to Use MCP' },
+  { id: 'the-question',   label: 'The assumption we tested' },
+  { id: 'what-we-tested', label: '36 sessions. 4 APIs. 3 models.' },
+  { id: 'the-numbers',    label: 'The numbers don\'t lie' },
+  { id: 'by-api',         label: 'Popular APIs are easy. Niche ones are not.' },
+  { id: 'by-sdk',         label: 'SDKs help. Until they don\'t.' },
+  { id: 'mcp-section',    label: 'MCP is not a docs server' },
+  { id: 'model-compare',  label: 'GPT checks. Claude trusts.' },
+  { id: 'key-findings',   label: 'What we found' },
+  { id: 'how-to-use-mcp', label: 'How to use this report' },
 ]
 
 export default function App() {
@@ -39,7 +39,7 @@ export default function App() {
         <Section
           id="the-question"
           chapterLabel="Introduction"
-          headline="Do Agents need help with integrating popular APIs?"
+          headline="The assumption we tested"
         >
           <div className="prose-custom space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
@@ -113,7 +113,7 @@ export default function App() {
         <Section
           id="what-we-tested"
           chapterLabel="Methodology — Setup"
-          headline="36 attempts. 4 APIs. 9 combinations."
+          headline="36 sessions. 4 APIs. 3 models."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
@@ -174,7 +174,7 @@ export default function App() {
         <Section
           id="the-numbers"
           chapterLabel="Results — Overview"
-          headline="All 36 runs, one chart"
+          headline="The numbers don't lie"
           subheadline="Each dot is a single session. Filter by any dimension."
         >
           <div className="text-stone-600 dark:text-stone-400 text-[14px] leading-relaxed mb-8">
@@ -190,7 +190,7 @@ export default function App() {
         <Section
           id="by-api"
           chapterLabel="Results — Per API"
-          headline="Results by API"
+          headline="Popular APIs are easy. Niche ones are not."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
@@ -234,7 +234,7 @@ export default function App() {
         <Section
           id="by-sdk"
           chapterLabel="Results — SDK"
-          headline="Results by SDK"
+          headline="SDKs help. Until they don't."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
@@ -297,7 +297,7 @@ export default function App() {
         <Section
           id="mcp-section"
           chapterLabel="Results — SDK + MCP"
-          headline="SDK + MCP"
+          headline="MCP is not a docs server"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
@@ -427,7 +427,7 @@ export default function App() {
         <Section
           id="model-compare"
           chapterLabel="Results — Model Comparison"
-          headline="Claude Opus vs Claude Sonnet vs Codex"
+          headline="GPT checks. Claude trusts."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
             <p>
@@ -460,7 +460,7 @@ export default function App() {
         <Section
           id="key-findings"
           chapterLabel="Conclusions"
-          headline="From the analysis, some interesting numbers"
+          headline="What we found"
         >
           <KeyFindings />
         </Section>
@@ -469,7 +469,7 @@ export default function App() {
         <Section
           id="how-to-use-mcp"
           chapterLabel="Recommendations"
-          headline="How to use MCP with AI agents"
+          headline="How to use this report"
         >
           <div className="space-y-8 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <div>
