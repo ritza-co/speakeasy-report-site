@@ -203,8 +203,9 @@ export default function AgentComparison() {
           </thead>
           <tbody>
             {MODES.map((mode, i) => {
-              const rA = aggregate(BENCHMARKS.filter(r => r.agent === 'claude-sonnet' && r.mode === mode))!
-              const rB = aggregate(BENCHMARKS.filter(r => r.agent === 'codex'         && r.mode === mode))!
+              const rA = aggregate(BENCHMARKS.filter(r => r.agent === 'claude-sonnet' && r.mode === mode))
+              const rB = aggregate(BENCHMARKS.filter(r => r.agent === 'codex'         && r.mode === mode))
+              if (!rA || !rB) return null
               const diff = (rA.successRate - rB.successRate) * 100
               return (
                 <motion.tr

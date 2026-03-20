@@ -25,7 +25,7 @@ export default function ModeComparisonTable() {
     mode,
     all:      aggregate(BENCHMARKS.filter(r => r.mode === mode))!,
     lazy:     aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'lazy'))!,
-    detailed: aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'detailed'))!,
+    detailed: aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'detailed')),
   }))
 
   const base = data[0].all
@@ -114,10 +114,16 @@ export default function ModeComparisonTable() {
                 const d = pt === 'lazy' ? lazy : detailed
                 return (
                   <td key={mode} className="py-3 text-center text-sm">
-                    <div className="text-ink dark:text-white font-medium">{pct(d.successRate)}</div>
-                    <div className="text-[11px] text-stone-400 mt-0.5">
-                      {num(d.avgTurns)} turns · {kk(d.avgTokens)}
-                    </div>
+                    {d ? (
+                      <>
+                        <div className="text-ink dark:text-white font-medium">{pct(d.successRate)}</div>
+                        <div className="text-[11px] text-stone-400 mt-0.5">
+                          {num(d.avgTurns)} turns · {kk(d.avgTokens)}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-stone-400">—</span>
+                    )}
                   </td>
                 )
               })}

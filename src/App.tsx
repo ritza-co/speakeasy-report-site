@@ -206,8 +206,8 @@ export default function App() {
                 {Math.round(aggregate(BENCHMARKS.filter(r => r.mode === 'sdk+mcp' && r.promptType === 'lazy'))!.successRate * 100)}%
               </strong>{' '}
               success, compared to{' '}
-              {Math.round(aggregate(BENCHMARKS.filter(r => r.mode === 'bare' && r.promptType === 'detailed'))!.successRate * 100)}%
-              {' '}for a detailed prompt in bare mode. Tooling compensates for prompt quality
+              {Math.round(aggregate(BENCHMARKS.filter(r => r.mode === 'bare' && r.promptType === 'lazy'))!.successRate * 100)}%
+              {' '}for a lazy prompt in bare mode. Tooling compensates for prompt quality
               up to a point. For teams where developers write short prompts, investing in
               tooling pays off more than writing a prompt engineering guide.
             </p>
@@ -227,8 +227,8 @@ export default function App() {
               </thead>
               <tbody>
                 {(['bare', 'sdk', 'sdk+mcp'] as const).map((mode, i) => {
-                  const l = aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'lazy'))!
-                  const d = aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'detailed'))!
+                  const l = aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'lazy'))
+                  const d = aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'detailed'))
                   return (
                     <tr key={mode} className={i % 2 === 0 ? 'bg-stone-100/50 dark:bg-stone-850/30' : ''}>
                       <td className="py-3.5 pr-8">
@@ -238,16 +238,16 @@ export default function App() {
                         </span>
                       </td>
                       <td className="py-3.5 text-center font-medium text-ink dark:text-white">
-                        {Math.round(l.successRate * 100)}%
+                        {l ? `${Math.round(l.successRate * 100)}%` : '—'}
                       </td>
                       <td className="py-3.5 text-center font-medium text-ink">
-                        {Math.round(d.successRate * 100)}%
+                        {d ? `${Math.round(d.successRate * 100)}%` : '—'}
                       </td>
                       <td className="py-3.5 text-center text-stone-500 text-[13px]">
-                        {(l.avgTokens / 1000).toFixed(1)}k
+                        {l ? `${(l.avgTokens / 1000).toFixed(1)}k` : '—'}
                       </td>
                       <td className="py-3.5 text-center text-stone-500 text-[13px]">
-                        {(d.avgTokens / 1000).toFixed(1)}k
+                        {d ? `${(d.avgTokens / 1000).toFixed(1)}k` : '—'}
                       </td>
                     </tr>
                   )

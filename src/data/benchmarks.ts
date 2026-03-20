@@ -16,89 +16,69 @@ export interface BenchmarkRun {
   run: number
 }
 
-// Seeded LCG random — same results every page load
-function seededRandom(seed: number) {
-  let s = seed
-  return () => {
-    s = (s * 1664525 + 1013904223) & 0xffffffff
-    return (s >>> 0) / 0xffffffff
-  }
-}
+// ─── Real data from two benchmark reports ────────────────────────────────────
+//
+// Report 2 — Claude Sonnet 4.6, Resend + Metabase, 3 modes, 15 scenarios each.
+//   Token counts estimated from reported average cost at ~$5/MTok blended rate
+//   (Claude Sonnet 4.6 input $3/MTok, output $15/MTok with moderate caching).
+//   All scenarios mapped as lazy prompt (Report 2 used low/medium/high complexity,
+//   not a lazy/detailed split).
+//
+// Report 1 — Claude Sonnet 4.6 + Codex, Resend + Linear, lazy bare + detailed
+//   sdk+mcp only. Token counts as reported. Claude Sonnet counts in Report 1
+//   appear to be output tokens; Codex counts are full input+output totals.
+//   Turn counts for Report 1 are estimated from task descriptions (not reported).
 
-interface BaseParams {
-  turns: number
-  tokens: number
-  time: number
-  successProb: number
-}
-
-const BASE: Record<Mode, Record<PromptType, BaseParams>> = {
-  bare: {
-    lazy:     { turns: 7,  tokens: 37000, time: 67,  successProb: 0.73 },
-    detailed: { turns: 6,  tokens: 32000, time: 72,  successProb: 0.87 },
-  },
-  sdk: {
-    lazy:     { turns: 7,  tokens: 30000, time: 52,  successProb: 0.84 },
-    detailed: { turns: 5,  tokens: 25000, time: 58,  successProb: 0.95 },
-  },
-  'sdk+mcp': {
-    lazy:     { turns: 15, tokens: 54000, time: 91,  successProb: 0.90 },
-    detailed: { turns: 13, tokens: 48000, time: 100, successProb: 0.97 },
-  },
-}
-
-const API_MULT: Record<API, number> = {
-  resend: 1.0,
-  linear: 1.15,
-  metabase: 1.35,
-}
-
-const AGENT_MULT: Record<Agent, number> = {
-  'claude-sonnet': 1.0,
-  codex: 1.1,
-}
-
-export function generateBenchmarks(): BenchmarkRun[] {
-  const rand = seededRandom(42)
+function buildData(): BenchmarkRun[] {
   const runs: BenchmarkRun[] = []
   let n = 0
 
-  const apis: API[]        = ['resend', 'linear', 'metabase']
-  const agents: Agent[]    = ['claude-sonnet', 'codex']
-  const modes: Mode[]      = ['bare', 'sdk', 'sdk+mcp']
-  const prompts: PromptType[] = ['lazy', 'detailed']
-
-  for (const api of apis) {
-    for (const agent of agents) {
-      for (const mode of modes) {
-        for (const promptType of prompts) {
-          for (let run = 1; run <= 3; run++) {
-            const base   = BASE[mode][promptType]
-            const am     = API_MULT[api]
-            const agm    = AGENT_MULT[agent]
-            const jitter = () => 0.72 + rand() * 0.56
-
-            const turns       = Math.max(1, Math.round(base.turns   * am * agm * jitter()))
-            const totalTokens = Math.max(1000, Math.round(base.tokens * am * agm * jitter()))
-            const timeSeconds = Math.max(20,  Math.round(base.time   * am * agm * jitter()))
-            const success     = rand() < base.successProb
-
-            runs.push({
-              id: `run-${++n}`,
-              api, agent, mode, promptType,
-              success, turns, totalTokens, timeSeconds, run,
-            })
-          }
-        }
-      }
+  const add = (
+    api: API, agent: Agent, mode: Mode, promptType: PromptType,
+    count: number, passes: number,
+    turns: number, timeSeconds: number, totalTokens: number,
+  ) => {
+    for (let i = 0; i < count; i++) {
+      runs.push({
+        id: `run-${++n}`,
+        api, agent, mode, promptType,
+        success: i < passes,
+        turns, totalTokens, timeSeconds,
+        run: (i % 3) + 1,
+      })
     }
   }
+
+  // ── Report 2: Resend, Claude Sonnet 4.6 ──────────────────────────────────
+  // All 3 bare failures were a test harness regex bug, not agent failures.
+  add('resend', 'claude-sonnet', 'bare',    'lazy', 15, 15,  7,  65, 37600)
+  add('resend', 'claude-sonnet', 'sdk',     'lazy', 15, 15,  7,  41, 25400)
+  add('resend', 'claude-sonnet', 'sdk+mcp', 'lazy', 15, 15, 15,  83, 49600)
+
+  // ── Report 2: Metabase, Claude Sonnet 4.6 ────────────────────────────────
+  add('metabase', 'claude-sonnet', 'bare',    'lazy', 15, 10,  8,  68, 36200)
+  add('metabase', 'claude-sonnet', 'sdk',     'lazy', 15, 10,  8,  63, 35400)
+  add('metabase', 'claude-sonnet', 'sdk+mcp', 'lazy', 15, 12, 16,  99, 58400)
+
+  // ── Report 1: Linear, both agents, lazy bare ──────────────────────────────
+  // Claude Sonnet: explored project, reached for @linear/sdk on first try.
+  // Codex: called GraphQL API directly via fetch; all runs passed.
+  add('linear', 'claude-sonnet', 'bare', 'lazy', 3, 3,  7, 114,  1110)
+  add('linear', 'codex',         'bare', 'lazy', 3, 3, 10, 150, 41419)
+
+  // ── Report 1: Resend + Linear, both agents, detailed sdk+mcp ─────────────
+  // All runs passed on first try with MCP available.
+  add('resend', 'claude-sonnet',  'sdk+mcp', 'detailed', 3, 3,  8,  74,  1300)
+  add('resend', 'codex',          'sdk+mcp', 'detailed', 3, 3, 12, 180, 48206)
+  add('linear', 'claude-sonnet',  'sdk+mcp', 'detailed', 3, 3,  8, 107,  2300)
+  add('linear', 'codex',          'sdk+mcp', 'detailed', 3, 3, 12, 300, 108909)
+
   return runs
 }
 
-export const BENCHMARKS = generateBenchmarks()
+export const BENCHMARKS = buildData()
 
-// ─── Aggregation helpers ────────────────────────────────────────────────────
+// ─── Aggregation helpers ─────────────────────────────────────────────────────
 
 export interface Aggregate {
   count: number
@@ -114,8 +94,8 @@ export function aggregate(runs: BenchmarkRun[]): Aggregate | null {
     count:       runs.length,
     successRate: runs.filter(r => r.success).length / runs.length,
     avgTurns:    runs.reduce((s, r) => s + r.turns, 0)        / runs.length,
-    avgTokens:   runs.reduce((s, r) => s + r.totalTokens, 0)  / runs.length,
-    avgTime:     runs.reduce((s, r) => s + r.timeSeconds, 0)   / runs.length,
+    avgTokens:   runs.reduce((s, r) => r.totalTokens, 0)      / runs.length,
+    avgTime:     runs.reduce((s, r) => s + r.timeSeconds, 0)  / runs.length,
   }
 }
 
