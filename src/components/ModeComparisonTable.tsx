@@ -1,136 +1,142 @@
-import type { Mode } from '../data/benchmarks'
-import { BENCHMARKS, aggregate, MODE_COLORS } from '../data/benchmarks'
-
-const MODES: Mode[] = ['bare', 'sdk', 'sdk+mcp']
-const MODE_LABELS: Record<Mode, string> = { bare: 'Bare', sdk: 'SDK', 'sdk+mcp': 'SDK + MCP' }
+import { motion } from 'framer-motion'
+import type { Method } from '../data/benchmarks'
+import { BENCHMARKS, aggregate, METHOD_COLORS, MODEL_COLORS, METHODS, MODELS } from '../data/benchmarks'
+import { CountUp } from './CountUp'
 
 function pct(v: number) { return `${Math.round(v * 100)}%` }
-function num(v: number, dec = 1) { return v.toFixed(dec) }
-function kk(v: number) { return `${(v / 1000).toFixed(1)}k` }
-function sec(v: number) { return `${Math.round(v)}s` }
-
-function Delta({ base, val, lower = true }: { base: number; val: number; lower?: boolean }) {
-  const pctChange = ((val - base) / base) * 100
-  const good = lower ? pctChange < 0 : pctChange > 0
-  if (Math.abs(pctChange) < 1) return <span className="text-stone-400 text-[11px]">—</span>
-  return (
-    <span className={`text-[11px] ml-1.5 ${good ? 'text-emerald-600' : 'text-red-500'}`}>
-      {good ? '↓' : '↑'} {Math.abs(pctChange).toFixed(0)}%
-    </span>
-  )
+function ctx(v: number) { return `${(v / 1_000_000).toFixed(2)}M` }
+function dur(v: number) {
+  const m = Math.floor(v / 60)
+  const s = Math.round(v % 60)
+  return m > 0 ? `${m}m ${s}s` : `${s}s`
 }
 
 export default function ModeComparisonTable() {
-  const data = MODES.map(mode => ({
-    mode,
-    all:      aggregate(BENCHMARKS.filter(r => r.mode === mode))!,
-    lazy:     aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'lazy'))!,
-    detailed: aggregate(BENCHMARKS.filter(r => r.mode === mode && r.promptType === 'detailed')),
-  }))
-
-  const base = data[0].all
-
-  const rows = [
-    {
-      label: 'Success rate',
-      fmt:   (d: ReturnType<typeof aggregate>) => pct(d!.successRate),
-      val:   (d: ReturnType<typeof aggregate>) => d!.successRate,
-      lower: false,
-    },
-    {
-      label: 'Avg turns',
-      fmt:   (d: ReturnType<typeof aggregate>) => num(d!.avgTurns),
-      val:   (d: ReturnType<typeof aggregate>) => d!.avgTurns,
-      lower: true,
-    },
-    {
-      label: 'Avg tokens',
-      fmt:   (d: ReturnType<typeof aggregate>) => kk(d!.avgTokens),
-      val:   (d: ReturnType<typeof aggregate>) => d!.avgTokens,
-      lower: true,
-    },
-    {
-      label: 'Avg time',
-      fmt:   (d: ReturnType<typeof aggregate>) => sec(d!.avgTime),
-      val:   (d: ReturnType<typeof aggregate>) => d!.avgTime,
-      lower: true,
-    },
-  ]
+  const base = aggregate(BENCHMARKS.filter(r => r.method === 'Bare'))!
 
   return (
-    <div className="w-full overflow-x-auto">
-      <table className="w-full text-sm font-sans border-collapse">
-        <thead>
-          <tr>
-            <th className="text-left py-3 pr-8 text-[10px] uppercase tracking-widest text-stone-400 font-normal w-32" />
-            {data.map(({ mode }) => (
-              <th key={mode} className="text-center pb-3 pt-1 min-w-[150px]">
-                <div className="flex flex-col items-center gap-1.5">
-                  <span
-                    className="w-2.5 h-2.5 rounded-full"
-                    style={{ backgroundColor: MODE_COLORS[mode] }}
-                  />
-                  <span className="text-ink dark:text-white font-medium text-sm">{MODE_LABELS[mode]}</span>
-                </div>
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={row.label} className={i % 2 === 0 ? 'bg-stone-100/60 dark:bg-stone-850/30' : ''}>
-              <td className="py-3.5 pr-8 text-[11px] uppercase tracking-widest text-stone-400 font-normal">
-                {row.label}
-              </td>
-              {data.map(({ mode, all }, j) => (
-                <td key={mode} className="py-3.5 text-center text-ink dark:text-white">
-                  <span className="text-base font-medium">{row.fmt(all)}</span>
-                  {j > 0 && (
-                    <Delta
-                      base={row.val(base)}
-                      val={row.val(all)}
-                      lower={row.lower}
-                    />
-                  )}
-                </td>
-              ))}
-            </tr>
-          ))}
+    <div className="w-full space-y-8">
 
-          {/* Prompt type sub-rows */}
-          <tr>
-            <td colSpan={4} className="pt-8 pb-2">
-              <p className="text-[10px] uppercase tracking-widest text-stone-400">
-                Broken out by prompt type
-              </p>
-            </td>
-          </tr>
-          {(['lazy', 'detailed'] as const).map(pt => (
-            <tr key={pt} className={pt === 'lazy' ? 'bg-stone-100/60 dark:bg-stone-850/30' : ''}>
-              <td className="py-3 pr-8 text-[11px] uppercase tracking-widest text-stone-400 font-normal capitalize">
-                {pt}
-              </td>
-              {data.map(({ mode, lazy, detailed }) => {
-                const d = pt === 'lazy' ? lazy : detailed
-                return (
-                  <td key={mode} className="py-3 text-center text-sm">
-                    {d ? (
-                      <>
-                        <div className="text-ink dark:text-white font-medium">{pct(d.successRate)}</div>
-                        <div className="text-[11px] text-stone-400 mt-0.5">
-                          {num(d.avgTurns)} turns · {kk(d.avgTokens)}
-                        </div>
-                      </>
-                    ) : (
-                      <span className="text-stone-400">—</span>
+      {/* Method × Model table */}
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm font-sans border-collapse">
+          <thead>
+            <tr className="border-b border-stone-200 dark:border-stone-850">
+              <th className="text-left py-3 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Method</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Success</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Avg time</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Avg ctx tokens</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">MCP calls</th>
+            </tr>
+          </thead>
+          <tbody>
+            {METHODS.map((method, i) => {
+              const agg = aggregate(BENCHMARKS.filter(r => r.method === method))!
+              const mcp = BENCHMARKS.filter(r => r.method === method).reduce((s, r) => s + r.mcp_calls, 0)
+              const ctxDelta = ((agg.avgTotalContext - base.avgTotalContext) / base.avgTotalContext * 100).toFixed(0)
+              const isBase = method === 'Bare'
+              return (
+                <tr key={method} className={i % 2 === 0 ? 'bg-stone-100/50 dark:bg-stone-850/30' : ''}>
+                  <td className="py-3.5 pr-6">
+                    <span className="flex items-center gap-2 text-[11px] uppercase tracking-widest text-stone-500">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: METHOD_COLORS[method] }} />
+                      {method}
+                    </span>
+                  </td>
+                  <td className="py-3.5 text-center font-medium text-ink dark:text-white">
+                    {pct(agg.successRate)}
+                  </td>
+                  <td className="py-3.5 text-center text-stone-500 text-[13px]">
+                    {dur(agg.avgElapsed)}
+                  </td>
+                  <td className="py-3.5 text-center text-stone-500 text-[13px]">
+                    {ctx(agg.avgTotalContext)}
+                    {!isBase && (
+                      <span className={`ml-1.5 text-[11px] ${Number(ctxDelta) > 0 ? 'text-amber-500' : 'text-emerald-600'}`}>
+                        {Number(ctxDelta) > 0 ? `+${ctxDelta}%` : `${ctxDelta}%`}
+                      </span>
                     )}
                   </td>
-                )
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                  <td className="py-3.5 text-center text-stone-500 text-[13px]">{mcp}</td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Broken out by prompt type sub-section */}
+      <div>
+        <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-4">
+          Broken out by model
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm font-sans border-collapse">
+            <thead>
+              <tr className="border-b border-stone-200 dark:border-stone-850">
+                <th className="text-left py-3 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Model</th>
+                {METHODS.map(m => (
+                  <th key={m} className="text-center py-3 px-4 text-[10px] uppercase tracking-widest font-normal"
+                    style={{ color: METHOD_COLORS[m] }}>
+                    {m}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {MODELS.map((model, i) => (
+                <tr key={model} className={i % 2 === 0 ? 'bg-stone-100/60 dark:bg-stone-850/30' : ''}>
+                  <td className="py-3 pr-6 text-[11px] uppercase tracking-widest text-stone-400"
+                    style={{ color: MODEL_COLORS[model] }}>
+                    {model}
+                  </td>
+                  {METHODS.map(method => {
+                    const d = aggregate(BENCHMARKS.filter(r => r.model === model && r.method === method))
+                    return (
+                      <td key={method} className="py-3 text-center text-sm">
+                        {d ? (
+                          <>
+                            <div className="text-ink dark:text-white font-medium">{pct(d.successRate)}</div>
+                            <div className="text-[11px] text-stone-400 mt-0.5">
+                              {dur(d.avgElapsed)} · {ctx(d.avgTotalContext)}
+                            </div>
+                          </>
+                        ) : (
+                          <span className="text-stone-400">—</span>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Method summary cards */}
+      <div className="grid grid-cols-3 gap-4">
+        {METHODS.map((method: Method) => {
+          const a = aggregate(BENCHMARKS.filter(r => r.method === method))!
+          return (
+            <motion.div
+              key={method}
+              className="text-center py-6 border border-stone-200 dark:border-stone-850 bg-white/40 dark:bg-stone-900/40"
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45 }}
+            >
+              <div className="w-3 h-3 rounded-full mx-auto mb-3" style={{ backgroundColor: METHOD_COLORS[method] }} />
+              <div className="font-serif text-3xl font-bold text-ink dark:text-white">
+                <CountUp to={Math.round(a.successRate * 100)} suffix="%" duration={900} />
+              </div>
+              <div className="text-[10px] uppercase tracking-widest text-stone-400 mt-1">{method} success</div>
+              <div className="text-[12px] text-stone-500 mt-3">{dur(a.avgElapsed)} avg</div>
+            </motion.div>
+          )
+        })}
+      </div>
     </div>
   )
 }
