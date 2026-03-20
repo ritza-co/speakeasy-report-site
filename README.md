@@ -21,11 +21,9 @@ Output is written to `dist/`.
 
 ## Deploy on Render
 
-Create a new **Static Site** on Render with the following settings:
+Create a new **Web Service** on Render with the following settings:
 
 | Setting | Value |
 |---|---|
 | Build command | `pnpm install && pnpm run build` |
-| Publish directory | `dist` |
-
-No start command is needed for static sites.
+| Start command | `pnpm run preview` |
