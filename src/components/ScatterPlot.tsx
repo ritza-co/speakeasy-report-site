@@ -153,7 +153,7 @@ export default function ScatterPlot() {
       </div>
 
       <p className="text-[11px] text-stone-400 font-sans mb-3">
-        Showing <strong className="text-ink dark:text-white">{activeSet.size}</strong> of {BENCHMARKS.length} sessions
+        Showing <strong className="text-ink dark:text-white">{activeSet.size * 3}</strong> of 108 sessions — each point is the average of 3 runs
       </p>
 
       <div className="w-full overflow-x-auto" ref={containerRef}>
