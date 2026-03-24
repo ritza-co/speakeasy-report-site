@@ -10,6 +10,8 @@ import RunSummaryCards from './components/RunSummaryCards'
 import PromptDeltaTable from './components/PromptDeltaTable'
 import RunMetricsTable from './components/RunMetricsTable'
 import FabricationTable from './components/FabricationTable'
+import FeatureCategoryTable from './components/FeatureCategoryTable'
+import CostCorrectnessScatter from './components/CostCorrectnessScatter'
 import { useScrollSpy } from './hooks/useScrollSpy'
 
 const SECTIONS = [
@@ -19,8 +21,7 @@ const SECTIONS = [
   { id: 'api-only',      label: 'API only' },
   { id: 'sdk-only',      label: 'SDK only' },
   { id: 'sdk-mcp',       label: 'SDK + MCP' },
-  { id: 'all-runs',      label: 'All six runs' },
-  { id: 'conclusions',   label: 'Conclusions' },
+  { id: 'all-runs',      label: 'Results and conclusions' },
 ]
 
 export default function App() {
@@ -711,11 +712,11 @@ export default function App() {
           </div>
         </Section>
 
-        {/* ─── ALL SIX RUNS ─── */}
+        {/* ─── ALL SIX RUNS + CONCLUSIONS ─── */}
         <Section
           id="all-runs"
-          chapterLabel="Results — Cross-run analysis"
-          headline="Results across all six runs"
+          chapterLabel="Results and conclusions"
+          headline="What the data shows"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
 
@@ -731,33 +732,33 @@ export default function App() {
               Concept coverage across all six runs
             </h3>
             <p>
-              Two rows in the table below stand out. Contact Properties was the only
-              feature no non-MCP run implemented correctly — the two-step create-then-assign
-              flow is not well-covered in training data and the agent consistently guessed
-              the wrong shape or skipped it. Inline logo handling split almost perfectly
-              along the fabrication fault line: the two runs that got it right either
-              happened to know the correct approach from training data (vague-raw-api) or
-              looked it up via MCP (precise-sdk-mcp). The three that got it wrong all
-              invented a constraint to justify a fallback.
+              Two rows stand out. Contact Properties was the only feature no non-MCP run
+              implemented correctly — the two-step create-then-assign flow is not
+              well-covered in training data and the agent consistently guessed the wrong
+              shape or skipped it entirely. Inline logo handling split along the fabrication
+              fault line: the two runs that got it right either happened to know the correct
+              approach from training data (vague-raw-api) or confirmed it via MCP
+              (precise-sdk-mcp). The three that got it wrong all invented a constraint to
+              justify a fallback.
             </p>
 
             <ConceptScoreTable
               columns={['V-Raw', 'V-SDK', 'V-MCP', 'P-Raw', 'P-SDK', 'P-MCP']}
               rows={[
-                { concept: 'Tag premium users (Segments API)',            scores: ['Partial', 'No',      'Yes',     'Yes',     'Yes',     'Partial'] },
+                { concept: 'Tag premium users (Segments API)',             scores: ['Partial', 'No',      'Yes',     'Yes',     'Yes',     'Partial'] },
                 { concept: 'Store subscription tier (Contact Properties)', scores: ['Partial', 'No',      'Yes',     'Partial', 'Partial', 'Yes']     },
-                { concept: 'Broadcast email (create + send)',              scores: ['Yes',     'No',      'Yes',     'Yes',     'Partial', 'Yes']     },
-                { concept: 'Personalize with template variables',          scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
-                { concept: 'Inline logo (content_id + cid:)',              scores: ['Yes',     'Yes',     'Partial', 'No',      'No',      'Yes']     },
-                { concept: 'Idempotency / safe to retry',                  scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
+                { concept: 'Broadcast email (create + send)',               scores: ['Yes',     'No',      'Yes',     'Yes',     'Partial', 'Yes']     },
+                { concept: 'Personalize with template variables',           scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
+                { concept: 'Inline logo (content_id + cid:)',               scores: ['Yes',     'Yes',     'Partial', 'No',      'No',      'Yes']     },
+                { concept: 'Idempotency / safe to retry',                   scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
               ]}
               scores={[
-                { label: 'V-Raw',  value: '4.5 / 6' },
-                { label: 'V-SDK',  value: '1.5 / 6' },
-                { label: 'V-MCP',  value: '5.0 / 6' },
-                { label: 'P-Raw',  value: '4.0 / 6' },
-                { label: 'P-SDK',  value: '4.0 / 6' },
-                { label: 'P-MCP',  value: '5.5 / 6' },
+                { label: 'V-Raw', value: '4.5 / 6' },
+                { label: 'V-SDK', value: '1.5 / 6' },
+                { label: 'V-MCP', value: '5.0 / 6' },
+                { label: 'P-Raw', value: '4.0 / 6' },
+                { label: 'P-SDK', value: '4.0 / 6' },
+                { label: 'P-MCP', value: '5.5 / 6' },
               ]}
             />
 
@@ -776,109 +777,52 @@ export default function App() {
             <FabricationTable />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP runs used more of every resource — but by very different amounts
+              MCP is necessary for some features, optional for others
             </h3>
             <p>
-              The vague-sdk-mcp run used roughly four times as many turns as vague-raw-api
-              and four times the cache read tokens. The precise-sdk-mcp run is in a
-              different category entirely: 55 turns, 2.2M cache read tokens, and 8 MCP
-              calls driven by an iterative cycle of run, fail, read error, correct, re-run.
-              No non-MCP run executed the code. Every non-MCP run wrote a file and stopped.
+              MCP proved necessary for two categories of feature: those requiring API
+              patterns not well-covered in training data (the Contact Properties two-step
+              flow), and those where the agent would otherwise fabricate a false constraint
+              (inline images via{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>).
+              For features the agent already knows well — broadcast flow, idempotency keys,
+              template variables — MCP added verification but not correctness.
+            </p>
+
+            <FeatureCategoryTable />
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              MCP improved correctness at a real cost in tokens and turns
+            </h3>
+            <p>
+              The vague-sdk-mcp run used roughly four times as many turns as vague-raw-api.
+              The precise-sdk-mcp run is in a different category: 55 turns and 2.2M cache
+              read tokens driven by an iterative cycle of run, fail, read error, correct,
+              re-run. No non-MCP run executed the code. Every non-MCP run wrote a file and
+              stopped. Whether that cost is worth it depends on how much correctness matters
+              over plausibility.
             </p>
 
             <RunMetricsTable />
 
-            <TokenBar
-              visibleIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk', 'vague-sdk-mcp', 'precise-sdk-mcp']}
-              highlightIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk', 'vague-sdk-mcp', 'precise-sdk-mcp']}
-            />
+            <CostCorrectnessScatter />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Summary
+              Prompt precision had diminishing returns as tooling improved
             </h3>
             <p>
-              Prompt precision had its largest effect in the SDK configuration and its
-              smallest with MCP. The vague-sdk-mcp run outscored every non-MCP run
-              regardless of prompt. The prompt delta compressed from 2.5 points (SDK) to
-              0.5 points (SDK + MCP).
+              Prompt detail had its largest effect in the SDK configuration, where a precise
+              prompt added 2.5 concept score points over a vague one. Its smallest effect
+              was with MCP, where the delta was only 0.5 points. The vague-raw-api run
+              actually outscored precise-raw-api by 0.5 points: more specificity created
+              more opportunities for confident wrong answers. Prompt detail changes what the
+              agent attempts. It does not change whether the agent knows when it's wrong.
             </p>
-            <ul className="space-y-2 pl-5 list-disc">
-              <li>
-                <strong className="text-ink dark:text-white">MCP vs no MCP:</strong>{' '}
-                The floor rose. The lowest-scoring MCP run (5.0/6) beat four of the four
-                non-MCP runs. Fabrication disappeared. The agent shifted from writing code
-                to researching, writing, and running it.
-              </li>
-              <li>
-                <strong className="text-ink dark:text-white">Precise vs vague:</strong>{' '}
-                Prompt detail helped most where tooling was weakest. With MCP available,
-                the agent found what it needed regardless of how the task was worded.
-              </li>
-            </ul>
 
             <PromptDeltaTable
               highlightConfig="SDK + MCP"
               visibleConfigs={['Raw HTTP', 'SDK', 'SDK + MCP']}
             />
-
-          </div>
-        </Section>
-
-        {/* ─── CONCLUSIONS ─── */}
-        <Section
-          id="conclusions"
-          chapterLabel="Conclusions"
-          headline="What the data shows"
-        >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP improved correctness and eliminated fabrication, at the cost of more tokens and more turns
-            </h3>
-            <p>
-              MCP improved concept coverage in both prompt conditions and eliminated the
-              fabrication pattern observed in non-MCP runs. The cost was real: more turns,
-              more tokens, more cache activity. The precise-sdk-mcp run used roughly 20
-              times more cache read tokens than the vague-raw-api run. Whether that cost is
-              worth it depends on how much it matters that the implementation is correct
-              rather than plausible.
-            </p>
-
-            {/* VISUALISATION: Cost vs correctness scatter — 6 runs plotted by cache token cost on
-                x-axis and concept score on y-axis. The tradeoff is the point, not a verdict. */}
-
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP is necessary for API features with sparse training data coverage
-            </h3>
-            <p>
-              MCP proved necessary for two categories of feature: those that require live
-              API patterns unlikely to be well-represented in training data (the Contact
-              Properties two-step flow), and those where the agent would otherwise
-              fabricate a false constraint (inline images via{' '}
-              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>).
-              For features the agent already knows well from training data — standard
-              broadcast flow, idempotency keys, template variables — MCP added verification
-              but not correctness.
-            </p>
-
-            {/* VISUALISATION: Feature categorisation table — three columns: "agent got this right
-                without MCP", "agent needed MCP to get this right", "agent fabricated a wrong
-                answer without MCP". */}
-
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Precise prompts improve results without MCP but cannot prevent fabrication
-            </h3>
-            <p>
-              If MCP is not available, prompt detail is the most effective substitute —
-              but only up to a point. The precise-sdk run scored 4.0/6 versus 1.5/6 for
-              vague-sdk: the structured prompt unlocked SDK-specific methods the agent
-              would not have discovered alone. But precise prompting did not fix the
-              fabrication problem. The agent still invented constraints it could not verify.
-              Prompt detail changes what the agent attempts. It does not change whether the
-              agent knows when it's wrong.
-            </p>
-
-            {/* VISUALISATION: Short two-column table: "what precise prompting fixes" vs "what it doesn't". */}
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               How to use MCP effectively
@@ -887,13 +831,14 @@ export default function App() {
             <ul className="space-y-2 pl-5 list-disc">
               <li>
                 <strong className="text-ink dark:text-white">Instruct agents to use MCP tools explicitly.</strong>{' '}
-                In none of the MCP runs did the agent use MCP without being asked. The
-                tools do not activate automatically.
+                Both MCP runs discovered and used the MCP server without being told to —
+                but this is not guaranteed behaviour. Explicitly mentioning available tools
+                in the prompt reduces the chance the agent overlooks them.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Use SDK + MCP for multi-step API flows and sparsely documented features.</strong>{' '}
-                The Contact Properties API result is the clearest example: without MCP, no
-                run got this right. With MCP, both did.
+                <strong className="text-ink dark:text-white">Use SDK + MCP for multi-step flows and features with sparse training coverage.</strong>{' '}
+                The Contact Properties result is the clearest example: without MCP, no run
+                got this right. With MCP, both did.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Use precise prompts when MCP is not available, but treat them as a partial fix.</strong>{' '}
@@ -907,8 +852,6 @@ export default function App() {
               </li>
             </ul>
 
-            {/* VISUALISATION: Summary decision guide — when to use each config based on API
-                familiarity, task complexity, and prompt quality. */}
           </div>
         </Section>
 
