@@ -12,12 +12,13 @@ import RunMetricsTable from './components/RunMetricsTable'
 import FabricationTable from './components/FabricationTable'
 import FeatureCategoryTable from './components/FeatureCategoryTable'
 import CostCorrectnessScatter from './components/CostCorrectnessScatter'
+import ConfigAccessTable from './components/ConfigAccessTable'
+import ConceptMappingTable from './components/ConceptMappingTable'
 import { useScrollSpy } from './hooks/useScrollSpy'
 
 const SECTIONS = [
   { id: 'hypothesis',    label: 'Hypothesis' },
   { id: 'methodology',   label: 'How we tested it' },
-  { id: 'the-task',      label: 'The task' },
   { id: 'api-only',      label: 'API only' },
   { id: 'sdk-only',      label: 'SDK only' },
   { id: 'sdk-mcp',       label: 'SDK + MCP' },
@@ -48,96 +49,99 @@ export default function App() {
               question is what it does next. Does it search for the answer, flag its
               uncertainty, or proceed as if it knows?
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Hypothesis 1: live documentation access improves correctness
+            </h3>
             <p>
-              This benchmark tests whether giving the agent access to a live MCP server
-              for the API changes that behaviour. The hypothesis is that it does: live
-              documentation access should reduce fabricated API constraints, improve
-              architectural correctness, and increase the chance of a working
+              Giving the agent access to a live MCP server for the API should change that
+              behaviour. Live documentation access should reduce fabricated API constraints,
+              improve architectural correctness, and increase the chance of a working
               implementation on features the agent does not know well.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Hypothesis 2: prompt precision can substitute for live documentation access
+            </h3>
             <p>
-              A secondary question emerged from the test design. Does prompt precision
-              substitute for tooling? A developer who knows the correct API surface can
-              write it into the prompt explicitly. Does that narrow the gap between MCP
-              and no MCP? Or does fabrication persist regardless of how specific the
-              instructions are?
+              A developer who knows the correct API surface can write it into the prompt
+              explicitly. Does that narrow the gap between MCP and no MCP? Or does
+              fabrication persist regardless of how specific the instructions are?
             </p>
 
-            {/* VISUALISATION: 2x3 grid or matrix diagram — the 6 run configurations laid out as a grid
-                (vague/precise x raw-api/sdk/sdk+mcp), so the reader can see the shape of the experiment. */}
+            <p>
+              To test both, we ran six sessions: three tooling configurations crossed with
+              two prompt styles, all against the same task.
+            </p>
           </div>
         </Section>
 
-        {/* ─── METHODOLOGY ─── */}
+        {/* ─── METHODOLOGY + THE TASK ─── */}
         <Section
           id="methodology"
-          chapterLabel="Introduction — Setup"
-          headline="Three tooling configurations, two prompt styles, one well-documented API"
+          chapterLabel="Introduction"
+          headline="How we tested it"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p>
               We ran six benchmark sessions across three tooling configurations and two
-              prompt styles, all against the same task.
+              prompt styles, all against the same task. Each run used Claude Code with the
+              same underlying question: can the agent correctly map a plain-English
+              description of an integration task to the right API features?
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Three configurations, stacked incrementally
+            </h3>
             <p>
-              The three configurations stack incrementally. Raw HTTP (no SDK, no MCP) is
-              the baseline: the agent has its training data and makes HTTP requests
-              directly. SDK only adds the Resend Node.js SDK: a typed library with named
-              methods and known response shapes. SDK + MCP adds the Resend docs MCP server
-              on top of the SDK: a live tool the agent can query to look up documentation
-              while it works.
+              Raw HTTP is the baseline: the agent has its training data and writes HTTP
+              requests directly. SDK only adds the Resend Node.js SDK — a typed library
+              with named methods and known response shapes. SDK + MCP adds the Resend docs
+              MCP server on top: a live tool the agent can query mid-session to look up
+              documentation while it works. The agent was not instructed to use MCP on
+              SDK + MCP runs. It was simply available in the environment.
             </p>
-            <p>
-              The two prompt styles each describe the same task. One is vague, written as
-              a non-technical user might describe it. The other is precise, written as a
-              developer would, naming specific capabilities and constraints explicitly.
-              Neither prompt tells the agent which Resend APIs to use. The agent must
-              figure that out.
-            </p>
+
+            <ConfigAccessTable />
+
             <p>
               The API is Resend, a widely used email platform with well-maintained
-              documentation, a clean SDK, and an official MCP server. This was a
-              deliberate choice. Resend is well represented in LLM training data, which
-              gives the non-MCP runs a reasonable chance of performing well. If MCP still
-              adds value on an API the agent already knows, that is a stronger result than
-              if we had chosen an obscure API with poor training coverage.
+              documentation, a clean SDK, and an official MCP server. This was deliberate.
+              Resend is well represented in LLM training data, which gives the non-MCP runs
+              a reasonable chance of performing well. If MCP still adds value on an API the
+              agent already knows, that is a stronger result than testing against an obscure
+              API with poor training coverage.
             </p>
 
-            {/* VISUALISATION: Short table or icon grid showing what each configuration had access to:
-                training data, SDK, MCP — ticked or crossed per run. */}
-          </div>
-        </Section>
-
-        {/* ─── THE TASK ─── */}
-        <Section
-          id="the-task"
-          chapterLabel="Introduction — Task"
-          headline="A non-trivial integration that requires composing several distinct API features"
-        >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              A task that requires composing several non-obvious API features
+            </h3>
             <p>
               All six runs received the same underlying task: write a Node.js script that
-              sends a personalized broadcast email to a group of premium contacts via the
-              Resend API. The script must tag contacts as premium (Segments API), store a
-              subscription tier on each contact's profile (Contact Properties API), send a
-              broadcast email personalized with that property (Broadcasts API), embed a
-              company logo inline in the email body rather than as an attachment
-              (<code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>),
-              and handle idempotency so the send is safe to retry.
+              sends a personalized broadcast email to a group of premium contacts. The
+              prompt does not name any Resend API. The agent must map plain-English
+              requirements to the correct API features itself — and several of those
+              mappings are non-obvious.
             </p>
+
+            <ConceptMappingTable />
+
             <p>
-              These features are each documented individually. What makes the task hard is
-              the composition: the agent must recognize that "tag them as premium" maps to
-              the Segments API, that "store their subscription tier" requires a separate
-              Contact Properties create-then-assign flow, and that "show the logo inline"
-              means <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code> attachment
-              with a <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">cid:</code> reference
-              in the HTML, not a base64 data URI. None of this is stated in the prompt.
-              The agent must know it or find it.
+              Each feature is documented individually. What makes the task hard is the
+              composition: the agent must recognise all six mappings, implement them in the
+              correct order, and know that some require multi-step flows not visible from
+              the method names alone. None of this is stated in the prompt. The agent must
+              know it or find it.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Two prompts describing the same task
+            </h3>
             <p>
-              The vague prompt described the task in plain English. The precise prompt
-              spelled out each capability as a numbered requirement. Both are shown below.
+              The vague prompt describes the task as a non-technical user might: natural
+              language, no API names, no structural requirements. The precise prompt
+              describes the same task as a developer would: numbered steps, a specified
+              runtime, explicit output expectations. Neither prompt names any Resend API.
             </p>
 
             <PromptCards
