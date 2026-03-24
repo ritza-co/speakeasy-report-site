@@ -50,7 +50,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.9 }}
         >
-          SDKs, MCPs, and epistemic humility across 36 sessions,
+          SDKs, MCPs, and epistemic humility across 108 sessions,
           <br />four APIs, and three models.
         </motion.p>
 

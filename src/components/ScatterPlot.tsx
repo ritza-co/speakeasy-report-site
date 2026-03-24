@@ -9,18 +9,18 @@ const M = { top: 28, right: 36, bottom: 64, left: 96 }
 const PW = W - M.left - M.right
 const PH = H - M.top  - M.bottom
 
-// Axes: x = elapsed_seconds, y = total_context (log-ish feel via clamped scale)
+// Axes: x = elapsed_seconds, y = output tokens
 const MAX_ELAPSED  = 3200   // 50m26s outlier
-const MAX_CONTEXT  = 5_000_000
+const MAX_OUTPUT   = 35_000
 
 const xScale = (v: number) => Math.min((v / MAX_ELAPSED) * PW, PW)
-const yScale = (v: number) => PH - Math.min((v / MAX_CONTEXT) * PH, PH)
+const yScale = (v: number) => PH - Math.min((v / MAX_OUTPUT) * PH, PH)
 const rScale = (output: number) => 5 + Math.min((output / 35000) * 14, 14)
 
 const X_TICKS = [0, 600, 1200, 1800, 2400, 3000]
-const Y_TICKS = [0, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000]
+const Y_TICKS = [0, 7_000, 14_000, 21_000, 28_000, 35_000]
 const fmtX = (v: number) => v === 0 ? '0' : `${v / 60 | 0}m`
-const fmtY = (v: number) => v === 0 ? '0' : `${(v / 1_000_000).toFixed(1)}M`
+const fmtY = (v: number) => v === 0 ? '0' : `${Math.round(v / 1000)}k`
 
 function Pill({ label, active, color, onClick }: {
   label: string; active: boolean; color?: string; onClick: () => void
@@ -79,12 +79,12 @@ function Tooltip({ data }: { data: TooltipData }) {
           <span className="text-stone-400">Time</span><span>{r.elapsed}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className="text-stone-400">Total ctx</span>
-          <span>{(r.tokens.total_context / 1_000_000).toFixed(2)}M</span>
-        </div>
-        <div className="flex justify-between gap-4">
           <span className="text-stone-400">Output</span>
           <span>{r.tokens.output.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="text-stone-400">Total ctx</span>
+          <span>{(r.tokens.total_context / 1_000_000).toFixed(2)}M</span>
         </div>
         {r.mcp_calls > 0 && (
           <div className="flex justify-between gap-4">
@@ -190,13 +190,13 @@ export default function ScatterPlot() {
             ))}
             <text transform={`translate(${-76},${PH / 2}) rotate(-90)`}
               textAnchor="middle" fontSize={11} fill="var(--scatter-label)" fontFamily="Inter, sans-serif">
-              Total context tokens
+              Output tokens
             </text>
 
             {BENCHMARKS.map((run, index) => {
               const visible = activeSet.has(run.id)
               const cx = xScale(run.elapsed_seconds)
-              const cy = yScale(run.tokens.total_context)
+              const cy = yScale(run.tokens.output)
               const r  = rScale(run.tokens.output)
               const color = METHOD_COLORS[run.method]
               const modelColor = MODEL_COLORS[run.model]
