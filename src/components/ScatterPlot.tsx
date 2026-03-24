@@ -62,9 +62,7 @@ function Tooltip({ data }: { data: TooltipData }) {
     >
       <div className="flex justify-between gap-4 mb-1">
         <span className="text-stone-400">{TOOL_LABELS[r.tool]}</span>
-        <span className={r.success ? 'text-green-400' : 'text-red-400'}>
-          {r.success ? '✓ success' : '✗ failed'}
-        </span>
+        <span className="text-stone-300">avg of 3 runs</span>
       </div>
       <div className="space-y-0.5 text-stone-300">
         <div className="flex justify-between gap-4">
@@ -204,7 +202,7 @@ export default function ScatterPlot() {
               const isSonnet = run.model === 'Sonnet'
 
               const targetOpacity = dotsVisible
-                ? (visible ? (run.success ? 0.82 : 0.25) : 0.04)
+                ? (visible ? 0.82 : 0.04)
                 : 0
               const delay = hasAnimated.current ? 0 : index * 0.006
 
@@ -248,7 +246,7 @@ export default function ScatterPlot() {
           GPT-5.4 = outline
         </span>
         <span className="text-stone-300">·</span>
-        <span>Dot size = output tokens · Faded = failed</span>
+        <span>Dot size = output tokens</span>
       </div>
 
       {tip && <Tooltip data={tip} />}
