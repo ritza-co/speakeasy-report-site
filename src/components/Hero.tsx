@@ -50,8 +50,8 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.9 }}
         >
-          Six runs. Three tooling configurations. Two prompt styles.
-          <br />One API the agent already knows.
+          A benchmark measuring how much a live MCP documentation server changes
+          <br />what an AI agent builds.
         </motion.p>
 
         <motion.button
