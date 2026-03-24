@@ -3,10 +3,13 @@ import TOC from './components/TOC'
 import ThemeToggle from './components/ThemeToggle'
 import Section from './components/Section'
 import PromptCards from './components/PromptCards'
+import AgentActivity from './components/AgentActivity'
 import ConceptScoreTable from './components/ConceptScoreTable'
 import TokenBar from './components/TokenBar'
 import RunSummaryCards from './components/RunSummaryCards'
 import PromptDeltaTable from './components/PromptDeltaTable'
+import RunMetricsTable from './components/RunMetricsTable'
+import FabricationTable from './components/FabricationTable'
 import { useScrollSpy } from './hooks/useScrollSpy'
 
 const SECTIONS = [
@@ -136,7 +139,18 @@ export default function App() {
               spelled out each capability as a numbered requirement. Both are shown below.
             </p>
 
-            {/* VISUALISATION: The two prompts side by side — styled as code block or callout cards. */}
+            <PromptCards
+              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
+              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
+              preciseSteps={[
+                'Define a customer group for premium users.',
+                'Create a customer profile with a custom property that stores their subscription tier.',
+                'Add that customer to the premium group.',
+                'Compose a broadcast email to the entire premium group where the message body is personalized using the customer\'s subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.',
+                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
+              ]}
+              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
+            />
           </div>
         </Section>
 
@@ -162,36 +176,43 @@ export default function App() {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              The two prompts
+              What the agent did
             </h3>
             <p>
-              The vague prompt describes the task as a non-technical user might: natural
-              language, no API names, no structural requirements. The precise prompt
-              describes the same task as a developer would: numbered steps, a specified
-              runtime, explicit output expectations. Neither prompt names any Resend API.
-              The agent must figure out the correct mapping in both cases.
+              Both runs used the same base prompts shown in the task section above, with
+              one addition:
             </p>
-
-            <PromptCards
-              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
-              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
-              preciseSteps={[
-                'Define a customer group for premium users.',
-                'Create a customer profile with a custom property that stores their subscription tier.',
-                'Add that customer to the premium group.',
-                'Compose a broadcast email to the entire premium group where the message body is personalized using the customer\'s subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.',
-                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
-              ]}
-              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
-            />
-
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+              "Use raw HTTP requests only (fetch or axios). Do not use any Resend SDK or npm package."
+            </div>
             <p>
-              The key difference is not what the agent is asked to do, but how much
-              architectural scaffolding the prompt provides. A vague prompt leaves the
-              agent to structure the problem. A precise prompt hands it a skeleton to
-              fill in. Whether that skeleton helps or creates new failure modes is one of
-              the things this section reveals.
+              No MCP was available. The agent drew entirely on training data.
             </p>
+
+            <AgentActivity
+              runs={[
+                {
+                  label: 'Vague — raw HTTP',
+                  promptStyle: 'vague',
+                  tools: [
+                    { name: 'Agent', count: 2, category: 'other' },
+                    { name: 'Bash',  count: 1, category: 'run'   },
+                    { name: 'Write', count: 1, category: 'write' },
+                  ],
+                },
+                {
+                  label: 'Precise — raw HTTP',
+                  promptStyle: 'precise',
+                  tools: [
+                    { name: 'Agent', count: 1, category: 'other' },
+                    { name: 'Bash',  count: 2, category: 'run'   },
+                    { name: 'Read',  count: 1, category: 'read'  },
+                    { name: 'Skill', count: 1, category: 'other' },
+                    { name: 'Write', count: 1, category: 'write' },
+                  ],
+                },
+              ]}
+            />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Qualitative results
@@ -251,9 +272,9 @@ export default function App() {
               backfired. When it reached the inline logo requirement, it wrote a code
               comment stating that CID/attachment-based inline images are not supported
               by the Resend broadcasts endpoint. This is false. It then used a base64
-              data URI instead, citing the invented constraint as justification. No web
-              search. No clarifying question. The fabricated constraint was written as if
-              it were documented behaviour.
+              data URI instead, citing the invented constraint as justification. No
+              clarifying question. The fabricated constraint was written as if it were
+              documented behaviour.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -269,8 +290,8 @@ export default function App() {
               The vague run completed in 6 turns with 111,136 cache read tokens. The
               precise run took 11 turns and read 667,099 cached tokens — six times more
               internal context retrieval before writing. More instruction produced more
-              deliberation, still bounded entirely by training data. Neither run called
-              the web search tool or any external source.
+              deliberation, still bounded entirely by training data. Neither run queried
+              any external source despite it being available.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -343,26 +364,43 @@ export default function App() {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              The two prompts
+              What the agent did
             </h3>
             <p>
-              The same prompts were used across all three configurations. The key dynamic
-              in this section is what happens when a typed library is available but the
-              prompt does not name any specific methods. The agent finds the most familiar
-              entry point in the SDK and stops exploring.
+              Both runs used the same base prompts with one addition:
+            </p>
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+              "Use the Resend Node.js SDK (resend npm package)."
+            </div>
+            <p>
+              The SDK was pre-installed. No MCP was available. The agent had training data
+              and SDK types to work with.
             </p>
 
-            <PromptCards
-              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
-              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
-              preciseSteps={[
-                'Define a customer group for premium users.',
-                'Create a customer profile with a custom property that stores their subscription tier.',
-                'Add that customer to the premium group.',
-                "Compose a broadcast email to the entire premium group where the message body is personalized using the customer's subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.",
-                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
+            <AgentActivity
+              runs={[
+                {
+                  label: 'Vague — SDK',
+                  promptStyle: 'vague',
+                  tools: [
+                    { name: 'Agent', count: 1, category: 'other' },
+                    { name: 'Read',  count: 1, category: 'read'  },
+                    { name: 'Bash',  count: 2, category: 'run'   },
+                    { name: 'Write', count: 2, category: 'write' },
+                  ],
+                },
+                {
+                  label: 'Precise — SDK',
+                  promptStyle: 'precise',
+                  tools: [
+                    { name: 'Agent', count: 1, category: 'other' },
+                    { name: 'Read',  count: 2, category: 'read'  },
+                    { name: 'Bash',  count: 3, category: 'run'   },
+                    { name: 'Write', count: 1, category: 'write' },
+                    { name: 'Edit',  count: 1, category: 'write' },
+                  ],
+                },
               ]}
-              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
             />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -417,8 +455,8 @@ export default function App() {
               The fabrication pattern reappeared on inline images. The agent stated the
               Resend SDK does not support{' '}
               <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code>{' '}
-              on attachments, then worked around the constraint it invented. No web search.
-              No SDK source check. Written as fact, built around as if documented.
+              on attachments, then worked around the constraint it invented. No SDK source
+              check. Written as fact, built around as if documented.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -433,9 +471,9 @@ export default function App() {
             <p>
               Both runs followed the same pattern as their raw HTTP counterparts: more
               instructions produced more internal context retrieval, all bounded by
-              training data. Neither run called the web search tool or any external source.
-              The additional turns over the raw HTTP runs reflect SDK method exploration
-              happening entirely within training data.
+              training data. Neither run queried any external source despite it being
+              available. The additional turns over the raw HTTP runs reflect SDK method
+              exploration happening entirely within training data.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -509,25 +547,42 @@ export default function App() {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              The two prompts
+              What the agent did
             </h3>
             <p>
-              The same prompts used in the previous two sections. The key dynamic here is
-              that MCP compressed the gap between them. A vague prompt with MCP scored
-              higher than a precise prompt without it.
+              The prompts were identical to the SDK runs. No configuration addition was
+              needed: the MCP server was simply present in the environment. The agent was
+              not instructed to use it. Both runs discovered and used it independently.
             </p>
 
-            <PromptCards
-              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
-              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
-              preciseSteps={[
-                'Define a customer group for premium users.',
-                'Create a customer profile with a custom property that stores their subscription tier.',
-                'Add that customer to the premium group.',
-                "Compose a broadcast email to the entire premium group where the message body is personalized using the customer's subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.",
-                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
+            <AgentActivity
+              runs={[
+                {
+                  label: 'Vague — SDK + MCP',
+                  promptStyle: 'vague',
+                  tools: [
+                    { name: 'mcp__resend__search_resend', count: 4, category: 'mcp'   },
+                    { name: 'ToolSearch',                 count: 2, category: 'other' },
+                    { name: 'AskUserQuestion',            count: 1, category: 'other' },
+                    { name: 'Read',                       count: 1, category: 'read'  },
+                    { name: 'Bash',                       count: 2, category: 'run'   },
+                    { name: 'Write',                      count: 3, category: 'write' },
+                  ],
+                },
+                {
+                  label: 'Precise — SDK + MCP',
+                  promptStyle: 'precise',
+                  tools: [
+                    { name: 'mcp__resend__search_resend', count: 8,  category: 'mcp'   },
+                    { name: 'ToolSearch',                 count: 1,  category: 'other' },
+                    { name: 'Skill',                      count: 1,  category: 'other' },
+                    { name: 'Read',                       count: 2,  category: 'read'  },
+                    { name: 'Bash',                       count: 23, category: 'run'   },
+                    { name: 'Write',                      count: 3,  category: 'write' },
+                    { name: 'Edit',                       count: 2,  category: 'write' },
+                  ],
+                },
               ]}
-              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
             />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -603,8 +658,8 @@ export default function App() {
               was more active than any non-MCP run but still recognisable in shape: 19
               turns, MCP queries mid-session, then done. The precise run is in a different
               category: 55 turns and 2.2M cache read tokens driven by the iterative
-              cycle of run, fail, read error, correct, re-run. Neither run used web search
-              despite it being available.
+              cycle of run, fail, read error, correct, re-run. Neither run queried any
+              external source despite it being available.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -664,79 +719,108 @@ export default function App() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Tokens, turns, and MCP calls compared
-            </h3>
             <p>
-              Before looking at concept coverage, the raw activity numbers tell a story
-              about how much the agent was actually doing in each run. MCP runs used
-              substantially more of every resource. The precise-sdk-mcp run is an outlier
-              even within the MCP group. And no non-MCP run ever queried an external source.
+              The three individual sections show each configuration in isolation. Placing
+              all six runs side by side reveals patterns that only become visible at this
+              scale: which API features no non-MCP run ever got right, which fabrications
+              appeared across multiple runs, and how dramatically prompt precision affected
+              results depending on what tooling was available.
             </p>
-
-            {/* VISUALISATION: Full 6-run comparison table. All metrics side by side. */}
-
-            {/* VISUALISATION: Grouped bar chart — turns and output tokens by config and prompt style.
-                The precise-sdk-mcp bar is visually isolated from everything else. */}
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Which API features each configuration got right
+              Concept coverage across all six runs
             </h3>
             <p>
-              Two patterns stand out across the concept heatmap. First: the Contact
-              Properties API was only implemented correctly by MCP runs. The two-step
-              create-then-assign flow is not well-represented in training data, and without
-              live documentation the agent either guessed the wrong shape or skipped it.
-              Second: inline image handling via{' '}
-              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>{' '}
-              was only correct in two runs — vague-raw-api (where the agent happened to get
-              it right from training data) and precise-sdk-mcp (where MCP confirmed it).
-              The precise-raw-api and precise-sdk runs both fabricated constraints to
-              explain why they couldn't do it.
+              Two rows in the table below stand out. Contact Properties was the only
+              feature no non-MCP run implemented correctly — the two-step create-then-assign
+              flow is not well-covered in training data and the agent consistently guessed
+              the wrong shape or skipped it. Inline logo handling split almost perfectly
+              along the fabrication fault line: the two runs that got it right either
+              happened to know the correct approach from training data (vague-raw-api) or
+              looked it up via MCP (precise-sdk-mcp). The three that got it wrong all
+              invented a constraint to justify a fallback.
             </p>
 
-            {/* VISUALISATION: Full concept heatmap — 6 columns (runs) x 6 rows (concepts),
-                coloured Yes/Partial/No. The Contact Properties row and content_id row
-                should be the visually striking ones. */}
+            <ConceptScoreTable
+              columns={['V-Raw', 'V-SDK', 'V-MCP', 'P-Raw', 'P-SDK', 'P-MCP']}
+              rows={[
+                { concept: 'Tag premium users (Segments API)',            scores: ['Partial', 'No',      'Yes',     'Yes',     'Yes',     'Partial'] },
+                { concept: 'Store subscription tier (Contact Properties)', scores: ['Partial', 'No',      'Yes',     'Partial', 'Partial', 'Yes']     },
+                { concept: 'Broadcast email (create + send)',              scores: ['Yes',     'No',      'Yes',     'Yes',     'Partial', 'Yes']     },
+                { concept: 'Personalize with template variables',          scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
+                { concept: 'Inline logo (content_id + cid:)',              scores: ['Yes',     'Yes',     'Partial', 'No',      'No',      'Yes']     },
+                { concept: 'Idempotency / safe to retry',                  scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
+              ]}
+              scores={[
+                { label: 'V-Raw',  value: '4.5 / 6' },
+                { label: 'V-SDK',  value: '1.5 / 6' },
+                { label: 'V-MCP',  value: '5.0 / 6' },
+                { label: 'P-Raw',  value: '4.0 / 6' },
+                { label: 'P-SDK',  value: '4.0 / 6' },
+                { label: 'P-MCP',  value: '5.5 / 6' },
+              ]}
+            />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Without MCP, the agent fabricated API constraints rather than admitting uncertainty
+              Without MCP, the agent fabricated constraints rather than admitting uncertainty
             </h3>
             <p>
-              Across non-MCP runs, the agent made incorrect claims about API capabilities
-              and stated them as facts. It never searched the web. It never asked a
-              clarifying question. It wrote the fabricated constraints into code comments
-              and proceeded as if those constraints were documented.
-            </p>
-            <p>
-              The MCP runs did not produce this pattern. When the agent had a tool to verify
-              a claim, it used it. When it didn't, it invented.
+              Across three non-MCP runs, the agent made incorrect claims about API
+              capabilities and wrote them into code comments as if they were documented
+              behaviour. It did not ask a clarifying question. It did not query an external
+              source. It invented a constraint, cited it, and built around it. The MCP runs
+              did not produce this pattern — when the agent had a tool to verify a claim, it
+              used it.
             </p>
 
-            {/* VISUALISATION: Callout table — 3 rows, one per fabricated claim: the run it appeared in,
-                the claim the agent made, and what the correct API behaviour actually is. */}
+            <FabricationTable />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Prompt detail had the most impact without MCP and the least impact with it
+              MCP runs used more of every resource — but by very different amounts
             </h3>
             <p>
-              Prompt detail had its largest effect in the SDK configuration, where a precise
-              prompt added 2.5 concept score points over a vague one. Its smallest effect
-              was in the MCP configuration, where the delta was only 0.5 points. The vague
-              raw HTTP run actually outscored the precise raw HTTP run by 0.5 points: a
-              more specific prompt created more opportunities for confident wrong answers on
-              an API the agent thought it knew.
-            </p>
-            <p>
-              This connects back to the secondary hypothesis. Prompt precision does not
-              substitute for tooling. It narrows the agent's search space and can unlock
-              SDK-specific methods. It cannot prevent the agent from fabricating facts it
-              cannot verify. That requires live tooling.
+              The vague-sdk-mcp run used roughly four times as many turns as vague-raw-api
+              and four times the cache read tokens. The precise-sdk-mcp run is in a
+              different category entirely: 55 turns, 2.2M cache read tokens, and 8 MCP
+              calls driven by an iterative cycle of run, fail, read error, correct, re-run.
+              No non-MCP run executed the code. Every non-MCP run wrote a file and stopped.
             </p>
 
-            {/* VISUALISATION: Delta bar chart — vague-to-precise score delta per config
-                (raw HTTP −0.5, SDK +2.5, SDK+MCP +0.5). Three bars showing the compression
-                effect of MCP. */}
+            <RunMetricsTable />
+
+            <TokenBar
+              visibleIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk', 'vague-sdk-mcp', 'precise-sdk-mcp']}
+              highlightIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk', 'vague-sdk-mcp', 'precise-sdk-mcp']}
+            />
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Summary
+            </h3>
+            <p>
+              Prompt precision had its largest effect in the SDK configuration and its
+              smallest with MCP. The vague-sdk-mcp run outscored every non-MCP run
+              regardless of prompt. The prompt delta compressed from 2.5 points (SDK) to
+              0.5 points (SDK + MCP).
+            </p>
+            <ul className="space-y-2 pl-5 list-disc">
+              <li>
+                <strong className="text-ink dark:text-white">MCP vs no MCP:</strong>{' '}
+                The floor rose. The lowest-scoring MCP run (5.0/6) beat four of the four
+                non-MCP runs. Fabrication disappeared. The agent shifted from writing code
+                to researching, writing, and running it.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white">Precise vs vague:</strong>{' '}
+                Prompt detail helped most where tooling was weakest. With MCP available,
+                the agent found what it needed regardless of how the task was worded.
+              </li>
+            </ul>
+
+            <PromptDeltaTable
+              highlightConfig="SDK + MCP"
+              visibleConfigs={['Raw HTTP', 'SDK', 'SDK + MCP']}
+            />
+
           </div>
         </Section>
 
