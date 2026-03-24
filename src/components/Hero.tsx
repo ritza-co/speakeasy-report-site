@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 export default function Hero() {
   const enter = () =>
-    document.getElementById('the-question')?.scrollIntoView({ behavior: 'smooth' })
+    document.getElementById('hypothesis')?.scrollIntoView({ behavior: 'smooth' })
 
   return (
     <div className="relative h-screen flex items-center justify-center overflow-hidden dot-grid bg-parchment dark:bg-black">
@@ -41,7 +41,7 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.55, duration: 1 }}
         >
-          Do Agents <em>Actually</em><br />Need Help?
+          Do AI Agents <em>Need</em><br />MCP Servers?
         </motion.h1>
 
         <motion.p
@@ -50,8 +50,8 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.9 }}
         >
-          SDKs, MCPs, and epistemic humility across 36 sessions,
-          <br />four APIs, and three models.
+          Six runs. Three tooling configurations. Two prompt styles.
+          <br />One API the agent already knows.
         </motion.p>
 
         <motion.button

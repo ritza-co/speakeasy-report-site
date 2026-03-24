@@ -2,26 +2,22 @@ import Hero from './components/Hero'
 import TOC from './components/TOC'
 import ThemeToggle from './components/ThemeToggle'
 import Section from './components/Section'
-import ScatterPlot from './components/ScatterPlot'
-import ModeComparisonTable from './components/ModeComparisonTable'
-import ApiBreakdown from './components/ApiBreakdown'
-import AgentComparison from './components/AgentComparison'
-import KeyFindings from './components/KeyFindings'
-import TestMatrix from './components/TestMatrix'
+import PromptCards from './components/PromptCards'
+import ConceptScoreTable from './components/ConceptScoreTable'
+import TokenBar from './components/TokenBar'
+import RunSummaryCards from './components/RunSummaryCards'
+import PromptDeltaTable from './components/PromptDeltaTable'
 import { useScrollSpy } from './hooks/useScrollSpy'
-import { BENCHMARKS, METHOD_COLORS, aggregate } from './data/benchmarks'
-import { CountUp } from './components/CountUp'
 
 const SECTIONS = [
-  { id: 'the-question',   label: 'The assumption we tested' },
-  { id: 'what-we-tested', label: '36 sessions. 4 APIs. 3 models.' },
-  { id: 'the-numbers',    label: 'The numbers don\'t lie' },
-  { id: 'by-api',         label: 'Popular APIs are easy. Niche ones are not.' },
-  { id: 'by-sdk',         label: 'SDKs help. Until they don\'t.' },
-  { id: 'mcp-section',    label: 'MCP is not a docs server' },
-  { id: 'model-compare',  label: 'GPT checks. Claude trusts.' },
-  { id: 'key-findings',   label: 'What we found' },
-  { id: 'how-to-use-mcp', label: 'How to use this report' },
+  { id: 'hypothesis',    label: 'Hypothesis' },
+  { id: 'methodology',   label: 'How we tested it' },
+  { id: 'the-task',      label: 'The task' },
+  { id: 'api-only',      label: 'API only' },
+  { id: 'sdk-only',      label: 'SDK only' },
+  { id: 'sdk-mcp',       label: 'SDK + MCP' },
+  { id: 'all-runs',      label: 'All six runs' },
+  { id: 'conclusions',   label: 'Conclusions' },
 ]
 
 export default function App() {
@@ -35,520 +31,807 @@ export default function App() {
 
       <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
 
-        {/* ─── THE QUESTION ─── */}
+        {/* ─── HYPOTHESIS ─── */}
         <Section
-          id="the-question"
+          id="hypothesis"
           chapterLabel="Introduction"
-          headline="The assumption we tested"
+          headline="Does live API context change what an agent builds?"
         >
           <div className="prose-custom space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              This report started with a reasonable assumption: giving AI coding agents
-              access to live API documentation through an MCP server makes them better at
-              integrations.
+              When an AI agent integrates an API it knows from training data, it will
+              occasionally reach a point where it does not know the correct approach. The
+              question is what it does next. Does it search for the answer, flag its
+              uncertainty, or proceed as if it knows?
             </p>
             <p>
-              After 36 sessions across four APIs, three tooling configurations, and three
-              models, that assumption holds, but not for the reasons anyone expected.
+              This benchmark tests whether giving the agent access to a live MCP server
+              for the API changes that behaviour. The hypothesis is that it does: live
+              documentation access should reduce fabricated API constraints, improve
+              architectural correctness, and increase the chance of a working
+              implementation on features the agent does not know well.
             </p>
             <p>
-              First, SDK+MCP is the only configuration with a 100% success rate. It is
-              also the slowest and most expensive. More importantly, agents are not using
-              MCP to read documentation. They are using it to check their own work:
-              querying Linear to confirm an issue was actually created, inspecting Resend
-              delivery logs to verify an email landed, and validating a PandaDoc document
-              lifecycle against a live workspace. MCP works in two distinct modes,
-              documentation lookup and live work validation, and the second mode is where
-              the real value sits.
+              A secondary question emerged from the test design. Does prompt precision
+              substitute for tooling? A developer who knows the correct API surface can
+              write it into the prompt explicitly. Does that narrow the gap between MCP
+              and no MCP? Or does fabrication persist regardless of how specific the
+              instructions are?
             </p>
-            <p>
-              Secondly, when sessions did not explicitly instruct agents to use MCP tools,
-              almost none of them did:
-            </p>
-            <ul className="space-y-1 pl-5 list-disc">
-              <li>Claude Sonnet made zero unprompted MCP calls across all bare and SDK sessions.</li>
-              <li>Claude Opus made one.</li>
-              <li>GPT-5.4 made seven, without being asked.</li>
-            </ul>
-            <p>
-              The difference is not in capability. It is{' '}
-              <a
-                href="https://www.knowledge-architecture.com/blog/why-epistemic-humility-might-be-the-most-important-skill-for-the-ai-era"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-crimson underline underline-offset-2"
-              >
-                epistemic humility
-              </a>
-              : the tendency to acknowledge the limits of your own knowledge and seek
-              external verification before committing to an answer. GPT-5.4 has it.
-              Claude, for the most part, does not. Claude trusts its training data. Most
-              of the time, that trust is justified. When it is not, it fails quietly.
-            </p>
-            <p>Here is what the data shows:</p>
-            <ul className="space-y-1 pl-5 list-disc">
-              <li>SDK+MCP is the only method with a 100% success rate, but it costs more time and tokens. Bare and SDK both sit at 92%.</li>
-              <li>GPT-5.4 made 45 MCP calls across 12 sessions. Claude Sonnet and Opus made 9 combined.</li>
-              <li>SDKs sometimes make things worse. Metabase's embedding SDK requires a paid plan. Agents that reached for it spent up to 18 minutes and 4.8 million tokens before hitting a paywall. Bare API calls on the same task were faster and more correct.</li>
-              <li>GPT-5.4 ran a PandaDoc session for 50 minutes, inspecting every available endpoint and mapping template roles to application users before writing code. It was the most thorough session in the benchmark and the only model to confirm the full document lifecycle end to end.</li>
-              <li>Codex is slower. GPT-5.4 averaged 14 minutes per session. Claude Sonnet averaged 8 minutes.</li>
-            </ul>
-            <p>
-              After the 36 runs, the experiment continued. A second test used a
-              multi-agent setup on a fresh project. Agent 1 explored the codebase and
-              briefed Agent 2, which handled a Supabase integration. A third agent, with
-              access to the Supabase MCP server, then validated the work. The validator
-              caught what the other two missed. That result points to where MCP belongs
-              in a real development workflow, not as a documentation server, but as a
-              dedicated validation layer.
-            </p>
-            <p>
-              The rest of this report walks through the data, API by API and model by
-              model.
-            </p>
+
+            {/* VISUALISATION: 2x3 grid or matrix diagram — the 6 run configurations laid out as a grid
+                (vague/precise x raw-api/sdk/sdk+mcp), so the reader can see the shape of the experiment. */}
           </div>
         </Section>
 
-        {/* ─── WHAT WE TESTED ─── */}
+        {/* ─── METHODOLOGY ─── */}
         <Section
-          id="what-we-tested"
-          chapterLabel="Methodology — Setup"
-          headline="36 sessions. 4 APIs. 3 models."
+          id="methodology"
+          chapterLabel="Introduction — Setup"
+          headline="Three tooling configurations, two prompt styles, one well-documented API"
         >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p>
-              Each run started from a fresh clone of a freelance marketplace application
-              built with Next.js and Express.js, with no shared context or tool call
-              history between runs. Each combination ran three times. A run was marked
-              successful if the integration produced working code that passed an automated
-              smoke test.
+              We ran six benchmark sessions across three tooling configurations and two
+              prompt styles, all against the same task.
             </p>
-            <p>Four APIs were selected for distinct reasons:</p>
+            <p>
+              The three configurations stack incrementally. Raw HTTP (no SDK, no MCP) is
+              the baseline: the agent has its training data and makes HTTP requests
+              directly. SDK only adds the Resend Node.js SDK: a typed library with named
+              methods and known response shapes. SDK + MCP adds the Resend docs MCP server
+              on top of the SDK: a live tool the agent can query to look up documentation
+              while it works.
+            </p>
+            <p>
+              The two prompt styles each describe the same task. One is vague, written as
+              a non-technical user might describe it. The other is precise, written as a
+              developer would, naming specific capabilities and constraints explicitly.
+              Neither prompt tells the agent which Resend APIs to use. The agent must
+              figure that out.
+            </p>
+            <p>
+              The API is Resend, a widely used email platform with well-maintained
+              documentation, a clean SDK, and an official MCP server. This was a
+              deliberate choice. Resend is well represented in LLM training data, which
+              gives the non-MCP runs a reasonable chance of performing well. If MCP still
+              adds value on an API the agent already knows, that is a stronger result than
+              if we had chosen an obscure API with poor training coverage.
+            </p>
+
+            {/* VISUALISATION: Short table or icon grid showing what each configuration had access to:
+                training data, SDK, MCP — ticked or crossed per run. */}
+          </div>
+        </Section>
+
+        {/* ─── THE TASK ─── */}
+        <Section
+          id="the-task"
+          chapterLabel="Introduction — Task"
+          headline="A non-trivial integration that requires composing several distinct API features"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+            <p>
+              All six runs received the same underlying task: write a Node.js script that
+              sends a personalized broadcast email to a group of premium contacts via the
+              Resend API. The script must tag contacts as premium (Segments API), store a
+              subscription tier on each contact's profile (Contact Properties API), send a
+              broadcast email personalized with that property (Broadcasts API), embed a
+              company logo inline in the email body rather than as an attachment
+              (<code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>),
+              and handle idempotency so the send is safe to retry.
+            </p>
+            <p>
+              These features are each documented individually. What makes the task hard is
+              the composition: the agent must recognize that "tag them as premium" maps to
+              the Segments API, that "store their subscription tier" requires a separate
+              Contact Properties create-then-assign flow, and that "show the logo inline"
+              means <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code> attachment
+              with a <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">cid:</code> reference
+              in the HTML, not a base64 data URI. None of this is stated in the prompt.
+              The agent must know it or find it.
+            </p>
+            <p>
+              The vague prompt described the task in plain English. The precise prompt
+              spelled out each capability as a numbered requirement. Both are shown below.
+            </p>
+
+            {/* VISUALISATION: The two prompts side by side — styled as code block or callout cards. */}
+          </div>
+        </Section>
+
+        {/* ─── API ONLY ─── */}
+        <Section
+          id="api-only"
+          chapterLabel="Results — Raw HTTP"
+          headline="API only: no SDK, no MCP"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+              Agent uses training data only. No installed library. No live documentation.
+            </p>
+
+            <p>
+              The raw HTTP configuration is the baseline. No SDK, no MCP — the agent
+              writes HTTP requests directly and draws entirely on what it knows from
+              training data. The two runs in this section show what that looks like in
+              practice: where training data is strong, the agent produces correct
+              implementations confidently and quickly. Where it is thin or wrong, it
+              produces confident wrong answers with no indication that anything went
+              sideways.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The two prompts
+            </h3>
+            <p>
+              The vague prompt describes the task as a non-technical user might: natural
+              language, no API names, no structural requirements. The precise prompt
+              describes the same task as a developer would: numbered steps, a specified
+              runtime, explicit output expectations. Neither prompt names any Resend API.
+              The agent must figure out the correct mapping in both cases.
+            </p>
+
+            <PromptCards
+              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
+              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
+              preciseSteps={[
+                'Define a customer group for premium users.',
+                'Create a customer profile with a custom property that stores their subscription tier.',
+                'Add that customer to the premium group.',
+                'Compose a broadcast email to the entire premium group where the message body is personalized using the customer\'s subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.',
+                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
+              ]}
+              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
+            />
+
+            <p>
+              The key difference is not what the agent is asked to do, but how much
+              architectural scaffolding the prompt provides. A vague prompt leaves the
+              agent to structure the problem. A precise prompt hands it a skeleton to
+              fill in. Whether that skeleton helps or creates new failure modes is one of
+              the things this section reveals.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Qualitative results
+            </h3>
+            <p>
+              The table below scores each run concept by concept. These are the six
+              features the task required. Each is scored Yes, Partial, or No based on
+              whether the agent implemented it correctly.
+            </p>
+
+            <ConceptScoreTable
+              columns={['Vague', 'Precise']}
+              rows={[
+                { concept: 'Tag premium users (Segments API)',            scores: ['Partial', 'Yes']     },
+                { concept: 'Store subscription tier (Contact Properties)', scores: ['Partial', 'Partial'] },
+                { concept: 'Broadcast email (create + send)',              scores: ['Yes',     'Yes']     },
+                { concept: 'Personalize with template variables',          scores: ['Yes',     'Yes']     },
+                { concept: 'Inline logo (content_id + cid:)',              scores: ['Yes',     'No']      },
+                { concept: 'Idempotency / safe to retry',                  scores: ['Yes',     'Yes']     },
+              ]}
+              scores={[
+                { label: 'Vague',   value: '4.5 / 6' },
+                { label: 'Precise', value: '4.0 / 6' },
+              ]}
+            />
+
+            <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
+              Vague prompt (4.5/6)
+            </h4>
+            <p>
+              The agent used the Broadcasts API correctly, handled the inline logo with{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>{' '}
+              (the correct Resend-native approach), and applied an idempotency key. These
+              are well-covered patterns in training data and the agent reached for them
+              without hesitation.
+            </p>
+            <p>
+              The misses were architectural. The agent passed contact metadata as an
+              inline{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">data</code>{' '}
+              field rather than using the Contact Properties API, and it assumed the
+              segment already existed rather than creating it programmatically. The code
+              runs. The architecture is wrong. Neither gap was flagged.
+            </p>
+
+            <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
+              Precise prompt (4.0/6)
+            </h4>
+            <p>
+              The precise run produced the most structurally complete non-MCP
+              implementation: segments, broadcasts, template variables, and an unsubscribe
+              URL all present. The numbered prompt explicitly named features the agent
+              then correctly implemented.
+            </p>
+            <p>
+              Where the agent hit a gap in its training data, the extra specificity
+              backfired. When it reached the inline logo requirement, it wrote a code
+              comment stating that CID/attachment-based inline images are not supported
+              by the Resend broadcasts endpoint. This is false. It then used a base64
+              data URI instead, citing the invented constraint as justification. No web
+              search. No clarifying question. The fabricated constraint was written as if
+              it were documented behaviour.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Quantitative results
+            </h3>
+
+            <TokenBar
+              visibleIds={['vague-raw-api', 'precise-raw-api']}
+              highlightIds={['vague-raw-api', 'precise-raw-api']}
+            />
+
+            <p>
+              The vague run completed in 6 turns with 111,136 cache read tokens. The
+              precise run took 11 turns and read 667,099 cached tokens — six times more
+              internal context retrieval before writing. More instruction produced more
+              deliberation, still bounded entirely by training data. Neither run called
+              the web search tool or any external source.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Summary
+            </h3>
+
+            <p>
+              Both runs scored similarly: 4.5/6 (vague) and 4.0/6 (precise). The precise
+              prompt did not improve the score. It produced a more complete implementation
+              in some areas while creating a more confident wrong answer in others.
+            </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white">Resend</strong> is a
-                widely-used email API with clean documentation. It tests whether tooling
-                adds value when the agent already has strong training data coverage.
+                <strong className="text-ink dark:text-white">Vague:</strong>{' '}
+                Fast, mostly correct, silent gaps. The agent reached for familiar patterns
+                and stopped. It did not search for what it did not know.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Linear</strong> has a
-                well-designed GraphQL API. GraphQL mutations and typed schemas add enough
-                complexity to reveal how agents handle non-trivial interfaces.
-              </li>
-              <li>
-                <strong className="text-ink dark:text-white">PandaDoc</strong> is a niche
-                document-signing platform with a large API surface. LLMs have limited
-                training data on it, which means errors are more likely without access to
-                live documentation.
-              </li>
-              <li>
-                <strong className="text-ink dark:text-white">Metabase</strong> is a
-                self-hosted analytics platform with sparse public documentation. It tests
-                whether tooling compensates for weak training data.
+                <strong className="text-ink dark:text-white">Precise:</strong>{' '}
+                More complete, more deliberate, one fabricated constraint. The structured
+                prompt unlocked more of what the agent knew, but when it hit the edge of
+                its training data, it invented a fact rather than admitting uncertainty.
               </li>
             </ul>
-            <p>Three integration modes were tested:</p>
-            <ul className="space-y-2 pl-5 list-disc">
-              <li>
-                <strong className="text-ink dark:text-white">Bare:</strong> the agent has
-                only its training data. No documentation, no SDK, no MCP server.
-              </li>
-              <li>
-                <strong className="text-ink dark:text-white">SDK:</strong> the official
-                SDK is pre-installed before the session starts.
-              </li>
-              <li>
-                <strong className="text-ink dark:text-white">SDK+MCP:</strong> the SDK is
-                installed and the tool's own MCP server is configured. Resend used the
-                Resend MCP server, Metabase used{' '}
-                <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">@cognitionai/metabase-mcp-server</code>
-                , PandaDoc used the PandaDoc MCP server, and Linear used the Linear MCP
-                server.
-              </li>
-            </ul>
+            <p>
+              Without live documentation access, the ceiling is set entirely by training
+              data coverage. The agent will not tell you when it has reached that ceiling.
+            </p>
+
+            <RunSummaryCards
+              runs={[
+                {
+                  label:     'Vague',
+                  score:     '4.5 / 6',
+                  turns:     6,
+                  cacheRead: '111k',
+                  keyMiss:   'Contact Properties API missed (used inline data field). Segment assumed to exist rather than created programmatically.',
+                },
+                {
+                  label:     'Precise',
+                  score:     '4.0 / 6',
+                  turns:     11,
+                  cacheRead: '667k',
+                  keyMiss:   'Fabricated constraint: claimed CID inline images are unsupported by Resend broadcasts. Used base64 data URI instead.',
+                },
+              ]}
+            />
           </div>
-          <TestMatrix />
         </Section>
 
-        {/* ─── THE NUMBERS ─── */}
+        {/* ─── SDK ONLY ─── */}
         <Section
-          id="the-numbers"
-          chapterLabel="Results — Overview"
-          headline="The numbers don't lie"
-          subheadline="Each dot is a single session. Filter by any dimension."
-        >
-          <div className="text-stone-600 dark:text-stone-400 text-[14px] leading-relaxed mb-8">
-            <p>
-              The chart below shows all 36 runs across every combination of model, API,
-              and tooling mode.
-            </p>
-          </div>
-          <ScatterPlot />
-        </Section>
-
-        {/* ─── BY API ─── */}
-        <Section
-          id="by-api"
-          chapterLabel="Results — Per API"
-          headline="Popular APIs are easy. Niche ones are not."
-        >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
-            <p>
-              LLMs perform well with APIs that are popular and well-documented. The
-              results split cleanly between the two familiar APIs, Resend and Linear,
-              and the two niche ones, Metabase and PandaDoc.
-            </p>
-            <p>
-              <strong className="text-ink dark:text-white">Resend</strong> worked on the
-              first attempt across all three models. The average completion time for the
-              bare method was 5 minutes 12 seconds, with Sonnet being the fastest at 3
-              minutes 43 seconds. Resend is not technically complex, and agents know it
-              well from training data.
-            </p>
-            <p>
-              <strong className="text-ink dark:text-white">Linear</strong> followed the
-              same pattern, with one exception. The bare runs completed without issues.
-              The SDK runs introduced a type error: the ID sent to the GraphQL API was in
-              the wrong format. The agents caught it by checking the internet and the SDK
-              documentation, and corrected it without human intervention.
-            </p>
-            <p>The two niche APIs produced different failure modes.</p>
-            <p>
-              <strong className="text-ink dark:text-white">Metabase</strong> exposed a
-              gap in documentation. Sonnet and Opus could not find the correct format for
-              the embedding secret, so both tried multiple formats until they arrived at
-              the correct one: a 64-character hex string (256-bit). No public
-              documentation covers this directly.
-            </p>
-            <p>
-              <strong className="text-ink dark:text-white">PandaDoc</strong> presented a
-              different problem. The agents needed document UUIDs to run tests, and could
-              not retrieve them from the environment. Outside of that, the integration
-              completed without errors. Opus was the fastest model on this API.
-            </p>
-          </div>
-          <ApiBreakdown />
-        </Section>
-
-        {/* ─── BY SDK ─── */}
-        <Section
-          id="by-sdk"
+          id="sdk-only"
           chapterLabel="Results — SDK"
-          headline="SDKs help. Until they don't."
+          headline="SDK only: typed library, no MCP"
         >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+              Resend Node.js SDK pre-installed. Agent uses training data and SDK types. No live documentation.
+            </p>
+
             <p>
-              The SDK integration used more tokens and more time, which was expected. The
-              quality of the integration improved in most cases, but not all.
+              The SDK gives the agent a typed, installable interface: method names,
+              response shapes, and parameter structures encoded in the library. The
+              question is whether this static scaffolding closes the gaps that raw HTTP
+              left open, or whether the agent still relies on training data for anything
+              not derivable from the types alone. These two runs give a clear answer: the
+              SDK amplifies whatever the prompt provides. With a vague prompt, it made
+              things worse. With a precise prompt, it made things significantly better.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The two prompts
+            </h3>
+            <p>
+              The same prompts were used across all three configurations. The key dynamic
+              in this section is what happens when a typed library is available but the
+              prompt does not name any specific methods. The agent finds the most familiar
+              entry point in the SDK and stops exploring.
+            </p>
+
+            <PromptCards
+              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
+              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
+              preciseSteps={[
+                'Define a customer group for premium users.',
+                'Create a customer profile with a custom property that stores their subscription tier.',
+                'Add that customer to the premium group.',
+                "Compose a broadcast email to the entire premium group where the message body is personalized using the customer's subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.",
+                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
+              ]}
+              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
+            />
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Qualitative results
+            </h3>
+
+            <ConceptScoreTable
+              columns={['Vague', 'Precise']}
+              rows={[
+                { concept: 'Tag premium users (Segments API)',             scores: ['No',      'Yes']     },
+                { concept: 'Store subscription tier (Contact Properties)', scores: ['No',      'Partial'] },
+                { concept: 'Broadcast email (create + send)',              scores: ['No',      'Partial'] },
+                { concept: 'Personalize with template variables',          scores: ['Partial', 'Yes']     },
+                { concept: 'Inline logo (content_id + cid:)',              scores: ['Yes',     'No']      },
+                { concept: 'Idempotency / safe to retry',                  scores: ['Partial', 'Yes']     },
+              ]}
+              scores={[
+                { label: 'Vague',   value: '1.5 / 6' },
+                { label: 'Precise', value: '4.0 / 6' },
+              ]}
+            />
+
+            <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
+              Vague prompt (1.5/6) — lowest score in the benchmark
+            </h4>
+            <p>
+              The agent used{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">resend.emails.send()</code>{' '}
+              in a loop, sending individual emails to each contact rather than using the
+              Broadcasts API. It missed the Segments API entirely, filtering contacts
+              locally in JavaScript instead. When it could not find the Contact Properties
+              API, it acknowledged the gap in a code comment and moved on without
+              searching for it. The SDK narrowed the agent's search space. Without prompt
+              guidance toward broadcast-specific methods, it found{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">emails.send()</code>{' '}
+              first and stopped.
+            </p>
+
+            <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
+              Precise prompt (4.0/6) — largest prompt delta in the benchmark
+            </h4>
+            <p>
+              The precise prompt explicitly named the Broadcasts API, the Segments API,
+              and SDK method patterns like{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">resend.segments.create()</code>.
+              The agent followed those references and got the core broadcast architecture
+              right — the clearest example in the benchmark of prompt detail substituting
+              for tooling. Where the developer knew enough to name the right methods, the
+              agent used them.
             </p>
             <p>
-              <strong className="text-ink dark:text-white">Linear</strong> showed the
-              clearest improvement. The bare sessions built generic HTTP wrappers. The SDK
-              sessions produced proper typed responses using{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">.createIssue()</code>{' '}
-              with structured payloads. Opus confirmed a real live issue was created,
-              RIT-12 on Linear.app, using the provisioned API key. Sonnet confirmed
-              RIT-14. The bare sessions could not reach this level of validation without
-              building authentication and request logic from scratch first.
+              The fabrication pattern reappeared on inline images. The agent stated the
+              Resend SDK does not support{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code>{' '}
+              on attachments, then worked around the constraint it invented. No web search.
+              No SDK source check. Written as fact, built around as if documented.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Quantitative results
+            </h3>
+
+            <TokenBar
+              visibleIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk']}
+              highlightIds={['vague-sdk', 'precise-sdk']}
+            />
+
             <p>
-              <strong className="text-ink dark:text-white">Resend</strong> produced the
-              strongest live validation of any SDK session. Opus was the only session
-              across all 36 runs to confirm a real email was delivered, returning a live
-              Resend message ID. It also caught a real-world constraint: Resend's test API
-              key only allows sending to the account owner's email address, something the
-              bare sessions never discovered because they never reached a working API call.
-              Sonnet also got live delivery confirmation with two real message IDs, in 2
-              minutes 20 seconds.
+              Both runs followed the same pattern as their raw HTTP counterparts: more
+              instructions produced more internal context retrieval, all bounded by
+              training data. Neither run called the web search tool or any external source.
+              The additional turns over the raw HTTP runs reflect SDK method exploration
+              happening entirely within training data.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Summary
+            </h3>
+
             <p>
-              <strong className="text-ink dark:text-white">Metabase</strong> is where the
-              SDK caused problems. The{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">@metabase/embedding-sdk-react</code>{' '}
-              package requires a Pro or Enterprise Metabase plan. Its authentication layer
-              returns a 404 on free plans. Sonnet caught this and fell back to a public
-              iframe. GPT-5.4 ran Playwright to verify rendering but hit the same wall.
-              The bare sessions avoided the problem entirely by skipping the SDK and
-              calling the REST API directly with JWT signing. The bare approach was faster
-              and more correct for Metabase.
+              The SDK is a multiplier on prompt quality, not a floor. The 2.5-point gap
+              between vague and precise is the largest delta of any configuration in the
+              benchmark.
             </p>
-            <p>
-              <strong className="text-ink dark:text-white">PandaDoc</strong> showed no
-              clear quality gap between bare and SDK. The SDK sessions were more
-              structured: Opus built a full six-endpoint contract lifecycle with a
-              dedicated service layer. Both Sonnet with SDK and GPT-5.4 with bare
-              discovered the same async constraint: a document cannot be sent immediately
-              after creation because it needs to reach{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">document.draft</code>{' '}
-              status first.
-            </p>
-            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-500 dark:text-stone-400">
-              The pattern is consistent across all four APIs. SDK wins when the library is
-              mature and credentials are available. It gives agents a typed, discoverable
-              interface that reduces exploration time and enables live validation. Bare wins
-              when the SDK carries external requirements, such as licensing or plan tiers,
-              that the environment does not meet.
-            </blockquote>
+            <ul className="space-y-2 pl-5 list-disc">
+              <li>
+                <strong className="text-ink dark:text-white">Vague:</strong>{' '}
+                Worse than raw HTTP with the same prompt. The SDK's familiar entry points
+                led the agent away from broadcast-specific methods rather than toward them.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white">Precise:</strong>{' '}
+                Better than raw HTTP with the same prompt. Named methods unlocked SDK
+                features the vague prompt never found. The fabrication problem persisted
+                regardless.
+              </li>
+            </ul>
+
+            <PromptDeltaTable
+              highlightConfig="SDK"
+              visibleConfigs={['Raw HTTP', 'SDK']}
+            />
+
+            <RunSummaryCards
+              runs={[
+                {
+                  label:     'Vague',
+                  score:     '1.5 / 6',
+                  turns:     10,
+                  cacheRead: '190k',
+                  keyMiss:   'Broadcasts API missed entirely — sent individual emails in a loop. Segments API also missed. Lowest score in the benchmark.',
+                },
+                {
+                  label:     'Precise',
+                  score:     '4.0 / 6',
+                  turns:     12,
+                  cacheRead: '248k',
+                  keyMiss:   'Fabricated constraint: claimed SDK does not support contentId on attachments. Used base64 data URI instead.',
+                },
+              ]}
+            />
           </div>
-          <ModeComparisonTable />
         </Section>
 
         {/* ─── SDK + MCP ─── */}
         <Section
-          id="mcp-section"
+          id="sdk-mcp"
           chapterLabel="Results — SDK + MCP"
-          headline="MCP is not a docs server"
+          headline="SDK + MCP: typed library and live documentation server"
         >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+              Resend Node.js SDK pre-installed. Resend MCP server active. Agent can query live API documentation.
+            </p>
+
             <p>
-              When sessions did not explicitly instruct agents to use MCP tools, Claude
-              never called them. Codex made a few unprompted calls to verify its own work,
-              but neither model used MCP in any systematic way. This reflects the epistemic
-              confidence gap introduced earlier: Claude trusts its training data and the
-              SDK type definitions. Codex checks.
+              With MCP active, the agent had a third source to draw on beyond training
+              data and SDK types: a live tool it could query mid-session to look up
+              documentation. The question is not whether this helped — it did — but how.
+              Both runs show MCP functioning as a discovery tool, letting the agent find
+              correct API patterns it would otherwise have guessed at. In the precise run,
+              it went further: the agent executed the code, hit real errors, and iterated
+              against live API responses. No other run in the benchmark did this.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The two prompts
+            </h3>
+            <p>
+              The same prompts used in the previous two sections. The key dynamic here is
+              that MCP compressed the gap between them. A vague prompt with MCP scored
+              higher than a precise prompt without it.
+            </p>
+
+            <PromptCards
+              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
+              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
+              preciseSteps={[
+                'Define a customer group for premium users.',
+                'Create a customer profile with a custom property that stores their subscription tier.',
+                'Add that customer to the premium group.',
+                "Compose a broadcast email to the entire premium group where the message body is personalized using the customer's subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.",
+                'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
+              ]}
+              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
+            />
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Qualitative results
+            </h3>
+
+            <ConceptScoreTable
+              columns={['Vague', 'Precise']}
+              rows={[
+                { concept: 'Tag premium users (Segments API)',             scores: ['Yes',     'Partial'] },
+                { concept: 'Store subscription tier (Contact Properties)', scores: ['Yes',     'Yes']     },
+                { concept: 'Broadcast email (create + send)',              scores: ['Yes',     'Yes']     },
+                { concept: 'Personalize with template variables',          scores: ['Yes',     'Yes']     },
+                { concept: 'Inline logo (content_id + cid:)',              scores: ['Partial', 'Yes']     },
+                { concept: 'Idempotency / safe to retry',                  scores: ['Yes',     'Yes']     },
+              ]}
+              scores={[
+                { label: 'Vague',   value: '5.0 / 6' },
+                { label: 'Precise', value: '5.5 / 6' },
+              ]}
+            />
+
+            <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
+              Vague prompt (5.0/6)
+            </h4>
+            <p>
+              MCP compensated for what the vague prompt left unspecified. The agent
+              queried the MCP server four times and discovered the Broadcasts API, the
+              Segments API, and the Contact Properties API — all three of which the vague
+              SDK run missed entirely. It correctly implemented the two-step Contact
+              Properties flow (create property, then assign to contact) that no non-MCP
+              run got right.
             </p>
             <p>
-              SDK+MCP sessions showed no consistent overhead in input or output token
-              usage compared to SDK-only sessions. Variance between the two methods was
-              driven primarily by session content and model behavior rather than MCP tool
-              definitions loading into context: GPT-5.4 averaged +5.9% more fresh input
-              tokens with MCP, while Opus averaged −89.6% and Sonnet +32.5%, with no
-              clear directional pattern across tools or models.
+              The one miss: the agent used a data URI for the inline logo rather than{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>.
+              It had the tooling to find the correct approach and did not use it here.
+            </p>
+
+            <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
+              Precise prompt (5.5/6) — highest score in the benchmark
+            </h4>
+            <p>
+              The precise MCP run is categorically different from every other run in the
+              benchmark. The agent queried MCP eight times, used{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>{' '}
+              for inline images correctly, implemented the Contact Properties API as a
+              proper two-step create-then-assign flow, and then executed the code against
+              the live API. It ran the script more than 20 times, reading real error
+              responses and correcting the implementation between runs. Every other run in
+              the benchmark wrote code and stopped. This run treated execution as part of
+              the task.
             </p>
             <p>
-              The results below are from sessions where agents were instructed to use the
-              MCP server.
+              The one partial miss: the agent searched for{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">resend.segments</code>{' '}
+              via MCP twice, concluded the SDK does not expose it cleanly, and fell back
+              to Audiences as a pragmatic alternative. It flagged the gap explicitly
+              rather than fabricating a constraint.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Quantitative results
+            </h3>
+
+            <TokenBar
+              visibleIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk', 'vague-sdk-mcp', 'precise-sdk-mcp']}
+              highlightIds={['vague-sdk-mcp', 'precise-sdk-mcp']}
+            />
+
             <p>
-              <strong className="text-ink dark:text-white">Linear</strong> showed the
-              clearest difference across all four APIs. All three models used the MCP
-              tools properly:
+              The numbers reflect two fundamentally different working modes. The vague run
+              was more active than any non-MCP run but still recognisable in shape: 19
+              turns, MCP queries mid-session, then done. The precise run is in a different
+              category: 55 turns and 2.2M cache read tokens driven by the iterative
+              cycle of run, fail, read error, correct, re-run. Neither run used web search
+              despite it being available.
             </p>
-            <ul className="space-y-1 pl-5 list-disc">
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Summary
+            </h3>
+
+            <p>
+              MCP changed how the agent worked, not just what it knew. The non-MCP runs
+              wrote code and stopped. The MCP runs researched, wrote, and in the precise
+              case ran and iterated. MCP also compressed the effect of prompt quality to
+              its smallest value in the benchmark.
+            </p>
+            <ul className="space-y-2 pl-5 list-disc">
               <li>
-                Opus called{' '}
-                <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">list_teams</code>
-                ,{' '}
-                <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">list_issue_statuses</code>
-                , and{' '}
-                <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">get_issue</code>{' '}
-                to verify issues RIT-15 and RIT-16 from the Linear side after creation.
+                <strong className="text-ink dark:text-white">Vague:</strong>{' '}
+                5.0/6 — higher than every non-MCP run regardless of prompt style. MCP
+                substituted for specificity the prompt never provided.
               </li>
               <li>
-                Sonnet called{' '}
-                <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">list_teams</code>{' '}
-                before writing any code, retrieving the real team ID instead of
-                hardcoding a guess.
-              </li>
-              <li>
-                GPT-5.4 verified RIT-21 through MCP and cancelled the smoke-test issues
-                afterward.
+                <strong className="text-ink dark:text-white">Precise:</strong>{' '}
+                5.5/6 — the highest score in the benchmark. The only run to execute the
+                code and validate against a live API. Gaps were acknowledged, not invented.
               </li>
             </ul>
-            <p>
-              Every MCP session on Linear confirmed a live issue was created and inspected
-              on the Linear side. The SDK-only sessions reached the same outcome, but had
-              to infer workspace structure from environment variables. MCP gave agents
-              ground truth before they wrote a line of code.
-            </p>
-            <p>
-              <strong className="text-ink dark:text-white">Resend</strong> produced the
-              strongest quality lift of any API in the MCP sessions. GPT-5.4 called{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">list-domains</code>
-              ,{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">list-api-keys</code>
-              ,{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">list-emails</code>
-              , and{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">get-email</code>{' '}
-              to confirm that email{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">0b654d96…</code>{' '}
-              was actually delivered on the Resend side, and inspected the rendered
-              subject and body. That is the only session across all 36 runs where external
-              delivery was confirmed through the provider's own records, not just a 200
-              response from the SDK. The difference matters in production: a success
-              response confirms the API accepted the request. The MCP call confirmed the
-              email reached the inbox.
-            </p>
-            <p>
-              <strong className="text-ink dark:text-white">Metabase</strong> used MCP to
-              validate the architecture before implementation. GPT-5.4 launched{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">metabase-mcp-server</code>
-              , listed available tools and resources, confirmed the dashboard existed,
-              called{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">api_call</code>{' '}
-              to inspect{' '}
-              <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">/api/dashboard/1</code>
-              , and verified that static embedding was enabled and an embedding secret was
-              present. That let the agent implement against the real dashboard
-              configuration instead of guessing at the settings.
-            </p>
-            <p>
-              <strong className="text-ink dark:text-white">PandaDoc</strong> used MCP to
-              navigate a large and complex API surface. GPT-5.4 inspected available
-              endpoints, confirmed the create, send, details, and session flow, verified
-              workspace members and available templates, and inspected template roles and
-              tokens. That last step was the critical one: it let the agent map the
-              application's client and freelancer users onto the correct PandaDoc recipient
-              roles, something no amount of static documentation lookup would have resolved
-              without live workspace access.
-            </p>
-            <p>
-              The pattern across all four APIs is the same. MCP did not teach agents how
-              to integrate these tools. They already knew that. MCP gave them access to
-              the actual state of the environment they were integrating into, and that is
-              a different kind of help entirely.
-            </p>
 
-            <div className="grid grid-cols-3 gap-4 my-8">
-              {(['Bare', 'SDK', 'SDK+MCP'] as const).map(method => {
-                const mcp = BENCHMARKS.filter(r => r.method === method).reduce((s, r) => s + r.mcp_calls, 0)
-                const agg = aggregate(BENCHMARKS.filter(r => r.method === method))!
-                return (
-                  <div key={method} className="text-center py-6 border border-stone-200 dark:border-stone-850 bg-white/40 dark:bg-stone-900/40">
-                    <div className="w-3 h-3 rounded-full mx-auto mb-3" style={{ backgroundColor: METHOD_COLORS[method] }} />
-                    <div className="font-serif text-3xl font-bold text-ink dark:text-white">
-                      <CountUp to={mcp} duration={900} />
-                    </div>
-                    <div className="text-[10px] uppercase tracking-widest text-stone-400 mt-1">
-                      {method} MCP calls
-                    </div>
-                    <div className="text-[12px] text-stone-500 mt-2">
-                      {Math.round(agg.successRate * 100)}% success rate
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
+            <PromptDeltaTable
+              highlightConfig="SDK + MCP"
+              visibleConfigs={['Raw HTTP', 'SDK', 'SDK + MCP']}
+            />
+
+            <RunSummaryCards
+              runs={[
+                {
+                  label:     'Vague',
+                  score:     '5.0 / 6',
+                  turns:     19,
+                  cacheRead: '441k',
+                  keyMiss:   'Inline logo used data URI instead of content_id despite MCP being available to look up the correct approach.',
+                },
+                {
+                  label:     'Precise',
+                  score:     '5.5 / 6',
+                  turns:     55,
+                  cacheRead: '2.2M',
+                  keyMiss:   'Segments API not exposed cleanly by SDK — fell back to Audiences. Gap flagged explicitly, not fabricated.',
+                },
+              ]}
+            />
           </div>
         </Section>
 
-        {/* ─── MODEL COMPARISON ─── */}
+        {/* ─── ALL SIX RUNS ─── */}
         <Section
-          id="model-compare"
-          chapterLabel="Results — Model Comparison"
-          headline="GPT checks. Claude trusts."
+          id="all-runs"
+          chapterLabel="Results — Cross-run analysis"
+          headline="Results across all six runs"
         >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mb-10">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Tokens, turns, and MCP calls compared
+            </h3>
             <p>
-              Every combination ran with Claude Sonnet 4.6, Claude Opus 4.6, and GPT-5.4,
-              using identical prompts, identical starting codebases, and identical tooling.
-              The most consistent difference across all 36 sessions was not pass rate or
-              code quality. It was how often each model reached for external verification.
+              Before looking at concept coverage, the raw activity numbers tell a story
+              about how much the agent was actually doing in each run. MCP runs used
+              substantially more of every resource. The precise-sdk-mcp run is an outlier
+              even within the MCP group. And no non-MCP run ever queried an external source.
+            </p>
+
+            {/* VISUALISATION: Full 6-run comparison table. All metrics side by side. */}
+
+            {/* VISUALISATION: Grouped bar chart — turns and output tokens by config and prompt style.
+                The precise-sdk-mcp bar is visually isolated from everything else. */}
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Which API features each configuration got right
+            </h3>
+            <p>
+              Two patterns stand out across the concept heatmap. First: the Contact
+              Properties API was only implemented correctly by MCP runs. The two-step
+              create-then-assign flow is not well-represented in training data, and without
+              live documentation the agent either guessed the wrong shape or skipped it.
+              Second: inline image handling via{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>{' '}
+              was only correct in two runs — vague-raw-api (where the agent happened to get
+              it right from training data) and precise-sdk-mcp (where MCP confirmed it).
+              The precise-raw-api and precise-sdk runs both fabricated constraints to
+              explain why they couldn't do it.
+            </p>
+
+            {/* VISUALISATION: Full concept heatmap — 6 columns (runs) x 6 rows (concepts),
+                coloured Yes/Partial/No. The Contact Properties row and content_id row
+                should be the visually striking ones. */}
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Without MCP, the agent fabricated API constraints rather than admitting uncertainty
+            </h3>
+            <p>
+              Across non-MCP runs, the agent made incorrect claims about API capabilities
+              and stated them as facts. It never searched the web. It never asked a
+              clarifying question. It wrote the fabricated constraints into code comments
+              and proceeded as if those constraints were documented.
             </p>
             <p>
-              GPT-5.4 made 45 MCP calls across 12 sessions. Claude Sonnet and Opus made 9
-              combined.
+              The MCP runs did not produce this pattern. When the agent had a tool to verify
+              a claim, it used it. When it didn't, it invented.
             </p>
-          </div>
-          <AgentComparison />
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed mt-10">
+
+            {/* VISUALISATION: Callout table — 3 rows, one per fabricated claim: the run it appeared in,
+                the claim the agent made, and what the correct API behaviour actually is. */}
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Prompt detail had the most impact without MCP and the least impact with it
+            </h3>
             <p>
-              The cache behavior reveals two completely different architectural approaches.
-              Claude models accumulate massive cache reads across turns. Sonnet averaged
-              1.84 million total context tokens per session, almost entirely from cache.
-              GPT-5.4 averaged 197,000 total context tokens, with cache reads and fresh
-              input roughly equal. Claude builds a long-running context and reads from it
-              repeatedly. GPT-5.4 sends fresh context each turn and uses tool calls to
-              retrieve what it needs. Neither approach is wrong, but they behave completely
-              differently under MCP and explain most of the token cost gap between models.
+              Prompt detail had its largest effect in the SDK configuration, where a precise
+              prompt added 2.5 concept score points over a vague one. Its smallest effect
+              was in the MCP configuration, where the delta was only 0.5 points. The vague
+              raw HTTP run actually outscored the precise raw HTTP run by 0.5 points: a
+              more specific prompt created more opportunities for confident wrong answers on
+              an API the agent thought it knew.
             </p>
+            <p>
+              This connects back to the secondary hypothesis. Prompt precision does not
+              substitute for tooling. It narrows the agent's search space and can unlock
+              SDK-specific methods. It cannot prevent the agent from fabricating facts it
+              cannot verify. That requires live tooling.
+            </p>
+
+            {/* VISUALISATION: Delta bar chart — vague-to-precise score delta per config
+                (raw HTTP −0.5, SDK +2.5, SDK+MCP +0.5). Three bars showing the compression
+                effect of MCP. */}
           </div>
         </Section>
 
-        {/* ─── KEY FINDINGS ─── */}
+        {/* ─── CONCLUSIONS ─── */}
         <Section
-          id="key-findings"
+          id="conclusions"
           chapterLabel="Conclusions"
-          headline="What we found"
+          headline="What the data shows"
         >
-          <KeyFindings />
-        </Section>
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
 
-        {/* ─── HOW TO USE MCP ─── */}
-        <Section
-          id="how-to-use-mcp"
-          chapterLabel="Recommendations"
-          headline="How to use this report"
-        >
-          <div className="space-y-8 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <div>
-              <h3 className="font-serif text-xl text-ink dark:text-white mb-3">
-                Force your agents to use MCP tools
-              </h3>
-              <p>
-                MCP tools do not activate automatically. The data from this benchmark is
-                clear: without an explicit instruction to use them, Claude never calls them.
-                Codex made a handful of unprompted calls, but not systematically. If you
-                want agents to validate their work through MCP, you have to tell them to.
-              </p>
-              <p className="mt-3">
-                A simple addition to your prompt is enough: instruct the agent to use the
-                MCP server to confirm the integration worked, not just to write the code.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-serif text-xl text-ink dark:text-white mb-3">
-                Agents should also read MCP documentation on the tools
-              </h3>
-              <p>
-                When an agent gets confused about an API, the most useful thing in an MCP
-                server is not the endpoint list. It is the tool descriptions and the flow
-                explanations. A well-written tool description tells the agent what the
-                endpoint does, what it expects, and what comes next in the sequence.
-                PandaDoc is the clearest example from this benchmark: the agent used MCP
-                to understand the create, send, details, and session flow in the correct
-                order, which it could not have inferred from the SDK alone. If your MCP
-                server exposes endpoints without describing their relationships, agents
-                will still make sequencing errors.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-serif text-xl text-ink dark:text-white mb-3">
-                Use GPT for exploring and questioning, Claude for planning and execution
-                and GPT for QA
-              </h3>
-              <p>
-                The epistemic confidence gap between GPT-5.4 and Claude has a practical
-                implication for how you assemble a team of agents. GPT-5.4 checks its
-                work, reaches for tools unprompted, and produces a 100% success rate at
-                the cost of time. Claude moves faster, writes more, and trusts its
-                training data. Those are not competing weaknesses. They are complementary
-                strengths. A productive multi-agent setup uses each model where its
-                instincts are an asset:
-              </p>
-              <ul className="mt-4 space-y-2 pl-5 list-disc">
-                <li>
-                  <strong className="text-ink dark:text-white">GPT-5.4</strong> for
-                  exploration and validation: understanding an unfamiliar codebase,
-                  inspecting live environment state, confirming that an integration
-                  actually worked end to end.
-                </li>
-                <li>
-                  <strong className="text-ink dark:text-white">Claude Opus</strong> for
-                  planning and architecture: reasoning through the right approach,
-                  structuring the implementation, making decisions that require judgment
-                  over verification.
-                </li>
-                <li>
-                  <strong className="text-ink dark:text-white">Claude Sonnet</strong> for
-                  execution: writing the code quickly once the plan is set, where speed
-                  and output volume matter more than external validation.
-                </li>
-                <li>
-                  <strong className="text-ink dark:text-white">GPT-5.4 again for QA:</strong>{' '}
-                  because it will reach for MCP tools to check the result without being
-                  asked, and it will catch what the other agents assumed was fine.
-                </li>
-              </ul>
-            </div>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              MCP improved correctness and eliminated fabrication, at the cost of more tokens and more turns
+            </h3>
+            <p>
+              MCP improved concept coverage in both prompt conditions and eliminated the
+              fabrication pattern observed in non-MCP runs. The cost was real: more turns,
+              more tokens, more cache activity. The precise-sdk-mcp run used roughly 20
+              times more cache read tokens than the vague-raw-api run. Whether that cost is
+              worth it depends on how much it matters that the implementation is correct
+              rather than plausible.
+            </p>
+
+            {/* VISUALISATION: Cost vs correctness scatter — 6 runs plotted by cache token cost on
+                x-axis and concept score on y-axis. The tradeoff is the point, not a verdict. */}
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              MCP is necessary for API features with sparse training data coverage
+            </h3>
+            <p>
+              MCP proved necessary for two categories of feature: those that require live
+              API patterns unlikely to be well-represented in training data (the Contact
+              Properties two-step flow), and those where the agent would otherwise
+              fabricate a false constraint (inline images via{' '}
+              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>).
+              For features the agent already knows well from training data — standard
+              broadcast flow, idempotency keys, template variables — MCP added verification
+              but not correctness.
+            </p>
+
+            {/* VISUALISATION: Feature categorisation table — three columns: "agent got this right
+                without MCP", "agent needed MCP to get this right", "agent fabricated a wrong
+                answer without MCP". */}
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Precise prompts improve results without MCP but cannot prevent fabrication
+            </h3>
+            <p>
+              If MCP is not available, prompt detail is the most effective substitute —
+              but only up to a point. The precise-sdk run scored 4.0/6 versus 1.5/6 for
+              vague-sdk: the structured prompt unlocked SDK-specific methods the agent
+              would not have discovered alone. But precise prompting did not fix the
+              fabrication problem. The agent still invented constraints it could not verify.
+              Prompt detail changes what the agent attempts. It does not change whether the
+              agent knows when it's wrong.
+            </p>
+
+            {/* VISUALISATION: Short two-column table: "what precise prompting fixes" vs "what it doesn't". */}
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              How to use MCP effectively
+            </h3>
+            <p>The data points to four practical adjustments for developers using agents on integration tasks.</p>
+            <ul className="space-y-2 pl-5 list-disc">
+              <li>
+                <strong className="text-ink dark:text-white">Instruct agents to use MCP tools explicitly.</strong>{' '}
+                In none of the MCP runs did the agent use MCP without being asked. The
+                tools do not activate automatically.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white">Use SDK + MCP for multi-step API flows and sparsely documented features.</strong>{' '}
+                The Contact Properties API result is the clearest example: without MCP, no
+                run got this right. With MCP, both did.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white">Use precise prompts when MCP is not available, but treat them as a partial fix.</strong>{' '}
+                Fabrication in response to knowledge gaps requires live tooling to prevent,
+                not better instructions.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white">Expect MCP runs to cost more.</strong>{' '}
+                The precise-sdk-mcp run was the most expensive and the most correct. The
+                agent was doing more work, not just generating more tokens.
+              </li>
+            </ul>
+
+            {/* VISUALISATION: Summary decision guide — when to use each config based on API
+                familiarity, task complexity, and prompt quality. */}
           </div>
         </Section>
 
         <footer className="pt-16 pb-24 border-t border-stone-200 dark:border-stone-850 mt-8">
           <div className="flex items-center justify-between text-[11px] text-stone-400 font-sans">
             <span>© 2026 Speakeasy</span>
-            <span>Do Agents Need Help with Integrating Popular APIs? — Benchmark Report</span>
+            <span>Do AI Agents Need MCP Servers? — Benchmark Report</span>
           </div>
         </footer>
       </main>
