@@ -44,24 +44,24 @@ export default function App() {
         >
           <div className="prose-custom space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              When an AI agent integrates an API it knows from training data, it will
-              occasionally reach a point where it does not know the correct approach. The
-              question is what it does next. Does it search for the answer, flag its
-              uncertainty, or proceed as if it knows?
+              When an AI agent integrates an API it knows from training data, it
+              occasionally reaches a point where it does not know the correct approach.
+              The question is what it does next. Does it search for the answer, flag
+              its uncertainty, or proceed as if it knows?
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Hypothesis 1: live documentation access improves correctness
+              Hypothesis 1: Live documentation access improves correctness
             </h3>
             <p>
               Giving the agent access to a live MCP server for the API should change that
-              behaviour. Live documentation access should reduce fabricated API constraints,
+              behavior. Live documentation access should reduce fabricated API constraints,
               improve architectural correctness, and increase the chance of a working
-              implementation on features the agent does not know well.
+              implementation for features the agent does not know well.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Hypothesis 2: prompt precision can substitute for live documentation access
+              Hypothesis 2: Prompt precision can substitute live documentation access
             </h3>
             <p>
               A developer who knows the correct API surface can write it into the prompt
@@ -70,8 +70,8 @@ export default function App() {
             </p>
 
             <p>
-              To test both, we ran six sessions: three tooling configurations crossed with
-              two prompt styles, all against the same task.
+              To test both, we ran six sessions (three tooling configurations crossed with
+              two prompt styles) all against the same task.
             </p>
           </div>
         </Section>
@@ -86,7 +86,7 @@ export default function App() {
             <p>
               We ran six benchmark sessions across three tooling configurations and two
               prompt styles, all against the same task. Each run used Claude Code with the
-              same underlying question: can the agent correctly map a plain-English
+              same underlying question: Can the agent correctly map a plain-English
               description of an integration task to the right API features?
             </p>
 
@@ -94,21 +94,27 @@ export default function App() {
               Three configurations, stacked incrementally
             </h3>
             <p>
-              Raw HTTP is the baseline: the agent has its training data and writes HTTP
-              requests directly. SDK only adds the Resend Node.js SDK, a typed library
-              with named methods and known response shapes. SDK + MCP adds the Resend docs
-              MCP server on top: a live tool the agent can query mid-session to look up
-              documentation while it works. The agent was not instructed to use MCP on
-              SDK + MCP runs. It was available in the environment.
+              <b>Raw HTTP</b> is the baseline. The agent has its training data and writes HTTP
+              requests directly.
+            </p>
+            <p>
+              <b>SDK only</b> adds the Resend Node.js SDK, a typed library with named methods and
+              known response shapes. 
+            </p>
+            <p>
+              <b>SDK + MCP</b> adds the Resend docs MCP server on top of HTTP and the Resend SDK,
+              creating a live tool the agent can query mid-session to look up documentation
+              while it works. The agent was not instructed to use MCP on SDK + MCP runs, but
+              the Resend MCP server was available in the environment.
             </p>
 
             <ConfigAccessTable />
 
             <p>
               The API is Resend, a widely used email platform with well-maintained
-              documentation, a clean SDK, and an official MCP server. Resend was chosen
+              documentation, a clean SDK, and an official MCP server. We chose Resend
               because it is well represented in LLM training data, which gives the non-MCP runs
-              a reasonable chance of performing well. If MCP still adds value on an API the
+              a reasonable chance of performing well. If MCP still adds value to an API the
               agent already knows, that is a stronger result than testing against an obscure
               API with poor training coverage.
             </p>
@@ -117,9 +123,9 @@ export default function App() {
               A task that requires composing several non-obvious API features
             </h3>
             <p>
-              All six runs received the same underlying task: write a Node.js script that
+              All six runs received the same underlying task: Write a Node.js script that
               sends a personalized broadcast email to a group of premium contacts. The
-              prompt does not name any Resend API. The agent must map plain-English
+              prompt does not name any Resend APIs. The agent must map plain-English
               requirements to the correct API features itself, and several of those
               mappings are non-obvious.
             </p>
@@ -128,19 +134,19 @@ export default function App() {
 
             <p>
               Each feature is documented individually. What makes the task hard is the
-              composition: the agent must recognise all six mappings, implement them in the
-              correct order, and know that some require multi-step flows not visible from
-              the method names alone. None of this is stated in the prompt.
+              composition: The agent must recognize all six mappings, implement them in the
+              correct order, and know that some require multi-step flows that are not 
+              visible from the method names alone. None of this is stated in the prompt.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Two prompts describing the same task
             </h3>
             <p>
-              The vague prompt describes the task as a non-technical user might: natural
-              language, no API names, no structural requirements. The precise prompt
-              describes the same task as a developer would: numbered steps, a specified
-              runtime, explicit output expectations. Neither prompt names any Resend API.
+              The vague prompt describes the task as a non-technical user might: with natural
+              language, no API names, and no structural requirements. The precise prompt
+              describes the same task as a developer would: with numbered steps, a specified
+              runtime, and explicit output expectations. Neither prompt names any Resend APIs.
             </p>
 
             <PromptCards
@@ -162,22 +168,23 @@ export default function App() {
         <Section
           id="api-only"
           chapterLabel="Results — Raw HTTP"
-          headline="API only: no SDK, no MCP"
+          headline="API only: No SDK, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              Agent uses training data only. No installed library. No live documentation.
+              The agent uses only training data, without an installed library or live documentation.
             </p>
 
             <p>
-              The raw HTTP configuration is the baseline: no SDK, no MCP. The agent
-              writes HTTP requests directly and draws entirely on what it knows from
-              training data. The two runs in this section show what that looks like in
-              practice: where training data is strong, the agent produces correct
-              implementations confidently and quickly. Where it is thin or wrong, it
-              produces confident wrong answers with no indication that anything went
-              sideways.
+              The raw HTTP configuration is the baseline, with no SDK or MCP. The
+              agent writes HTTP requests directly and draws entirely on what it knows
+              from training data. The two runs in this section show what that looks like
+              in practice:
             </p>
+            <ul>
+              <li>Where training data is strong, the agent produces correct implementations confidently and quickly.</li>
+              <li>Where training data is thin or wrong, the agent produces confident wrong answers with no indication that anything went sideways.</li>
+            </ul>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               What the agent did
@@ -190,7 +197,7 @@ export default function App() {
               "Use raw HTTP requests only (fetch or axios). Do not use any Resend SDK or npm package."
             </div>
             <p>
-              No MCP was available and the agent drew entirely on training data.
+              No MCP server was available, and the agent drew entirely on training data.
             </p>
 
             <AgentActivity
@@ -222,7 +229,7 @@ export default function App() {
               Qualitative results
             </h3>
             <p>
-              The table below scores each run concept by concept. These are the six
+              The table below scores each run, concept by concept. These are the six
               features the task required. Each is scored Yes, Partial, or No based on
               whether the agent implemented it correctly.
             </p>
@@ -247,9 +254,9 @@ export default function App() {
               Vague prompt (4.5/6)
             </h4>
             <p>
-              The agent dispatched a sub-agent to fetch the Resend docs, got real API
-              documentation back, and wrote the script. Where training data was strong it
-              moved fast and got things right. The inline logo was handled correctly using{' '}
+              The agent dispatched a subagent to fetch the Resend docs, got the real API
+              documentation back from the subagent, and wrote the script. Where training data was strong,
+              it moved fast and got things right. The inline logo was handled correctly using{' '}
               <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>{' '}
               and a <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">cid:</code>{' '}
               reference. The broadcast and idempotency key were both correct.
@@ -257,27 +264,27 @@ export default function App() {
             <p>
               Where the agent didn't know the correct approach, it substituted the nearest
               plausible one and kept moving. Nothing in the output indicated a gap had been
-              filled. For example, contact metadata landed in the wrong place entirely: the
+              filled. For example, contact metadata landed in the wrong place entirely: The
               agent used a generic field rather than the dedicated API, annotating it as{' '}
-              <span className="italic">"stores arbitrary key/value metadata on the contact"</span>{' '}
-              as if that were the intended pattern. The premium segment was assumed to already
-              exist. Neither problem produced an error or was flagged.
+              <span className="italic">"stores arbitrary key/value metadata on the contact"</span>{''}
+              as if that were the intended pattern. It also assumed the premium segment
+              already existed. Neither problem was flagged or produced an error.
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
               Precise prompt (4.0/6)
             </h4>
             <p>
-              The precise prompt produced a more complete implementation — where it named
+              The precise prompt produced a more complete implementation: Where the prompt named
               a feature explicitly, the agent delivered it. But when the agent hit a gap
               in its knowledge, extra specificity made things worse, not better. Rather
               than flagging uncertainty, it treated an ambiguous research result as
-              definitive, stated a false constraint as fact, and built a workaround around
-              it. The output looked considered but was wrong.
+              definitive, stated a false constraint as fact, and built a workaround for
+              it. The output looked considered but was incorrect.
             </p>
             <p>
-              The research step surfaced a caveat noting that inline image embedding via
-              CID is only documented on the standard email endpoint, and suggesting the
+              The research step surfaced a caveat, noting that inline image embedding via
+              CID is only documented on the standard email endpoint and suggesting the
               developer "confirm with Resend support" whether it works on broadcasts. The
               agent's response:
             </p>
@@ -286,10 +293,10 @@ export default function App() {
               broadcasts."
             </div>
             <p>
-              Without verification, it switched approach and moved on. The claim was false:
-              the correct method works on the broadcasts endpoint. A developer reviewing
+              Without verification, the agent changed to a different approach. The claim was false:
+              The correct method works on the broadcasts endpoint. A developer reviewing
               the output would have spotted it immediately, but the agent had no indication
-              anything had gone wrong.
+              that anything had gone wrong.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -302,11 +309,11 @@ export default function App() {
             />
 
             <p>
-              The vague run completed in 6 turns with 111,136 cache read tokens. The
-              precise run took 11 turns and read 667,099 cached tokens, six times more
+              The vague run completed in six turns with 111,136 cache read tokens. The
+              precise run took 11 turns and read 667,099 cached tokens, using six times more
               internal context retrieval before writing. More instruction produced more
               deliberation, still bounded entirely by training data. Neither run queried
-              any external source despite it being available.
+              any external sources, despite them being available.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -314,20 +321,21 @@ export default function App() {
             </h3>
 
             <p>
-              Both runs scored similarly: 4.5/6 (vague) and 4.0/6 (precise). The precise
-              prompt did not improve the score. It produced a more complete implementation
-              in some areas while creating a more confident wrong answer in others.
+              Both runs scored similarly. The vague prompt got 4.5/6 and the precise prompt got 4.0/6.
+              The precise prompt did not improve the score. It produced a more complete
+              implementation in some areas, while creating a more confident incorrect answer
+              in others.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
                 <strong className="text-ink dark:text-white">Vague:</strong>{' '}
-                Mostly correct, but gaps were filled silently. The agent reached for
+                This run was mostly correct, but the agent filled gaps silently. It reached for
                 familiar patterns without searching for what it did not know.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Precise:</strong>{' '}
-                More complete, more deliberate, one fabricated constraint. The structured
-                prompt unlocked more of what the agent knew, but when it hit the edge of
+                This run was more complete and deliberate, but had one fabricated constraint. The
+                structured prompt unlocked more of what the agent knew, but when it hit the edge of
                 its training data, it invented a fact rather than admitting uncertainty.
               </li>
             </ul>
@@ -365,15 +373,15 @@ export default function App() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              Resend Node.js SDK pre-installed. Agent uses training data and SDK types. No live documentation.
+              The Resend Node.js SDK is pre-installed. The agent uses training data and SDK types, but no live documentation.
             </p>
 
             <p>
-              The SDK gives the agent a typed, installable interface: method names,
+              The SDK gives the agent a typed, installable interface: with method names,
               response shapes, and parameter structures encoded in the library. The
               question is whether this static scaffolding closes the gaps that raw HTTP
-              left open, or whether the agent still relies on training data for anything
-              not derivable from the types alone. These two runs give a clear answer: the
+              leaves open, or whether the agent still relies on training data for anything
+              it cannot derive from the types alone. These two runs give a clear answer: The
               SDK amplifies whatever the prompt provides, making things worse with a vague
               prompt and significantly better with a precise one.
             </p>
@@ -445,13 +453,13 @@ export default function App() {
               The SDK gave the agent a starting point, and it went straight to the
               most familiar method and stopped. Without any prompt guidance toward
               broadcast-specific features, it solved the task as a basic email loop:
-              iterate over contacts, send each one individually. The broadcast
-              architecture, the contact grouping, and the stored profile data were all missed.
+              iterating over contacts and sending each one individually. It missed all
+              the broadcast architecture, contact grouping, and stored profile data.
               When it couldn't find a method for storing contact metadata, it noted
               the gap in a comment and kept going, without searching or asking.
             </p>
             <p>
-              The agent's own summary of how it handled the subscription tier requirement:
+              The agent's own summary of how it handled the subscription-tier requirement:
             </p>
             <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
               "Tier is held in your customer record and injected into the email at send
@@ -460,7 +468,7 @@ export default function App() {
             </div>
             <p>
               This was written as a design decision, not a limitation. The Contact
-              Properties API exists and was the correct approach.
+              Properties API exists and would have been the correct approach.
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
@@ -469,8 +477,8 @@ export default function App() {
             <p>
               Where the vague prompt let the agent default to what it knew, the precise
               prompt named what it needed to do. The agent followed those references and
-              the core architecture came out right. This is the clearest example in the
-              benchmark of developer knowledge substituting for tooling: when the prompt
+              the core architecture came out correctly. This is the clearest example in the
+              benchmark of developer knowledge substituting for tooling: When the prompt
               was specific enough, the agent delivered.
             </p>
             <p>
@@ -484,8 +492,8 @@ export default function App() {
               inline logo in the HTML body, which works without attachments."
             </div>
             <p>
-              It was written as fact and built around as if documented, with no check made.
-              The correct approach was available in the SDK.
+              The agent wrote it as fact and built around it as if documented, without
+               making any checks. The correct approach was available in the SDK.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -498,9 +506,9 @@ export default function App() {
             />
 
             <p>
-              Both runs followed the same pattern as their raw HTTP counterparts: more
+              Both runs followed the same pattern as their raw HTTP counterparts: More
               instructions produced more internal context retrieval, all bounded by
-              training data. Neither run queried any external source despite it being
+              training data. Neither run queried any external sources, despite them being
               available. The additional turns over the raw HTTP runs reflect SDK method
               exploration happening entirely within training data.
             </p>
@@ -510,9 +518,9 @@ export default function App() {
             </h3>
 
             <p>
-              The SDK is a multiplier on prompt quality, not a floor. The 2.5-point gap
-              between vague and precise is the largest delta of any configuration in the
-              benchmark.
+              The SDK acts as a multiplier of prompt quality, not a floor. The 2.5-point gap
+              between the vague and precise prompts is the largest delta of any configuration
+              in the benchmark.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
@@ -523,8 +531,8 @@ export default function App() {
               <li>
                 <strong className="text-ink dark:text-white">Precise:</strong>{' '}
                 Better than raw HTTP with the same prompt. Named methods unlocked SDK
-                features the vague prompt never found. The fabrication problem persisted
-                regardless.
+                features that the vague prompt never found. The fabrication problem
+                persisted regardless.
               </li>
             </ul>
 
@@ -562,16 +570,16 @@ export default function App() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              Resend Node.js SDK pre-installed. Resend MCP server active. Agent can query live API documentation.
+              The Resend Node.js SDK is pre-installed, and the Resend MCP server is active. The agent can query live API documentation.
             </p>
 
             <p>
               With MCP active, the agent had a third source to draw on beyond training
-              data and SDK types: a live tool it could query mid-session to look up
-              documentation. Both runs show MCP functioning as a discovery tool, letting
+              data and SDK types. It could query the Resend MCP server mid-session to look
+              up documentation. Both runs show MCP functioning as a discovery tool, letting
               the agent find correct API patterns it would otherwise have guessed at. The
-              question is not whether it helped but how. In the precise run it went further:
-              the agent executed the code, hit real errors, and iterated against live API
+              question is not whether it helped, but how. In the precise run, it went further:
+              The agent executed the code, hit real errors, and iterated against live API
               responses, something no other run in the benchmark did.
             </p>
 
@@ -579,9 +587,10 @@ export default function App() {
               What the agent did
             </h3>
             <p>
-              The prompts were identical to the SDK runs. No configuration addition was
-              needed: the MCP server was present in the environment. The agent was
-              not instructed to use it. Both runs discovered and used it independently.
+              The prompts were identical to the SDK runs. No additional configuration was
+              needed. The MCP server was present in the environment, but the agent was
+              not instructed to use it. In both runs, the agent discovered and used
+              the MCP server independently.
             </p>
 
             <AgentActivity
@@ -638,11 +647,11 @@ export default function App() {
               Vague prompt (5.0/6)
             </h4>
             <p>
-              MCP changed the agent's behaviour before it wrote a single line. Instead
-              of defaulting to what it knew, it queried the documentation four times,
+              Adding the MCP server changed the agent's behaviour before it wrote a single line.
+              Instead of defaulting to what it knew, it queried the documentation four times,
               discovering the correct APIs for broadcast sending, contact grouping, and
-              profile data storage that the vague SDK run missed entirely.
-              It implemented the multi-step contact properties flow correctly, something
+              profile data storage that the vague SDK run had missed entirely.
+              It implemented the multi-step contact properties flow correctly, which was something
               no non-MCP run managed.
             </p>
             <p>
@@ -661,7 +670,7 @@ export default function App() {
               When it hit a gap, it verified rather than guessed.
             </p>
             <p>
-              For example, when the SDK didn't expose a segments method, the agent
+              For example, when the SDK didn't expose a Segments method, the agent
               inspected the installed package directly to confirm what was available:
             </p>
             <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
@@ -685,12 +694,14 @@ export default function App() {
             />
 
             <p>
-              The numbers reflect two fundamentally different working modes. The vague run
-              was more active than any non-MCP run but still recognisable in shape: 19
-              turns, MCP queries mid-session, then done. The precise run is in a different
-              category: 55 turns and 2.2M cache read tokens driven by the iterative
-              cycle of run, fail, read error, correct, re-run. Neither run queried any
-              external source despite it being available.
+              The numbers reflect two fundamentally different working modes:
+            </p>
+            <ul>
+              <li>The vague run was more active than any non-MCP run, but still recognisable in shape: 19 turns, MCP queries mid-session, and then done.</li>
+              <li>The precise run was in a different category: 55 turns and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
+            </ul>
+            <p>
+              Neither run queried any external sources, despite them being available.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -699,7 +710,7 @@ export default function App() {
 
             <p>
               MCP changed how the agent worked. The non-MCP runs wrote code and stopped.
-              The MCP runs researched, wrote, and in the precise case ran and iterated
+              The MCP runs researched, wrote, and in the precise case, ran and iterated
               against live API responses. MCP also compressed the effect of prompt quality
               to its smallest value in the benchmark.
             </p>
@@ -707,12 +718,13 @@ export default function App() {
               <li>
                 <strong className="text-ink dark:text-white">Vague:</strong>{' '}
                 Scored 5.0/6, higher than every non-MCP run regardless of prompt style. MCP
-                substituted for specificity the prompt never provided.
+                substituted the specificity that the prompt lacked.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Precise:</strong>{' '}
-                Scored 5.5/6, the highest in the benchmark. The only run to execute the
-                code and validate against a live API, with gaps acknowledged rather than fabricated.
+                Scored 5.5/6, the highest in the benchmark. This was the only run to execute the
+                code and validate against a live API, acknowledging gaps rather than fabricating
+                a constraint.
               </li>
             </ul>
 
@@ -752,18 +764,18 @@ export default function App() {
 
             <p>
               The three individual sections show each configuration in isolation. Placing
-              all six runs side by side reveals patterns that only become visible at this
-              scale: which API features no non-MCP run ever got right, which fabrications
+              all six runs side by side reveals a pattern only visible at this scale,
+              showing which API features no non-MCP run ever got right, which fabrications
               appeared across multiple runs, and how dramatically prompt precision affected
-              results depending on what tooling was available.
+              results depending on the available tooling.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Concept coverage across all six runs
             </h3>
             <p>
-              Contact Properties was the only feature no non-MCP run implemented correctly.
-              The two-step create-then-assign flow is not well-covered in training data
+              Contact Properties was the only feature that no non-MCP run implemented correctly.
+              The two-step create-then-assign flow is not well covered in training data
               and the agent consistently guessed the wrong shape or skipped it entirely. Inline logo handling split along the fabrication
               fault line: the two runs that got it right either happened to know the correct
               approach from training data (vague-raw-api) or confirmed it via MCP
@@ -797,9 +809,9 @@ export default function App() {
             <p>
               Across three non-MCP runs, the agent made incorrect claims about API
               capabilities and wrote them into code comments as if they were documented
-              behaviour. In each case the agent invented a constraint, cited it, and built
+              behavior. In each case, the agent invented a constraint, cited it, and built
               around it without asking a clarifying question or querying an external source.
-              The MCP runs did not produce this pattern: when the agent had a tool to verify
+              The MCP runs did not produce this pattern: When the agent had a tool to verify
               a claim, it used it.
             </p>
 
@@ -814,7 +826,7 @@ export default function App() {
               flow), and those where the agent would otherwise fabricate a false constraint
               (inline images via{' '}
               <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>).
-              For features the agent already knows well (broadcast flow, idempotency keys,
+              For features the agent already knew well (broadcast flow, idempotency keys,
               template variables), MCP added verification but not correctness.
             </p>
 
@@ -827,7 +839,7 @@ export default function App() {
               The vague-sdk-mcp run used roughly four times as many turns as vague-raw-api.
               The precise-sdk-mcp run is in a different category: 55 turns and 2.2M cache
               read tokens driven by an iterative cycle of run, fail, read error, correct,
-              re-run. Every non-MCP run wrote a file and stopped without executing it.
+              and re-run. Every non-MCP run wrote a file and stopped without executing it.
               Whether that cost is worth it depends on how much correctness matters
               over plausibility.
             </p>
@@ -840,12 +852,12 @@ export default function App() {
               Prompt precision had diminishing returns as tooling improved
             </h3>
             <p>
-              Prompt detail had its largest effect in the SDK configuration, where a precise
-              prompt added 2.5 concept score points over a vague one. Its smallest effect
-              was with MCP, where the delta was only 0.5 points. The vague-raw-api run
-              actually outscored precise-raw-api by 0.5 points: more specificity created
-              more opportunities for confident wrong answers. Prompt detail changes what the
-              agent attempts, but not whether it knows when it's wrong.
+              Prompt detail most affected the SDK configuration, where a precise
+              prompt added 2.5 concept score points over a vague one. It had the least impact
+              on the MCP configuration, where the delta was only 0.5 points. The vague-raw-api run
+              actually outscored precise-raw-api by 0.5 points: More specificity created
+              more opportunities for confident wrong answers, demonstrating that prompt detail
+              changes what the agent attempts, but not whether it knows when it's wrong.
             </p>
 
             <PromptDeltaTable
@@ -859,23 +871,23 @@ export default function App() {
             <p>The data points to four practical adjustments for developers using agents on integration tasks.</p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white">Instruct agents to use MCP tools explicitly.</strong>{' '}
+                <strong className="text-ink dark:text-white">Instruct agents to use MCP tools explicitly:</strong>{' '}
                 Both MCP runs discovered and used the MCP server without being told to,
                 but this is not guaranteed behaviour. Explicitly mentioning available tools
-                in the prompt reduces the chance the agent overlooks them.
+                in the prompt reduces the chance of the agent overlooking them.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Use SDK + MCP for multi-step flows and features with sparse training coverage.</strong>{' '}
-                The Contact Properties result is the clearest example: without MCP, no run
+                <strong className="text-ink dark:text-white">Use SDK + MCP for multi-step flows and features with sparse training coverage:</strong>{' '}
+                The Contact Properties result is the clearest example: Without MCP, no run
                 got this right. With MCP, both did.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Use precise prompts when MCP is not available, but treat them as a partial fix.</strong>{' '}
-                Fabrication in response to knowledge gaps requires live tooling to prevent,
+                <strong className="text-ink dark:text-white">Use precise prompts when MCP is not available, but treat them as a partial fix:</strong>{' '}
+                Preventing fabrication in response to knowledge gaps requires live tooling,
                 not better instructions.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Expect MCP runs to cost more.</strong>{' '}
+                <strong className="text-ink dark:text-white">Expect MCP runs to cost more:</strong>{' '}
                 The precise-sdk-mcp run was the most expensive and the most correct. The
                 agent was doing more work, not just generating more tokens.
               </li>
