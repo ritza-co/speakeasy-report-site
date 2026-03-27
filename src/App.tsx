@@ -183,7 +183,7 @@ export default function App() {
             </p>
             <ul>
               <li>Where training data is strong, the agent produces correct implementations confidently and quickly.</li>
-              </li>Where training data is thin or wrong, the agent produces confident wrong answers with no indication that anything went sideways.</li>
+              <li>Where training data is thin or wrong, the agent produces confident wrong answers with no indication that anything went sideways.</li>
             </ul>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -699,6 +699,7 @@ export default function App() {
             <ul>
               <li>The vague run was more active than any non-MCP run, but still recognisable in shape: 19 turns, MCP queries mid-session, and then done.</li>
               <li>The precise run was in a different category: 55 turns and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
+            </ul>
             <p>
               Neither run queried any external sources, despite them being available.
             </p>
