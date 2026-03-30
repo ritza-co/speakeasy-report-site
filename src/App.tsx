@@ -3,16 +3,18 @@ import Hero from './components/Hero'
 import ThemeToggle from './components/ThemeToggle'
 import ResendReport from './components/ResendReport'
 import VercelReport from './components/VercelReport'
+import GuideArticle from './components/GuideArticle'
 
-type Tab = 'resend' | 'vercel'
+type Tab = 'guide' | 'resend' | 'vercel'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
-  { id: 'resend',   label: 'Resend',        subtitle: 'Well-documented API' },
-  { id: 'vercel',   label: 'Vercel AI SDK', subtitle: 'SDK migration benchmark' },
+  { id: 'guide',  label: 'Introduction',   subtitle: 'AI agents and context' },
+  { id: 'resend', label: 'Resend',         subtitle: 'Well-documented API' },
+  { id: 'vercel', label: 'Vercel AI SDK',  subtitle: 'SDK migration benchmark' },
 ]
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('resend')
+  const [activeTab, setActiveTab] = useState<Tab>('guide')
 
   return (
     <div className="bg-parchment dark:bg-black min-h-screen">
@@ -56,8 +58,9 @@ export default function App() {
       </div>
 
       {/* ─── REPORT CONTENT ─── */}
-      {activeTab === 'resend'   && <ResendReport />}
-      {activeTab === 'vercel'   && <VercelReport />}
+      {activeTab === 'guide'  && <GuideArticle onNavigate={setActiveTab} />}
+      {activeTab === 'resend' && <ResendReport />}
+      {activeTab === 'vercel' && <VercelReport />}
     </div>
   )
 }
