@@ -33,7 +33,7 @@ export default function TestMatrix() {
         <Badge label="APIs"       value="Linear · Resend · Metabase · PandaDoc" />
         <Badge label="Methods"    value="Bare · SDK · SDK+MCP" />
         <Badge label="Models"     value="Opus · Sonnet · GPT-5.4" />
-        <Badge label="Sessions"   value={BENCHMARKS.length} />
+        <Badge label="Sessions"   value={108} />
       </div>
 
       {/* Heatmap: Tool × Method */}
@@ -106,12 +106,9 @@ export default function TestMatrix() {
       </div>
 
       <div className="border-t border-stone-200 dark:border-stone-850 pt-6 flex items-baseline gap-4">
-        <span className="font-serif text-5xl text-ink dark:text-white font-bold">36</span>
+        <span className="font-serif text-5xl text-ink dark:text-white font-bold">108</span>
         <div>
           <p className="text-sm text-ink dark:text-white font-medium">total sessions</p>
-          <p className="text-[12px] text-stone-400 mt-0.5">
-            4 APIs × 3 models × 3 methods · one session each
-          </p>
         </div>
       </div>
     </div>

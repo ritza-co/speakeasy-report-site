@@ -1,13 +1,13 @@
 const CONFIGS = ['Raw HTTP', 'SDK', 'SDK + MCP']
-const PROMPTS = ['Vague', 'Precise']
+const PROMPTS = ['Simple', 'Complex']
 
 const RUN_IDS: Record<string, string> = {
-  'Vague-Raw HTTP':   'vague-raw-api',
-  'Vague-SDK':        'vague-sdk',
-  'Vague-SDK + MCP':  'vague-sdk-mcp',
-  'Precise-Raw HTTP': 'precise-raw-api',
-  'Precise-SDK':      'precise-sdk',
-  'Precise-SDK + MCP':'precise-sdk-mcp',
+  'Simple-Raw HTTP':   'simple-raw-api',
+  'Simple-SDK':        'simple-sdk',
+  'Simple-SDK + MCP':  'simple-sdk-mcp',
+  'Complex-Raw HTTP':  'complex-raw-api',
+  'Complex-SDK':       'complex-sdk',
+  'Complex-SDK + MCP': 'complex-sdk-mcp',
 }
 
 export default function RunMatrix() {
@@ -27,7 +27,7 @@ export default function RunMatrix() {
         <tbody>
           {PROMPTS.map(prompt => (
             <tr key={prompt}>
-              <td className={`py-3 pr-6 text-[10px] uppercase tracking-widest font-sans font-normal ${prompt === 'Precise' ? 'text-crimson' : 'text-stone-400'}`}>
+              <td className={`py-3 pr-6 text-[10px] uppercase tracking-widest font-sans font-normal ${prompt === 'Complex' ? 'text-crimson' : 'text-stone-400'}`}>
                 {prompt}
               </td>
               {CONFIGS.map(config => {

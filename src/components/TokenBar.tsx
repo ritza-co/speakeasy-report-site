@@ -13,8 +13,6 @@ function fmt(n: number): string {
   return String(n)
 }
 
-const MAX_CACHE = Math.max(...ALL_RUNS.map(r => r.cacheRead))
-const MAX_OUTPUT = Math.max(...ALL_RUNS.map(r => r.output))
 const MAX_TOTAL = Math.max(...ALL_RUNS.map(r => r.cacheRead + r.output))
 
 export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
@@ -39,7 +37,6 @@ export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
           const isHighlight = highlightIds.includes(run.id)
           const cacheH  = Math.round((run.cacheRead / MAX_TOTAL) * BAR_HEIGHT)
           const outputH = Math.round((run.output    / MAX_TOTAL) * BAR_HEIGHT)
-          const totalH  = cacheH + outputH
 
           const opacity = !isVisible ? 'opacity-0' : isHighlight ? 'opacity-100' : 'opacity-50'
 
@@ -69,7 +66,7 @@ export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
                 <div className="text-[10px] text-stone-500 font-sans leading-tight">{run.prompt}</div>
                 <div className="text-[9px] uppercase tracking-widest text-stone-400 font-sans leading-tight">{run.config}</div>
                 {isVisible && (
-                  <div className="text-[9px] text-stone-400 font-sans">{run.turns}t</div>
+                  <div className="text-[9px] text-stone-400 font-sans">{run.turns}a</div>
                 )}
               </div>
             </div>
