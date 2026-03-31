@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 
 export default function Hero() {
   const enter = () =>
-    document.getElementById('hypothesis')?.scrollIntoView({ behavior: 'smooth' })
+    document.getElementById('tab-bar')?.scrollIntoView({ behavior: 'smooth' })
 
   return (
     <div className="relative h-screen flex items-center justify-center overflow-hidden dot-grid bg-parchment dark:bg-black">

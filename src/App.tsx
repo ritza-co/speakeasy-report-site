@@ -1,20 +1,37 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Hero from './components/Hero'
 import ThemeToggle from './components/ThemeToggle'
 import ResendReport from './components/ResendReport'
 import VercelReport from './components/VercelReport'
 import GuideArticle from './components/GuideArticle'
+import FullBenchmarkReport from './components/FullBenchmarkReport'
 
-type Tab = 'guide' | 'resend' | 'vercel'
+type Tab = 'guide' | 'resend' | 'vercel' | 'full'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
-  { id: 'guide',  label: 'Introduction',   subtitle: 'AI agents and context' },
-  { id: 'resend', label: 'Resend',         subtitle: 'Well-documented API' },
-  { id: 'vercel', label: 'Vercel AI SDK',  subtitle: 'SDK migration benchmark' },
+  { id: 'guide',  label: 'Introduction',      subtitle: 'AI agents and context' },
+  { id: 'vercel', label: 'Vercel AI SDK',     subtitle: 'SDK migration benchmark' },
+  { id: 'resend', label: 'Resend',            subtitle: 'Well-documented API' },
+  { id: 'full',   label: 'Full Benchmark',    subtitle: '108 sessions, 4 APIs, 3 models' },
 ]
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('guide')
+  const tabBarRef = useRef<HTMLDivElement>(null)
+  const tabBarTop = useRef<number>(0)
+
+  useEffect(() => {
+    if (tabBarRef.current) {
+      // Walk up offsetParent chain to get true document offset
+      let el: HTMLElement | null = tabBarRef.current
+      let top = 0
+      while (el) {
+        top += el.offsetTop
+        el = el.offsetParent as HTMLElement | null
+      }
+      tabBarTop.current = top
+    }
+  }, [])
 
   return (
     <div className="bg-parchment dark:bg-black min-h-screen">
@@ -22,7 +39,7 @@ export default function App() {
       <Hero />
 
       {/* ─── TAB BAR ─── */}
-      <div className="sticky top-0 z-30 bg-parchment/95 dark:bg-black/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-850">
+      <div id="tab-bar" ref={tabBarRef} className="sticky top-0 z-30 bg-parchment/95 dark:bg-black/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-850">
         <div className="px-8 md:px-16 xl:pl-24 max-w-[1280px]">
           <div className="flex gap-0">
             {TABS.map((tab) => {
@@ -32,7 +49,7 @@ export default function App() {
                   key={tab.id}
                   onClick={() => {
                     setActiveTab(tab.id)
-                    window.scrollTo({ top: 0 })
+                    window.scrollTo({ top: tabBarTop.current, behavior: 'smooth' })
                   }}
                   className={`group flex flex-col gap-0.5 px-6 py-4 border-b-2 transition-all duration-200 text-left ${
                     isActive
@@ -59,8 +76,9 @@ export default function App() {
 
       {/* ─── REPORT CONTENT ─── */}
       {activeTab === 'guide'  && <GuideArticle onNavigate={setActiveTab} />}
-      {activeTab === 'resend' && <ResendReport />}
       {activeTab === 'vercel' && <VercelReport />}
+      {activeTab === 'resend' && <ResendReport />}
+      {activeTab === 'full'   && <FullBenchmarkReport />}
     </div>
   )
 }
