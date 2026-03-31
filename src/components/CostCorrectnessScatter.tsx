@@ -1,10 +1,10 @@
 const RUNS = [
-  { id: 'vague-raw-api',   label: 'V-Raw',  cacheRead: 111,   score: 4.5, promptStyle: 'vague'   },
-  { id: 'vague-sdk',       label: 'V-SDK',  cacheRead: 190,   score: 1.5, promptStyle: 'vague'   },
-  { id: 'vague-sdk-mcp',   label: 'V-MCP',  cacheRead: 441,   score: 5.0, promptStyle: 'vague'   },
-  { id: 'precise-raw-api', label: 'P-Raw',  cacheRead: 667,   score: 4.0, promptStyle: 'precise' },
-  { id: 'precise-sdk',     label: 'P-SDK',  cacheRead: 248,   score: 4.0, promptStyle: 'precise' },
-  { id: 'precise-sdk-mcp', label: 'P-MCP',  cacheRead: 2238,  score: 5.5, promptStyle: 'precise' },
+  { id: 'simple-raw-api',   label: 'S-Raw',  cacheRead: 111,   score: 4.5, promptStyle: 'simple'  },
+  { id: 'simple-sdk',       label: 'S-SDK',  cacheRead: 190,   score: 1.5, promptStyle: 'simple'  },
+  { id: 'simple-sdk-mcp',   label: 'S-MCP',  cacheRead: 441,   score: 5.0, promptStyle: 'simple'  },
+  { id: 'complex-raw-api',  label: 'C-Raw',  cacheRead: 667,   score: 4.0, promptStyle: 'complex' },
+  { id: 'complex-sdk',      label: 'C-SDK',  cacheRead: 248,   score: 4.0, promptStyle: 'complex' },
+  { id: 'complex-sdk-mcp',  label: 'C-MCP',  cacheRead: 2238,  score: 5.5, promptStyle: 'complex' },
 ]
 
 const MAX_CACHE = 2238
@@ -95,7 +95,7 @@ export default function CostCorrectnessScatter() {
           {RUNS.map(run => {
             const cx = toX(run.cacheRead)
             const cy = toY(run.score)
-            const isPrecise = run.promptStyle === 'precise'
+            const isPrecise = run.promptStyle === 'complex'
             return (
               <g key={run.id}>
                 <circle
@@ -118,10 +118,10 @@ export default function CostCorrectnessScatter() {
       </div>
       <div className="flex gap-4 mt-2">
         <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-stone-400 font-sans">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-stone-400 dark:bg-stone-500" /> Vague
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-stone-400 dark:bg-stone-500" /> Simple
         </span>
         <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-crimson font-sans">
-          <span className="inline-block w-2.5 h-2.5 rounded-full bg-crimson/80" /> Precise
+          <span className="inline-block w-2.5 h-2.5 rounded-full bg-crimson/80" /> Complex
         </span>
       </div>
     </div>

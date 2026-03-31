@@ -37,7 +37,7 @@ function buildFindings(): Finding[] {
     {
       prefix: '+', value: ctxIncrease, suffix: '%', decimals: 1,
       label: 'more total context tokens with sdk+mcp than bare',
-      detail: `Bare sessions averaged ${Math.round(bare.avgTotalContext).toLocaleString()} tokens. SDK+MCP sessions averaged ${Math.round(sdkMcp.avgTotalContext).toLocaleString()}. The agent is actively consulting documentation and validating its work, which adds turns and context. The cost is real.`,
+      detail: `Bare sessions averaged ${Math.round(bare.avgTotalContext).toLocaleString()} tokens. SDK+MCP sessions averaged ${Math.round(sdkMcp.avgTotalContext).toLocaleString()}. The agent is actively consulting documentation and validating its work, which adds agent actions and context. The cost is real.`,
       color: '#c0392b',
     },
     {

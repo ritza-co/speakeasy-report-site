@@ -66,7 +66,7 @@ export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
                 <div className="text-[10px] text-stone-500 font-sans leading-tight">{run.prompt}</div>
                 <div className="text-[9px] uppercase tracking-widest text-stone-400 font-sans leading-tight">{run.config}</div>
                 {isVisible && (
-                  <div className="text-[9px] text-stone-400 font-sans">{run.turns}t</div>
+                  <div className="text-[9px] text-stone-400 font-sans">{run.turns}a</div>
                 )}
               </div>
             </div>

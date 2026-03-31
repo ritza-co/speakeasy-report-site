@@ -1,26 +1,26 @@
 interface FabricationRow {
   run: string
-  promptStyle: 'vague' | 'precise'
+  promptStyle: 'simple' | 'complex'
   claim: string
   reality: string
 }
 
 const ROWS: FabricationRow[] = [
   {
-    run: 'precise-raw-api',
-    promptStyle: 'precise',
+    run: 'complex-raw-api',
+    promptStyle: 'complex',
     claim: '"CID/attachment-based inline images are not supported by the Resend broadcasts endpoint"',
-    reality: 'Resend broadcasts support contentId attachments with cid: references in HTML. The precise-sdk-mcp run used this correctly.',
+    reality: 'Resend broadcasts support contentId attachments with cid: references in HTML. The complex-sdk-mcp run used this correctly.',
   },
   {
-    run: 'precise-sdk',
-    promptStyle: 'precise',
+    run: 'complex-sdk',
+    promptStyle: 'complex',
     claim: '"The Resend SDK does not support contentId on attachments"',
     reality: 'The Resend SDK accepts a contentId field on attachment objects. The agent worked around a constraint it invented.',
   },
   {
-    run: 'vague-sdk',
-    promptStyle: 'vague',
+    run: 'simple-sdk',
+    promptStyle: 'simple',
     claim: '"Resend\'s contact API does not expose a generic key/value metadata field"',
     reality: 'The Contact Properties API provides exactly this. The agent acknowledged the gap in a comment rather than looking it up.',
   },
@@ -40,7 +40,7 @@ export default function FabricationTable() {
         <tbody>
           {ROWS.map((row, i) => (
             <tr key={row.run} className={`align-top ${i % 2 === 0 ? 'bg-stone-100/50 dark:bg-stone-850/20' : ''}`}>
-              <td className={`py-3 pr-4 font-medium text-[12px] ${row.promptStyle === 'precise' ? 'text-crimson' : 'text-stone-500 dark:text-stone-400'}`}>
+              <td className={`py-3 pr-4 font-medium text-[12px] ${row.promptStyle === 'complex' ? 'text-crimson' : 'text-stone-500 dark:text-stone-400'}`}>
                 {row.run}
               </td>
               <td className="py-3 px-4 text-stone-600 dark:text-stone-400 italic leading-relaxed">

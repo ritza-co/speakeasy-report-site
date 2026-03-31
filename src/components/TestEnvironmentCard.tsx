@@ -1,9 +1,17 @@
-const FIELDS = [
-  { label: 'Model', value: 'Claude Sonnet 4.6' },
-  { label: 'Date',  value: '27 March 2026' },
-]
+interface TestEnvironmentCardProps {
+  model?: string
+  date?: string
+}
 
-export default function TestEnvironmentCard() {
+export default function TestEnvironmentCard({
+  model = 'Claude Sonnet 4.6',
+  date  = '27 March 2026',
+}: TestEnvironmentCardProps) {
+  const FIELDS = [
+    { label: 'Model', value: model },
+    { label: 'Date',  value: date  },
+  ]
+
   return (
     <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
       {FIELDS.map((field, i) => (

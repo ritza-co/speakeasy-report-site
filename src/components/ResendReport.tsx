@@ -12,6 +12,7 @@ import FeatureCategoryTable from './FeatureCategoryTable'
 import CostCorrectnessScatter from './CostCorrectnessScatter'
 import ConfigAccessTable from './ConfigAccessTable'
 import ConceptMappingTable from './ConceptMappingTable'
+import TestEnvironmentCard from './TestEnvironmentCard'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
@@ -139,24 +140,26 @@ export default function ResendReport() {
               Two prompts describing the same task
             </h3>
             <p>
-              The vague prompt describes the task as a non-technical user might: with natural
-              language, no API names, and no structural requirements. The precise prompt
+              The simple prompt describes the task as a non-technical user might: with natural
+              language, no API names, and no structural requirements. The complex prompt
               describes the same task as a developer would: with numbered steps, a specified
               runtime, and explicit output expectations. Neither prompt names any Resend APIs.
             </p>
 
             <PromptCards
-              vague="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
-              preciseIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
-              preciseSteps={[
+              simple="I want to send a newsletter to my premium subscribers. I have a list of customers and want to tag them as premium, store their subscription tier as extra info on their profile, then send them a broadcast email that uses that info to personalize the message. Embed our company logo so it shows up directly in the email body rather than as an attachment. Make sure the send is safe to retry without sending duplicates."
+              complexIntro="You are building a Node.js script that sends a personalized broadcast email to a group of premium customers using a transactional email API. The script should:"
+              complexSteps={[
                 'Define a customer group for premium users.',
                 'Create a customer profile with a custom property that stores their subscription tier.',
                 'Add that customer to the premium group.',
                 'Compose a broadcast email to the entire premium group where the message body is personalized using the customer\'s subscription tier property. The email should display the company logo inline in the HTML body, not as a downloadable attachment.',
                 'Send the broadcast in a way that is safe to retry — if the script runs twice, the email should not be sent twice.',
               ]}
-              preciseOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
+              complexOutro="Use environment variables for all API keys. The script should be runnable from the command line and log the result of each step."
             />
+
+            <TestEnvironmentCard model="Claude Sonnet 4.6" date="23 March 2026" />
           </div>
         </Section>
 
@@ -199,8 +202,8 @@ export default function ResendReport() {
             <AgentActivity
               runs={[
                 {
-                  label: 'Vague — raw HTTP',
-                  promptStyle: 'vague',
+                  label: 'Simple — raw HTTP',
+                  promptStyle: 'simple',
                   tools: [
                     { name: 'Agent', count: 2, category: 'other' },
                     { name: 'Bash',  count: 1, category: 'run'   },
@@ -208,8 +211,8 @@ export default function ResendReport() {
                   ],
                 },
                 {
-                  label: 'Precise — raw HTTP',
-                  promptStyle: 'precise',
+                  label: 'Complex — raw HTTP',
+                  promptStyle: 'complex',
                   tools: [
                     { name: 'Agent', count: 1, category: 'other' },
                     { name: 'Bash',  count: 2, category: 'run'   },
@@ -231,7 +234,7 @@ export default function ResendReport() {
             </p>
 
             <ConceptScoreTable
-              columns={['Vague', 'Precise']}
+              columns={['Simple', 'Complex']}
               rows={[
                 { concept: 'Tag premium users (Segments API)',            scores: ['Partial', 'Yes']     },
                 { concept: 'Store subscription tier (Contact Properties)', scores: ['Partial', 'Partial'] },
@@ -241,13 +244,13 @@ export default function ResendReport() {
                 { concept: 'Idempotency / safe to retry',                  scores: ['Yes',     'Yes']     },
               ]}
               scores={[
-                { label: 'Vague',   value: '4.5 / 6' },
-                { label: 'Precise', value: '4.0 / 6' },
+                { label: 'Simple',  value: '4.5 / 6' },
+                { label: 'Complex', value: '4.0 / 6' },
               ]}
             />
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
-              Vague prompt (4.5/6)
+              Simple prompt (4.5/6)
             </h4>
             <p>
               The agent dispatched a subagent to fetch the Resend docs, got the real API
@@ -268,10 +271,10 @@ export default function ResendReport() {
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
-              Precise prompt (4.0/6)
+              Complex prompt (4.0/6)
             </h4>
             <p>
-              The precise prompt produced a more complete implementation: Where the prompt named
+              The complex prompt produced a more complete implementation: Where the prompt named
               a feature explicitly, the agent delivered it. But when the agent hit a gap
               in its knowledge, extra specificity made things worse, not better. Rather
               than flagging uncertainty, it treated an ambiguous research result as
@@ -300,13 +303,13 @@ export default function ResendReport() {
             </h3>
 
             <TokenBar
-              visibleIds={['vague-raw-api', 'precise-raw-api']}
-              highlightIds={['vague-raw-api', 'precise-raw-api']}
+              visibleIds={['simple-raw-api', 'complex-raw-api']}
+              highlightIds={['simple-raw-api', 'complex-raw-api']}
             />
 
             <p>
-              The vague run completed in six turns with 111,136 cache read tokens. The
-              precise run took 11 turns and read 667,099 cached tokens, using six times more
+              The simple run completed in six agent actions with 111,136 cache read tokens. The
+              complex run took 11 agent actions and read 667,099 cached tokens, using six times more
               internal context retrieval before writing. More instruction produced more
               deliberation, still bounded entirely by training data. Neither run queried
               any external sources, despite them being available.
@@ -317,19 +320,19 @@ export default function ResendReport() {
             </h3>
 
             <p>
-              Both runs scored similarly. The vague prompt got 4.5/6 and the precise prompt got 4.0/6.
-              The precise prompt did not improve the score. It produced a more complete
+              Both runs scored similarly. The simple prompt got 4.5/6 and the complex prompt got 4.0/6.
+              The complex prompt did not improve the score. It produced a more complete
               implementation in some areas, while creating a more confident incorrect answer
               in others.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white">Vague:</strong>{' '}
+                <strong className="text-ink dark:text-white">Simple:</strong>{' '}
                 This run was mostly correct, but the agent filled gaps silently. It reached for
                 familiar patterns without searching for what it did not know.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Precise:</strong>{' '}
+                <strong className="text-ink dark:text-white">Complex:</strong>{' '}
                 This run was more complete and deliberate, but had one fabricated constraint. The
                 structured prompt unlocked more of what the agent knew, but when it hit the edge of
                 its training data, it invented a fact rather than admitting uncertainty.
@@ -343,14 +346,14 @@ export default function ResendReport() {
             <RunSummaryCards
               runs={[
                 {
-                  label:     'Vague',
+                  label:     'Simple',
                   score:     '4.5 / 6',
                   turns:     6,
                   cacheRead: '111k',
                   keyMiss:   'Contact Properties API missed (used inline data field). Segment assumed to exist rather than created programmatically.',
                 },
                 {
-                  label:     'Precise',
+                  label:     'Complex',
                   score:     '4.0 / 6',
                   turns:     11,
                   cacheRead: '667k',
@@ -378,8 +381,8 @@ export default function ResendReport() {
               question is whether this static scaffolding closes the gaps that raw HTTP
               leaves open, or whether the agent still relies on training data for anything
               it cannot derive from the types alone. These two runs give a clear answer: The
-              SDK amplifies whatever the prompt provides, making things worse with a vague
-              prompt and significantly better with a precise one.
+              SDK amplifies whatever the prompt provides, making things worse with a simple
+              prompt and significantly better with a complex one.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -399,8 +402,8 @@ export default function ResendReport() {
             <AgentActivity
               runs={[
                 {
-                  label: 'Vague — SDK',
-                  promptStyle: 'vague',
+                  label: 'Simple — SDK',
+                  promptStyle: 'simple',
                   tools: [
                     { name: 'Agent', count: 1, category: 'other' },
                     { name: 'Read',  count: 1, category: 'read'  },
@@ -409,8 +412,8 @@ export default function ResendReport() {
                   ],
                 },
                 {
-                  label: 'Precise — SDK',
-                  promptStyle: 'precise',
+                  label: 'Complex — SDK',
+                  promptStyle: 'complex',
                   tools: [
                     { name: 'Agent', count: 1, category: 'other' },
                     { name: 'Read',  count: 2, category: 'read'  },
@@ -427,7 +430,7 @@ export default function ResendReport() {
             </h3>
 
             <ConceptScoreTable
-              columns={['Vague', 'Precise']}
+              columns={['Simple', 'Complex']}
               rows={[
                 { concept: 'Tag premium users (Segments API)',             scores: ['No',      'Yes']     },
                 { concept: 'Store subscription tier (Contact Properties)', scores: ['No',      'Partial'] },
@@ -437,13 +440,13 @@ export default function ResendReport() {
                 { concept: 'Idempotency / safe to retry',                  scores: ['Partial', 'Yes']     },
               ]}
               scores={[
-                { label: 'Vague',   value: '1.5 / 6' },
-                { label: 'Precise', value: '4.0 / 6' },
+                { label: 'Simple',  value: '1.5 / 6' },
+                { label: 'Complex', value: '4.0 / 6' },
               ]}
             />
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
-              Vague prompt (1.5/6) — lowest score in the benchmark
+              Simple prompt (1.5/6) — lowest score in the benchmark
             </h4>
             <p>
               The SDK gave the agent a starting point, and it went straight to the
@@ -468,10 +471,10 @@ export default function ResendReport() {
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
-              Precise prompt (4.0/6) — largest prompt delta in the benchmark
+              Complex prompt (4.0/6) — largest prompt delta in the benchmark
             </h4>
             <p>
-              Where the vague prompt let the agent default to what it knew, the precise
+              Where the simple prompt let the agent default to what it knew, the complex
               prompt named what it needed to do. The agent followed those references and
               the core architecture came out correctly. This is the clearest example in the
               benchmark of developer knowledge substituting for tooling: When the prompt
@@ -497,15 +500,15 @@ export default function ResendReport() {
             </h3>
 
             <TokenBar
-              visibleIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk']}
-              highlightIds={['vague-sdk', 'precise-sdk']}
+              visibleIds={['simple-raw-api', 'complex-raw-api', 'simple-sdk', 'complex-sdk']}
+              highlightIds={['simple-sdk', 'complex-sdk']}
             />
 
             <p>
               Both runs followed the same pattern as their raw HTTP counterparts: More
               instructions produced more internal context retrieval, all bounded by
               training data. Neither run queried any external sources, despite them being
-              available. The additional turns over the raw HTTP runs reflect SDK method
+              available. The additional agent actions over the raw HTTP runs reflect SDK method
               exploration happening entirely within training data.
             </p>
 
@@ -515,19 +518,19 @@ export default function ResendReport() {
 
             <p>
               The SDK acts as a multiplier of prompt quality, not a floor. The 2.5-point gap
-              between the vague and precise prompts is the largest delta of any configuration
+              between the simple and complex prompts is the largest delta of any configuration
               in the benchmark.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white">Vague:</strong>{' '}
+                <strong className="text-ink dark:text-white">Simple:</strong>{' '}
                 Worse than raw HTTP with the same prompt. The SDK's familiar entry points
                 led the agent away from broadcast-specific methods rather than toward them.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Precise:</strong>{' '}
+                <strong className="text-ink dark:text-white">Complex:</strong>{' '}
                 Better than raw HTTP with the same prompt. Named methods unlocked SDK
-                features that the vague prompt never found. The fabrication problem
+                features that the simple prompt never found. The fabrication problem
                 persisted regardless.
               </li>
             </ul>
@@ -540,14 +543,14 @@ export default function ResendReport() {
             <RunSummaryCards
               runs={[
                 {
-                  label:     'Vague',
+                  label:     'Simple',
                   score:     '1.5 / 6',
                   turns:     10,
                   cacheRead: '190k',
                   keyMiss:   'Broadcasts API missed entirely — sent individual emails in a loop. Segments API also missed. Lowest score in the benchmark.',
                 },
                 {
-                  label:     'Precise',
+                  label:     'Complex',
                   score:     '4.0 / 6',
                   turns:     12,
                   cacheRead: '248k',
@@ -574,7 +577,7 @@ export default function ResendReport() {
               data and SDK types. It could query the Resend MCP server mid-session to look
               up documentation. Both runs show MCP functioning as a discovery tool, letting
               the agent find correct API patterns it would otherwise have guessed at. The
-              question is not whether it helped, but how. In the precise run, it went further:
+              question is not whether it helped, but how. In the complex run, it went further:
               The agent executed the code, hit real errors, and iterated against live API
               responses, something no other run in the benchmark did.
             </p>
@@ -592,8 +595,8 @@ export default function ResendReport() {
             <AgentActivity
               runs={[
                 {
-                  label: 'Vague — SDK + MCP',
-                  promptStyle: 'vague',
+                  label: 'Simple — SDK + MCP',
+                  promptStyle: 'simple',
                   tools: [
                     { name: 'mcp__resend__search_resend', count: 4, category: 'mcp'   },
                     { name: 'ToolSearch',                 count: 2, category: 'other' },
@@ -604,8 +607,8 @@ export default function ResendReport() {
                   ],
                 },
                 {
-                  label: 'Precise — SDK + MCP',
-                  promptStyle: 'precise',
+                  label: 'Complex — SDK + MCP',
+                  promptStyle: 'complex',
                   tools: [
                     { name: 'mcp__resend__search_resend', count: 8,  category: 'mcp'   },
                     { name: 'ToolSearch',                 count: 1,  category: 'other' },
@@ -624,7 +627,7 @@ export default function ResendReport() {
             </h3>
 
             <ConceptScoreTable
-              columns={['Vague', 'Precise']}
+              columns={['Simple', 'Complex']}
               rows={[
                 { concept: 'Tag premium users (Segments API)',             scores: ['Yes',     'Partial'] },
                 { concept: 'Store subscription tier (Contact Properties)', scores: ['Yes',     'Yes']     },
@@ -634,19 +637,19 @@ export default function ResendReport() {
                 { concept: 'Idempotency / safe to retry',                  scores: ['Yes',     'Yes']     },
               ]}
               scores={[
-                { label: 'Vague',   value: '5.0 / 6' },
-                { label: 'Precise', value: '5.5 / 6' },
+                { label: 'Simple',  value: '5.0 / 6' },
+                { label: 'Complex', value: '5.5 / 6' },
               ]}
             />
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
-              Vague prompt (5.0/6)
+              Simple prompt (5.0/6)
             </h4>
             <p>
               Adding the MCP server changed the agent's behaviour before it wrote a single line.
               Instead of defaulting to what it knew, it queried the documentation four times,
               discovering the correct APIs for broadcast sending, contact grouping, and
-              profile data storage that the vague SDK run had missed entirely.
+              profile data storage that the simple SDK run had missed entirely.
               It implemented the multi-step contact properties flow correctly, which was something
               no non-MCP run managed.
             </p>
@@ -656,7 +659,7 @@ export default function ResendReport() {
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
-              Precise prompt (5.5/6) — highest score in the benchmark
+              Complex prompt (5.5/6) — highest score in the benchmark
             </h4>
             <p>
               This run was qualitatively different from every other in the benchmark.
@@ -685,16 +688,16 @@ export default function ResendReport() {
             </h3>
 
             <TokenBar
-              visibleIds={['vague-raw-api', 'precise-raw-api', 'vague-sdk', 'precise-sdk', 'vague-sdk-mcp', 'precise-sdk-mcp']}
-              highlightIds={['vague-sdk-mcp', 'precise-sdk-mcp']}
+              visibleIds={['simple-raw-api', 'complex-raw-api', 'simple-sdk', 'complex-sdk', 'simple-sdk-mcp', 'complex-sdk-mcp']}
+              highlightIds={['simple-sdk-mcp', 'complex-sdk-mcp']}
             />
 
             <p>
               The numbers reflect two fundamentally different working modes:
             </p>
             <ul>
-              <li>The vague run was more active than any non-MCP run, but still recognisable in shape: 19 turns, MCP queries mid-session, and then done.</li>
-              <li>The precise run was in a different category: 55 turns and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
+              <li>The simple run was more active than any non-MCP run, but still recognisable in shape: 19 agent actions, MCP queries mid-session, and then done.</li>
+              <li>The complex run was in a different category: 55 agent actions and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
             </ul>
             <p>
               Neither run queried any external sources, despite them being available.
@@ -706,18 +709,18 @@ export default function ResendReport() {
 
             <p>
               MCP changed how the agent worked. The non-MCP runs wrote code and stopped.
-              The MCP runs researched, wrote, and in the precise case, ran and iterated
+              The MCP runs researched, wrote, and in the complex case, ran and iterated
               against live API responses. MCP also compressed the effect of prompt quality
               to its smallest value in the benchmark.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white">Vague:</strong>{' '}
+                <strong className="text-ink dark:text-white">Simple:</strong>{' '}
                 Scored 5.0/6, higher than every non-MCP run regardless of prompt style. MCP
                 substituted the specificity that the prompt lacked.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Precise:</strong>{' '}
+                <strong className="text-ink dark:text-white">Complex:</strong>{' '}
                 Scored 5.5/6, the highest in the benchmark. This was the only run to execute the
                 code and validate against a live API, acknowledging gaps rather than fabricating
                 a constraint.
@@ -732,14 +735,14 @@ export default function ResendReport() {
             <RunSummaryCards
               runs={[
                 {
-                  label:     'Vague',
+                  label:     'Simple',
                   score:     '5.0 / 6',
                   turns:     19,
                   cacheRead: '441k',
                   keyMiss:   'Inline logo used data URI instead of content_id despite MCP being available to look up the correct approach.',
                 },
                 {
-                  label:     'Precise',
+                  label:     'Complex',
                   score:     '5.5 / 6',
                   turns:     55,
                   cacheRead: '2.2M',
@@ -774,13 +777,13 @@ export default function ResendReport() {
               The two-step create-then-assign flow is not well covered in training data
               and the agent consistently guessed the wrong shape or skipped it entirely. Inline logo handling split along the fabrication
               fault line: the two runs that got it right either happened to know the correct
-              approach from training data (vague-raw-api) or confirmed it via MCP
-              (precise-sdk-mcp). The three that got it wrong all invented a constraint to
+              approach from training data (simple-raw-api) or confirmed it via MCP
+              (complex-sdk-mcp). The three that got it wrong all invented a constraint to
               justify a fallback.
             </p>
 
             <ConceptScoreTable
-              columns={['V-Raw', 'V-SDK', 'V-MCP', 'P-Raw', 'P-SDK', 'P-MCP']}
+              columns={['S-Raw', 'S-SDK', 'S-MCP', 'C-Raw', 'C-SDK', 'C-MCP']}
               rows={[
                 { concept: 'Tag premium users (Segments API)',             scores: ['Partial', 'No',      'Yes',     'Yes',     'Yes',     'Partial'] },
                 { concept: 'Store subscription tier (Contact Properties)', scores: ['Partial', 'No',      'Yes',     'Partial', 'Partial', 'Yes']     },
@@ -790,12 +793,12 @@ export default function ResendReport() {
                 { concept: 'Idempotency / safe to retry',                   scores: ['Yes',     'Partial', 'Yes',     'Yes',     'Yes',     'Yes']     },
               ]}
               scores={[
-                { label: 'V-Raw', value: '4.5 / 6' },
-                { label: 'V-SDK', value: '1.5 / 6' },
-                { label: 'V-MCP', value: '5.0 / 6' },
-                { label: 'P-Raw', value: '4.0 / 6' },
-                { label: 'P-SDK', value: '4.0 / 6' },
-                { label: 'P-MCP', value: '5.5 / 6' },
+                { label: 'S-Raw', value: '4.5 / 6' },
+                { label: 'S-SDK', value: '1.5 / 6' },
+                { label: 'S-MCP', value: '5.0 / 6' },
+                { label: 'C-Raw', value: '4.0 / 6' },
+                { label: 'C-SDK', value: '4.0 / 6' },
+                { label: 'C-MCP', value: '5.5 / 6' },
               ]}
             />
 
@@ -829,11 +832,11 @@ export default function ResendReport() {
             <FeatureCategoryTable />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP improved correctness at a real cost in tokens and turns
+              MCP improved correctness at a real cost in tokens and agent actions
             </h3>
             <p>
-              The vague-sdk-mcp run used roughly four times as many turns as vague-raw-api.
-              The precise-sdk-mcp run is in a different category: 55 turns and 2.2M cache
+              The simple-sdk-mcp run used roughly four times as many actions as simple-raw-api.
+              The complex-sdk-mcp run is in a different category: 55 actions and 2.2M cache
               read tokens driven by an iterative cycle of run, fail, read error, correct,
               and re-run. Every non-MCP run wrote a file and stopped without executing it.
               Whether that cost is worth it depends on how much correctness matters
@@ -848,10 +851,10 @@ export default function ResendReport() {
               Prompt precision had diminishing returns as tooling improved
             </h3>
             <p>
-              Prompt detail most affected the SDK configuration, where a precise
-              prompt added 2.5 concept score points over a vague one. It had the least impact
-              on the MCP configuration, where the delta was only 0.5 points. The vague-raw-api run
-              actually outscored precise-raw-api by 0.5 points: More specificity created
+              Prompt detail most affected the SDK configuration, where a complex
+              prompt added 2.5 concept score points over a simple one. It had the least impact
+              on the MCP configuration, where the delta was only 0.5 points. The simple-raw-api run
+              actually outscored complex-raw-api by 0.5 points: More specificity created
               more opportunities for confident wrong answers, demonstrating that prompt detail
               changes what the agent attempts, but not whether it knows when it's wrong.
             </p>
@@ -878,13 +881,13 @@ export default function ResendReport() {
                 got this right. With MCP, both did.
               </li>
               <li>
-                <strong className="text-ink dark:text-white">Use precise prompts when MCP is not available, but treat them as a partial fix:</strong>{' '}
+                <strong className="text-ink dark:text-white">Use complex prompts when MCP is not available, but treat them as a partial fix:</strong>{' '}
                 Preventing fabrication in response to knowledge gaps requires live tooling,
                 not better instructions.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Expect MCP runs to cost more:</strong>{' '}
-                The precise-sdk-mcp run was the most expensive and the most correct. The
+                The complex-sdk-mcp run was the most expensive and the most correct. The
                 agent was doing more work, not just generating more tokens.
               </li>
             </ul>

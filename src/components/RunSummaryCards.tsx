@@ -32,7 +32,7 @@ export default function RunSummaryCards({ runs }: RunSummaryCardsProps) {
             </div>
             <div>
               <p className="font-serif text-2xl font-bold text-ink dark:text-white">{run.turns}</p>
-              <p className="text-[10px] uppercase tracking-widest text-stone-400 font-sans mt-0.5">turns</p>
+              <p className="text-[10px] uppercase tracking-widest text-stone-400 font-sans mt-0.5">actions</p>
             </div>
             <div>
               <p className="font-serif text-2xl font-bold text-ink dark:text-white">{run.cacheRead}</p>
