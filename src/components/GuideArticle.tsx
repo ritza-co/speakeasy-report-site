@@ -357,6 +357,30 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-6 mb-3">
+              Context cost
+            </h3>
+            <p>
+              Adding an MCP server didn't increase context consumption. Both sessions ended at the same context usage, with the MCP agent slightly lower.
+            </p>
+            <div className="flex gap-4 my-5">
+              <div className="flex-1 border border-stone-200 dark:border-stone-700 rounded-lg p-4">
+                <div className="text-[11px] font-sans font-semibold text-stone-400 uppercase tracking-wide mb-2">Web search only</div>
+                <div className="text-2xl font-mono font-bold text-ink dark:text-white">37k</div>
+                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-1">of 200k tokens used (18%)</div>
+                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-3">19.9k in messages</div>
+              </div>
+              <div className="flex-1 border border-stone-200 dark:border-stone-700 rounded-lg p-4">
+                <div className="text-[11px] font-sans font-semibold text-stone-400 uppercase tracking-wide mb-2">Web search + MCP</div>
+                <div className="text-2xl font-mono font-bold text-ink dark:text-white">36k</div>
+                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-1">of 200k tokens used (18%)</div>
+                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-3">18.8k in messages</div>
+              </div>
+            </div>
+            <p>
+              The MCP agent used fewer message tokens because it resolved the type error in fewer exchanges. Better context produced better output and a shorter path to get there.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white mt-6 mb-3">
               Where this fits in a larger picture
             </h3>
             <p>
