@@ -9,18 +9,18 @@ const M = { top: 28, right: 36, bottom: 64, left: 96 }
 const PW = W - M.left - M.right
 const PH = H - M.top  - M.bottom
 
-// Axes: x = elapsed_seconds, y = total_context (log-ish feel via clamped scale)
+// Axes: x = elapsed_seconds, y = output tokens
 const MAX_ELAPSED  = 3200   // 50m26s outlier
-const MAX_CONTEXT  = 5_000_000
+const MAX_OUTPUT   = 35_000
 
 const xScale = (v: number) => Math.min((v / MAX_ELAPSED) * PW, PW)
-const yScale = (v: number) => PH - Math.min((v / MAX_CONTEXT) * PH, PH)
+const yScale = (v: number) => PH - Math.min((v / MAX_OUTPUT) * PH, PH)
 const rScale = (output: number) => 5 + Math.min((output / 35000) * 14, 14)
 
 const X_TICKS = [0, 600, 1200, 1800, 2400, 3000]
-const Y_TICKS = [0, 1_000_000, 2_000_000, 3_000_000, 4_000_000, 5_000_000]
+const Y_TICKS = [0, 7_000, 14_000, 21_000, 28_000, 35_000]
 const fmtX = (v: number) => v === 0 ? '0' : `${v / 60 | 0}m`
-const fmtY = (v: number) => v === 0 ? '0' : `${(v / 1_000_000).toFixed(1)}M`
+const fmtY = (v: number) => v === 0 ? '0' : `${Math.round(v / 1000)}k`
 
 function Pill({ label, active, color, onClick }: {
   label: string; active: boolean; color?: string; onClick: () => void
@@ -62,9 +62,7 @@ function Tooltip({ data }: { data: TooltipData }) {
     >
       <div className="flex justify-between gap-4 mb-1">
         <span className="text-stone-400">{TOOL_LABELS[r.tool]}</span>
-        <span className={r.success ? 'text-green-400' : 'text-red-400'}>
-          {r.success ? '✓ success' : '✗ failed'}
-        </span>
+        <span className="text-stone-300">avg of 3 runs</span>
       </div>
       <div className="space-y-0.5 text-stone-300">
         <div className="flex justify-between gap-4">
@@ -79,12 +77,12 @@ function Tooltip({ data }: { data: TooltipData }) {
           <span className="text-stone-400">Time</span><span>{r.elapsed}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className="text-stone-400">Total ctx</span>
-          <span>{(r.tokens.total_context / 1_000_000).toFixed(2)}M</span>
-        </div>
-        <div className="flex justify-between gap-4">
           <span className="text-stone-400">Output</span>
           <span>{r.tokens.output.toLocaleString()}</span>
+        </div>
+        <div className="flex justify-between gap-4">
+          <span className="text-stone-400">Total ctx</span>
+          <span>{(r.tokens.total_context / 1_000_000).toFixed(2)}M</span>
         </div>
         {r.mcp_calls > 0 && (
           <div className="flex justify-between gap-4">
@@ -153,7 +151,7 @@ export default function ScatterPlot() {
       </div>
 
       <p className="text-[11px] text-stone-400 font-sans mb-3">
-        Showing <strong className="text-ink dark:text-white">{activeSet.size}</strong> of {BENCHMARKS.length} sessions
+        Showing <strong className="text-ink dark:text-white">{activeSet.size * 3}</strong> of 108 sessions — each point is the average of 3 runs
       </p>
 
       <div className="w-full overflow-x-auto" ref={containerRef}>
@@ -190,13 +188,13 @@ export default function ScatterPlot() {
             ))}
             <text transform={`translate(${-76},${PH / 2}) rotate(-90)`}
               textAnchor="middle" fontSize={11} fill="var(--scatter-label)" fontFamily="Inter, sans-serif">
-              Total context tokens
+              Output tokens
             </text>
 
             {BENCHMARKS.map((run, index) => {
               const visible = activeSet.has(run.id)
               const cx = xScale(run.elapsed_seconds)
-              const cy = yScale(run.tokens.total_context)
+              const cy = yScale(run.tokens.output)
               const r  = rScale(run.tokens.output)
               const color = METHOD_COLORS[run.method]
               const modelColor = MODEL_COLORS[run.model]
@@ -204,7 +202,7 @@ export default function ScatterPlot() {
               const isSonnet = run.model === 'Sonnet'
 
               const targetOpacity = dotsVisible
-                ? (visible ? (run.success ? 0.82 : 0.25) : 0.04)
+                ? (visible ? 0.82 : 0.04)
                 : 0
               const delay = hasAnimated.current ? 0 : index * 0.006
 
@@ -248,7 +246,7 @@ export default function ScatterPlot() {
           GPT-5.4 = outline
         </span>
         <span className="text-stone-300">·</span>
-        <span>Dot size = output tokens · Faded = failed</span>
+        <span>Dot size = output tokens</span>
       </div>
 
       {tip && <Tooltip data={tip} />}
