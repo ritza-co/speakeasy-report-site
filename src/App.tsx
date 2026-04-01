@@ -5,13 +5,15 @@ import ResendReport from './components/ResendReport'
 import VercelReport from './components/VercelReport'
 import GuideArticle from './components/GuideArticle'
 import FullBenchmarkReport from './components/FullBenchmarkReport'
+import DocuSignReport from './components/DocuSignReport'
 
-type Tab = 'guide' | 'resend' | 'vercel' // | 'full'
+type Tab = 'guide' | 'resend' | 'vercel' | 'docusign' // | 'full'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
-  { id: 'guide',  label: 'Introduction',      subtitle: 'AI agents and context' },
-  { id: 'vercel', label: 'Vercel AI SDK',     subtitle: 'SDK migration benchmark' },
-  { id: 'resend', label: 'Resend',            subtitle: 'Well-documented API' },
+  { id: 'guide',    label: 'Introduction',  subtitle: 'AI agents and context' },
+  { id: 'vercel',   label: 'Vercel AI SDK', subtitle: 'SDK migration benchmark' },
+  { id: 'resend',   label: 'Resend',        subtitle: 'Well-documented API' },
+  { id: 'docusign', label: 'DocuSign',      subtitle: 'Enterprise API benchmark' },
   // { id: 'full',   label: 'Full Benchmark',    subtitle: '108 sessions, 4 APIs, 3 models' },
 ]
 
@@ -75,9 +77,10 @@ export default function App() {
       </div>
 
       {/* ─── REPORT CONTENT ─── */}
-      {activeTab === 'guide'  && <GuideArticle onNavigate={setActiveTab} />}
-      {activeTab === 'vercel' && <VercelReport />}
-      {activeTab === 'resend' && <ResendReport />}
+      {activeTab === 'guide'    && <GuideArticle onNavigate={setActiveTab} />}
+      {activeTab === 'vercel'   && <VercelReport />}
+      {activeTab === 'resend'   && <ResendReport />}
+      {activeTab === 'docusign' && <DocuSignReport />}
       {/* {activeTab === 'full'   && <FullBenchmarkReport />} */}
     </div>
   )
