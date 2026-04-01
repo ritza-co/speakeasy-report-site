@@ -95,6 +95,54 @@ function ComparisonBar({ label, noMcp, withMcp, max, format }: {
   )
 }
 
+// ── Highlighted finding block ────────────────────────────────────────────────
+
+function Highlight({ number, title, children }: { number: number; title: string; children: React.ReactNode }) {
+  return (
+    <div className="flex gap-4 py-5 border-b border-stone-100 dark:border-stone-800 last:border-0">
+      <div className="shrink-0 w-6 h-6 rounded-full bg-crimson text-white text-[11px] font-semibold flex items-center justify-center mt-0.5 font-sans">
+        {number}
+      </div>
+      <div className="space-y-1">
+        <p className="text-[14px] font-semibold text-ink dark:text-white">{title}</p>
+        <p className="text-[14px] text-stone-600 dark:text-stone-400 leading-relaxed">{children}</p>
+      </div>
+    </div>
+  )
+}
+
+function HighlightBox({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="my-6 border border-stone-200 dark:border-stone-800 rounded divide-y divide-stone-100 dark:divide-stone-800 bg-stone-50/50 dark:bg-stone-900/40">
+      {children}
+    </div>
+  )
+}
+
+function Callout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="my-5 border-l-2 border-crimson pl-5 py-1">
+      <p className="text-[14px] text-stone-700 dark:text-stone-300 leading-relaxed italic">{children}</p>
+    </div>
+  )
+}
+
+// ── Prompt block ─────────────────────────────────────────────────────────────
+
+function PromptBlock({ label, children }: { label: string; children: string }) {
+  return (
+    <div className="my-6 rounded overflow-hidden border border-stone-200 dark:border-stone-800">
+      <div className="flex items-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+        <span className="w-2 h-2 rounded-full bg-crimson" />
+        <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans">{label}</span>
+      </div>
+      <pre className="p-4 text-[12px] font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-950">
+        {children}
+      </pre>
+    </div>
+  )
+}
+
 // ── Token table with inline bars ─────────────────────────────────────────────
 
 function TokenTable({ rows }: { rows: { label: string; display: string; value: number }[] }) {
@@ -277,7 +325,7 @@ export default function HowToHelpAgentsReport() {
               following prompt:
             </p>
 
-            <pre className="bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-[12px] font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap text-stone-700 dark:text-stone-300">
+            <PromptBlock label="Prompt — no MCP">
 {`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. Here are the features it should have:
 ### Live Order Board
 - Orders displayed as cards in four columns: New, Preparing, Ready, Served
@@ -308,7 +356,7 @@ export default function HowToHelpAgentsReport() {
 username: order-dashboard-user password: dashboard_secret_2024
 http://localhost:3001 for the existing dashboard.
 Only rely on the dashboard. This is what we have, as in a real scenario, you don't have access to the running server or directories. Only rely on the dashboard testing and findings.`}
-            </pre>
+            </PromptBlock>
 
             <p>The prompt specified three things beyond the standard feature list:</p>
             <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
@@ -402,30 +450,29 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
               className="rounded border border-stone-200 dark:border-stone-800 max-w-full my-2"
             />
 
-            <p>
+            <Callout>
               Both strategies led to the same conclusion: Claude collapsed the entire data layer
               onto a single endpoint, using the orders endpoint as the source for analytics, client
               data, and everything else.
-            </p>
+            </Callout>
 
-            <p className="font-semibold text-ink dark:text-white">What can we learn from this run?</p>
-            <ol className="list-decimal list-outside space-y-3 pl-5 text-[14px]">
-              <li>
-                <strong>Exploration is not the same as understanding.</strong> The agent navigated
-                the dashboard, read chunk files, and brute-forced endpoints until it had enough to
-                build a functional system. <strong>Functional is not correct</strong>. The resulting
-                dashboard used one endpoint for everything, meaning analytics, client data, and order
-                views all came from the same source, regardless of which service was responsible for
-                that data. The exploration took 54 minutes and 11.6M cache reads, and still produced
-                an architecturally wrong result.
-              </li>
-              <li>
-                <strong>Environment conditions matter.</strong> This run worked because the server
-                ran in development mode, where Next.js serves readable chunk files. In a production
-                build with obfuscated code, the reverse-engineering strategy would have failed. The
-                agent would have had fewer signals, and the output would likely have been worse.
-              </li>
-            </ol>
+            <p className="font-semibold text-ink dark:text-white pt-2">What can we learn from this run?</p>
+            <HighlightBox>
+              <Highlight number={1} title="Exploration is not the same as understanding.">
+                The agent navigated the dashboard, read chunk files, and brute-forced endpoints until
+                it had enough to build a functional system. <strong>Functional is not correct</strong>.
+                The resulting dashboard used one endpoint for everything, meaning analytics, client
+                data, and order views all came from the same source, regardless of which service was
+                responsible for that data. The exploration took 54 minutes and 11.6M cache reads,
+                and still produced an architecturally wrong result.
+              </Highlight>
+              <Highlight number={2} title="Environment conditions matter.">
+                This run worked because the server ran in development mode, where Next.js serves
+                readable chunk files. In a production build with obfuscated code, the
+                reverse-engineering strategy would have failed. The agent would have had fewer
+                signals, and the output would likely have been worse.
+              </Highlight>
+            </HighlightBox>
           </div>
         </Section>
 
@@ -442,7 +489,7 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
               named <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">orderify-docs</code>:
             </p>
 
-            <pre className="bg-stone-100 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded p-4 text-[12px] font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap text-stone-700 dark:text-stone-300">
+            <PromptBlock label="Prompt — with MCP">
 {`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. You also have access to a docs MCP server where you can ask everything you need about the services and the endpoints: orderify-docs
 . Here are the features it should have:
 ### Live Order Board
@@ -474,7 +521,7 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
 username: order-dashboard-user password: dashboard_secret_2024
 http://localhost:3001 for the existing dashboard.
 Only rely on the orderify-docs MCP server. This is what we have, as in a real scenario, you don't have access to the running server or directories. Before implementing any API call, query the orderify-docs MCP server to get the exact endpoint path, parameter names, identifier types, and request/response schema. Do not assume: look it up first.`}
-            </pre>
+            </PromptBlock>
 
             <p>The prompt specified four things:</p>
             <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
@@ -576,29 +623,27 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               onto the orders endpoint. The analytics came from the Analytics API, order validation
               went through the Jobs API, and order management used the Orders API as intended.
             </p>
-            <p>
+            <Callout>
               The result was a correct dashboard, built in 18 minutes instead of 50 minutes, using
               2.5M cache reads instead of 11.6M.
-            </p>
+            </Callout>
 
-            <p className="font-semibold text-ink dark:text-white">What can we learn from this run?</p>
-            <ol className="list-decimal list-outside space-y-3 pl-5 text-[14px]">
-              <li>
-                <strong>Queryable documentation changes agent behavior, not just speed.</strong> The
-                agent did not explore blindly. It
+            <p className="font-semibold text-ink dark:text-white pt-2">What can we learn from this run?</p>
+            <HighlightBox>
+              <Highlight number={1} title="Queryable documentation changes agent behavior, not just speed.">
+                The agent did not explore blindly. It
                 queried <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> before
                 writing any API call, which means it built on correct information from the start
                 rather than correcting mistakes after the fact. The 18-minute runtime and 2.5M cache
                 reads reflect that directness.
-              </li>
-              <li>
-                <strong>The agent decomposed the work naturally.</strong> With reliable documentation
-                available, Claude split the task toward two subagents: one for research, one for
-                implementation. That separation did not come from the prompt. It emerged because the
-                agent had enough information to plan before building. Without documentation, there
-                was no planning phase, only exploration.
-              </li>
-            </ol>
+              </Highlight>
+              <Highlight number={2} title="The agent decomposed the work naturally.">
+                With reliable documentation available, Claude split the task toward two subagents:
+                one for research, one for implementation. That separation did not come from the
+                prompt. It emerged because the agent had enough information to plan before building.
+                Without documentation, there was no planning phase, only exploration.
+              </Highlight>
+            </HighlightBox>
           </div>
         </Section>
 
@@ -647,11 +692,11 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               </table>
             </div>
 
-            <p>
+            <Callout>
               The surface features worked in both runs. Login, navigation, and order views loaded
               correctly either way. The difference appeared in the features that required knowing
               which service to use for the right data.
-            </p>
+            </Callout>
             <p>
               Without documentation, the agent spent 54 minutes exploring, reverse-engineering chunk
               files, and brute-forcing endpoints, and still produced a dashboard where analytics,
@@ -668,12 +713,12 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
         {/* ─── WHAT THIS MEANS ─── */}
         <Section id="takeaways" chapterLabel="Conclusions" headline="What this means for API providers">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-            <p>
+            <Callout>
               For the sake of agent experience, ship an MCP server alongside your API, or even
               better, a docs MCP server. With agents being able to code faster, exploration easily
               increases the margin of errors and assumptions, while correctness is what separates a
               working integration from a silent failure.
-            </p>
+            </Callout>
           </div>
         </Section>
 
