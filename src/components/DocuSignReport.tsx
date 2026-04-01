@@ -80,12 +80,12 @@ function GistLink({ label, href }: { label: string; href: string }) {
 
 function SessionLinks() {
   const sessions = [
-    { run: 'haiku-no-mcp',  href: 'https://gisthost.github.io/?99ffbf6c4154c5b049573d64314e02bb/index.html' },
-    { run: 'haiku-mcp',     href: 'https://gisthost.github.io/?d3c74bd094a2fd997156bc74f07e6b38/index.html' },
-    { run: 'sonnet-no-mcp', href: 'https://gisthost.github.io/?fb76fbfca6fa998cc7a1daccd902c55f/index.html' },
-    { run: 'sonnet-mcp',    href: 'https://gisthost.github.io/?06e5e657c5c9d272fbbe08e0254fd59f/index.html' },
-    { run: 'opus-no-mcp',   href: 'https://gisthost.github.io/?f06c9fbe08bb4c179d6a6c17c7e236dd/index.html' },
-    { run: 'opus-mcp',      href: 'https://gisthost.github.io/?68a66e9f603bfdef0960d8d0760cab74/index.html' },
+    { run: 'haiku-no-mcp',  href: 'https://gisthost.github.io/?03739716d9df6893fd6bd28913d8c088/index.html' },
+    { run: 'haiku-mcp',     href: 'https://gisthost.github.io/?62a38f4a4546d315204ebe189b9c47e6/index.html' },
+    { run: 'sonnet-no-mcp', href: 'https://gisthost.github.io/?7f399efa2d7d90218e3747583bdf8550/index.html' },
+    { run: 'sonnet-mcp',    href: 'https://gisthost.github.io/?4051629166b094536a29fbb9ebd90b27/index.html' },
+    { run: 'opus-no-mcp',   href: 'https://gisthost.github.io/?ea3dbb266159a430add48d3533f2b3d7/index.html' },
+    { run: 'opus-mcp',      href: 'https://gisthost.github.io/?3e4cc09bddf58665a39823f7c322fb66/index.html' },
   ]
   return (
     <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
@@ -105,64 +105,64 @@ function SessionLinks() {
 
 // ─── Workflow tab data ───────────────────────────────────────────────────────
 
-const GIST_HAIKU_NO_MCP  = 'https://gisthost.github.io/?99ffbf6c4154c5b049573d64314e02bb/index.html'
-const GIST_HAIKU_MCP     = 'https://gisthost.github.io/?d3c74bd094a2fd997156bc74f07e6b38/index.html'
-const GIST_SONNET_NO_MCP = 'https://gisthost.github.io/?fb76fbfca6fa998cc7a1daccd902c55f/index.html'
-const GIST_SONNET_MCP    = 'https://gisthost.github.io/?06e5e657c5c9d272fbbe08e0254fd59f/index.html'
-const GIST_OPUS_NO_MCP   = 'https://gisthost.github.io/?f06c9fbe08bb4c179d6a6c17c7e236dd/index.html'
-const GIST_OPUS_MCP      = 'https://gisthost.github.io/?68a66e9f603bfdef0960d8d0760cab74/index.html'
+const GIST_HAIKU_NO_MCP  = 'https://gisthost.github.io/?03739716d9df6893fd6bd28913d8c088'
+const GIST_HAIKU_MCP     = 'https://gisthost.github.io/?62a38f4a4546d315204ebe189b9c47e6'
+const GIST_SONNET_NO_MCP = 'https://gisthost.github.io/?7f399efa2d7d90218e3747583bdf8550'
+const GIST_SONNET_MCP    = 'https://gisthost.github.io/?4051629166b094536a29fbb9ebd90b27'
+const GIST_OPUS_NO_MCP   = 'https://gisthost.github.io/?ea3dbb266159a430add48d3533f2b3d7'
+const GIST_OPUS_MCP      = 'https://gisthost.github.io/?3e4cc09bddf58665a39823f7c322fb66'
 
 const HAIKU_NO_MCP_CALLS = [
-  { tool: 'Read / Glob',    description: 'Read task.md, .env, check for existing .py files', outcome: 'neutral' as const },
-  { tool: 'Write',          description: 'Write send_contract.py — na4.docusign.net', outcome: 'neutral' as const },
-  { tool: 'Bash',           description: 'Run script — 401 Unauthorized', outcome: 'failed' as const },
-  { tool: 'WebSearch',      description: 'Search DocuSign API authentication bearer token 2026', outcome: 'neutral' as const },
-  { tool: 'WebFetch ×2',   description: 'Fetch two DocuSign auth docs pages — no sandbox URL mentioned', outcome: 'failed' as const },
-  { tool: 'Bash ×10',      description: 'Inline tests: vary base URL (na3, na4, eu, sandbox.docusign.net) — all 401', outcome: 'failed' as const },
-  { tool: 'Bash',           description: 'Inline test against demo.docusign.net — 200 OK', outcome: 'found' as const },
-  { tool: 'Edit',           description: 'Update base URL to demo.docusign.net', outcome: 'neutral' as const },
-  { tool: 'Bash',           description: 'Run script — envelope sent', outcome: 'found' as const, href: `${GIST_HAIKU_NO_MCP}` },
+  { tool: 'Read / Glob',    description: 'Read task.md, .env, check for existing .py files', outcome: 'neutral' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0013` },
+  { tool: 'Write',          description: 'Write send_contract.py — na4.docusign.net', outcome: 'neutral' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0016` },
+  { tool: 'Bash',           description: 'Run script — 401 Unauthorized', outcome: 'failed' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0023` },
+  { tool: 'WebSearch',      description: 'Search DocuSign API authentication bearer token 2026', outcome: 'neutral' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0031` },
+  { tool: 'WebFetch ×2',   description: 'Fetch two DocuSign auth docs pages — no sandbox URL mentioned', outcome: 'failed' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0034` },
+  { tool: 'Bash ×10',      description: 'Inline tests: vary base URL (na3, na4, eu, sandbox.docusign.net) — all 401', outcome: 'failed' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0045` },
+  { tool: 'Bash',           description: 'Inline test against demo.docusign.net — 200 OK', outcome: 'found' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0070` },
+  { tool: 'Edit',           description: 'Update base URL to demo.docusign.net', outcome: 'neutral' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0072` },
+  { tool: 'Bash',           description: 'Run script — envelope sent', outcome: 'found' as const, href: `${GIST_HAIKU_NO_MCP}/page-001.html#msg-0077` },
 ]
 
 const HAIKU_MCP_CALLS = [
-  { tool: 'Read / Glob',    description: 'Read task.md, .env, check for existing .py files', outcome: 'neutral' as const },
-  { tool: 'searchDocusignDocs ×3', description: 'Three MCP queries — all responses 57–77KB, unreadable', outcome: 'failed' as const },
-  { tool: 'Write',          description: 'Write send_contract.py — demo.docusign.net (from training data or preview fragment)', outcome: 'neutral' as const },
-  { tool: 'Bash',           description: 'Run script — envelope sent on first attempt', outcome: 'found' as const, href: `${GIST_HAIKU_MCP}` },
+  { tool: 'Read / Glob',    description: 'Read task.md, .env, check for existing .py files', outcome: 'neutral' as const, href: `${GIST_HAIKU_MCP}/page-001.html#msg-0002` },
+  { tool: 'searchDocusignDocs ×3', description: 'Three MCP queries — all responses 57–77KB, unreadable', outcome: 'failed' as const, href: `${GIST_HAIKU_MCP}/page-001.html#msg-0012` },
+  { tool: 'Write',          description: 'Write send_contract.py — demo.docusign.net (from training data or preview fragment)', outcome: 'neutral' as const, href: `${GIST_HAIKU_MCP}/page-001.html#msg-0024` },
+  { tool: 'Bash',           description: 'Run script — envelope sent on first attempt', outcome: 'found' as const, href: `${GIST_HAIKU_MCP}/page-001.html#msg-0040` },
 ]
 
 const SONNET_NO_MCP_CALLS = [
-  { tool: 'Bash',           description: 'Read task.md and .env in one command', outcome: 'neutral' as const },
-  { tool: 'Write',          description: 'Write send_contract.py — na4.docusign.net', outcome: 'neutral' as const },
-  { tool: 'Bash',           description: 'Run script — 401 Unauthorized', outcome: 'failed' as const },
-  { tool: 'Bash',           description: 'Call account.docusign.com/oauth/userinfo — 401', outcome: 'failed' as const },
-  { tool: 'Bash',           description: 'Call account-d.docusign.com/oauth/userinfo — 200, returns base URI', outcome: 'found' as const },
-  { tool: 'Edit',           description: 'Update base URL to demo.docusign.net', outcome: 'neutral' as const },
-  { tool: 'Bash',           description: 'Run script — envelope sent', outcome: 'found' as const, href: `${GIST_SONNET_NO_MCP}` },
+  { tool: 'Bash',           description: 'Read task.md and .env in one command', outcome: 'neutral' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0005` },
+  { tool: 'Write',          description: 'Write send_contract.py — na4.docusign.net', outcome: 'neutral' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0010` },
+  { tool: 'Bash',           description: 'Run script — 401 Unauthorized', outcome: 'failed' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0015` },
+  { tool: 'Bash',           description: 'Call account.docusign.com/oauth/userinfo — 401', outcome: 'failed' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0017` },
+  { tool: 'Bash',           description: 'Call account-d.docusign.com/oauth/userinfo — 200, returns base URI', outcome: 'found' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0025` },
+  { tool: 'Edit',           description: 'Update base URL to demo.docusign.net', outcome: 'neutral' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0028` },
+  { tool: 'Bash',           description: 'Run script — envelope sent', outcome: 'found' as const, href: `${GIST_SONNET_NO_MCP}/page-001.html#msg-0030` },
 ]
 
 const SONNET_MCP_CALLS = [
-  { tool: 'Read / Glob',   description: 'Read task.md and .env, list directory', outcome: 'neutral' as const },
-  { tool: 'searchDocusignDocs ×2', description: 'Two MCP queries — both 68–83KB, unreadable', outcome: 'failed' as const },
-  { tool: 'Write',         description: 'Write send_contract.py — na4.docusign.net', outcome: 'neutral' as const },
-  { tool: 'Bash',          description: 'Run script — 401 Unauthorized', outcome: 'failed' as const },
-  { tool: 'Bash',          description: 'Call account-d.docusign.com/oauth/userinfo — 200, returns base URI', outcome: 'found' as const },
-  { tool: 'Edit',          description: 'Update base URL to demo.docusign.net', outcome: 'neutral' as const },
-  { tool: 'Bash',          description: 'Run script — envelope sent', outcome: 'found' as const, href: `${GIST_SONNET_MCP}` },
+  { tool: 'Read / Glob',   description: 'Read task.md and .env, list directory', outcome: 'neutral' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0002` },
+  { tool: 'searchDocusignDocs ×2', description: 'Two MCP queries — both 68–83KB, unreadable', outcome: 'failed' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0011` },
+  { tool: 'Write',         description: 'Write send_contract.py — na4.docusign.net', outcome: 'neutral' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0016` },
+  { tool: 'Bash',          description: 'Run script — 401 Unauthorized', outcome: 'failed' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0021` },
+  { tool: 'Bash',          description: 'Call account-d.docusign.com/oauth/userinfo — 200, returns base URI', outcome: 'found' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0027` },
+  { tool: 'Edit',          description: 'Update base URL to demo.docusign.net', outcome: 'neutral' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0029` },
+  { tool: 'Bash',          description: 'Run script — envelope sent', outcome: 'found' as const, href: `${GIST_SONNET_MCP}/page-001.html#msg-0031` },
 ]
 
 const OPUS_NO_MCP_CALLS = [
-  { tool: 'Read',          description: 'Read task.md and .env', outcome: 'neutral' as const },
-  { tool: 'Bash ×2',      description: 'Check requests and dotenv are importable', outcome: 'neutral' as const },
-  { tool: 'Write',         description: 'Write send_envelope.py — demo.docusign.net, anchor-based tabs', outcome: 'neutral' as const },
-  { tool: 'Bash',          description: 'Run script — envelope sent on first attempt', outcome: 'found' as const, href: `${GIST_OPUS_NO_MCP}` },
+  { tool: 'Read',          description: 'Read task.md and .env', outcome: 'neutral' as const, href: `${GIST_OPUS_NO_MCP}/page-001.html#msg-0004` },
+  { tool: 'Bash ×2',      description: 'Check requests and dotenv are importable', outcome: 'neutral' as const, href: `${GIST_OPUS_NO_MCP}/page-001.html#msg-0015` },
+  { tool: 'Write',         description: 'Write send_envelope.py — demo.docusign.net, anchor-based tabs', outcome: 'neutral' as const, href: `${GIST_OPUS_NO_MCP}/page-001.html#msg-0021` },
+  { tool: 'Bash',          description: 'Run script — envelope sent on first attempt', outcome: 'found' as const, href: `${GIST_OPUS_NO_MCP}/page-001.html#msg-0023` },
 ]
 
 const OPUS_MCP_CALLS = [
-  { tool: 'Read',          description: 'Read .env and task.md', outcome: 'neutral' as const },
-  { tool: 'searchDocusignDocs', description: 'One MCP query — 65.9KB, unreadable', outcome: 'failed' as const },
-  { tool: 'Write',         description: 'Write send_envelope.py — demo.docusign.net, anchor-based tabs', outcome: 'neutral' as const },
-  { tool: 'Bash',          description: 'Run script — envelope sent on first attempt', outcome: 'found' as const, href: `${GIST_OPUS_MCP}` },
+  { tool: 'Read',          description: 'Read .env and task.md', outcome: 'neutral' as const, href: `${GIST_OPUS_MCP}/page-002.html#msg-0007` },
+  { tool: 'searchDocusignDocs', description: 'One MCP query — 65.9KB, unreadable', outcome: 'failed' as const, href: `${GIST_OPUS_MCP}/page-002.html#msg-0015` },
+  { tool: 'Write',         description: 'Write send_envelope.py — demo.docusign.net, anchor-based tabs', outcome: 'neutral' as const, href: `${GIST_OPUS_MCP}/page-002.html#msg-0018` },
+  { tool: 'Bash',          description: 'Run script — envelope sent on first attempt', outcome: 'found' as const, href: `${GIST_OPUS_MCP}/page-002.html#msg-0023` },
 ]
 
 const WORKFLOW_TABS = [
