@@ -5,14 +5,16 @@ import ResendReport from './components/ResendReport'
 import VercelReport from './components/VercelReport'
 import GuideArticle from './components/GuideArticle'
 import FullBenchmarkReport from './components/FullBenchmarkReport'
+import HowToHelpAgentsReport from './components/HowToHelpAgentsReport'
 
-type Tab = 'guide' | 'resend' | 'vercel' | 'full'
+type Tab = 'guide' | 'resend' | 'vercel' | 'full' | 'agents'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
   { id: 'guide',  label: 'Introduction',      subtitle: 'AI agents and context' },
   { id: 'vercel', label: 'Vercel AI SDK',     subtitle: 'SDK migration benchmark' },
   { id: 'resend', label: 'Resend',            subtitle: 'Well-documented API' },
   { id: 'full',   label: 'Full Benchmark',    subtitle: '108 sessions, 4 APIs, 3 models' },
+  { id: 'agents', label: 'How to Help Agents', subtitle: 'Private APIs & MCP docs' },
 ]
 
 export default function App() {
@@ -79,6 +81,7 @@ export default function App() {
       {activeTab === 'vercel' && <VercelReport />}
       {activeTab === 'resend' && <ResendReport />}
       {activeTab === 'full'   && <FullBenchmarkReport />}
+      {activeTab === 'agents' && <HowToHelpAgentsReport />}
     </div>
   )
 }
