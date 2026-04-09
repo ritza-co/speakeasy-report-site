@@ -2,16 +2,15 @@ import Section from './Section'
 import TOC from './TOC'
 import CorrectnessScorecard from './CorrectnessScorecard'
 import FabricationTable from './FabricationTable'
-import KeyFindings from './KeyFindings'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'overview',  label: 'Overview' },
-  { id: 'vercel',    label: 'Vercel AI SDK' },
-  { id: 'docusign',  label: 'DocuSign' },
-  { id: 'resend',    label: 'Resend' },
-  { id: 'agents',    label: 'How to Help Agents' },
-  { id: 'full',      label: 'Full Benchmark' },
+  { id: 'overview',       label: 'Introduction' },
+  { id: 'broken-mcp',     label: 'Even a broken MCP server outperformed no MCP server at all' },
+  { id: 'more-tooling',   label: 'Agents relying on the SDK were more confidently wrong' },
+  { id: 'hallucinations', label: 'Great documentation doesn\'t prevent hallucinations' },
+  { id: 'no-docs',        label: 'Without any documentation, agents waste time and still get it wrong' },
+  { id: 'reports',        label: 'Read the full reports' },
 ]
 
 interface GuideArticleProps {
@@ -35,54 +34,45 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              AI agents generate code from their training data and whatever context arrives in the prompt. When an API or SDK changes after the training cutoff, that gap produces silent errors: code that compiles, type-checks, and then fails at runtime using a pattern that was correct two versions ago.
+              When using AI agents to write code, keeping them up to date is harder than it looks. Agents are trained on data up to a certain point, and if the tools or APIs they're working with have changed since then, the results will be wrong.
             </p>
             <p>
-              We ran a series of benchmarks to measure how much this matters and what actually closes the gap. All sessions ran against real APIs using agents including Claude Code and GPT-5.4, scored on whether the agent produced code that reflects current best practices.
+              Web search helps sometimes, but you're not in control of what the agent finds, and old or partial sources can quietly poison its output without any obvious error.
+            </p>
+            <p>
+              Documentation MCP servers are supposed to fix this. Instead of searching the web, the agent queries a server that holds up-to-date, official documentation and gets back only the most relevant results.
+            </p>
+            <p>
+              We ran a series of benchmarks to find out if that actually makes a difference in practice. We found that MCP servers consistently help agents produce more accurate, working code, and that without one, agents consistently hallucinate product features or use outdated patterns.
             </p>
           </div>
         </Section>
 
-        {/* ─── VERCEL ─── */}
+        {/* ─── BROKEN MCP ─── */}
         <Section
-          id="vercel"
-          chapterLabel="Benchmark 1"
-          headline="Vercel AI SDK: does version-specific documentation change the output?"
+          id="broken-mcp"
+          chapterLabel="Finding 1"
+          headline="Even a broken MCP server outperformed no MCP server at all"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The Vercel AI SDK had significant breaking changes between v4 and v6. Tool field names were renamed, the error class for handling tool failures was removed, and streaming changed. An agent drawing on training data writes code that looks right but fails at runtime. We tested three conditions against four tasks that each targeted one of the changed patterns: Web (web search only), SDK (web search plus the pre-installed SDK), and MCP (everything in SDK plus a v6-specific docs MCP server).
-            </p>
-            <p>
-              Only the MCP condition got a perfect score. The SDK condition scored lower than Web: the agent inspected the installed types but searched for the wrong method names because it didn't know the v6 replacements existed.
+              We tested agents against a complex enterprise API where small configuration details can break everything. We ran the same task across three different AI models, and each model ran it twice: once with web search only, and once with the MCP server available as well.
             </p>
 
-            <CorrectnessScorecard />
-
-            <button
-              onClick={() => {
-                onNavigate('vercel')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
-              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
-            >
-              Read the Vercel AI SDK report →
-            </button>
-          </div>
-        </Section>
-
-        {/* ─── DOCUSIGN ─── */}
-        <Section
-          id="docusign"
-          chapterLabel="Benchmark 2"
-          headline="DocuSign: does an MCP server help agents use a complex API correctly?"
-        >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The MCP server was broken and still helped
+            </h3>
             <p>
-              DocuSign has two separate environments with different base URLs, and credentials for one don't work with the other. It's exactly the kind of configuration detail that isn't reliably in training data. We ran six sessions across three models, each twice: once with web search only, once with a DocuSign MCP server added.
+              In every single run, the MCP server returned responses that were too large for the agent to read in full. All it ever got was a truncated preview before the response cut off. And yet agents that had the server available still did better than those that didn't.
             </p>
             <p>
-              All six agents completed the task. But the gap between them tracked model capability, not tool access. Opus used the correct sandbox URL on the first attempt in both conditions. Haiku spent 27 tool calls finding it without MCP, and 16 with. The MCP server returned responses too large to read in full, but even the truncated preview was enough to change haiku's first guess.
+              We tested three models with different capability levels. The smaller models struggled the most without MCP, spending a huge number of tool calls just trying to find basic configuration details they couldn't locate.
+            </p>
+            <p>
+              Those same models with MCP, even only seeing a fragment of the documentation, got those details right on the first attempt.
+            </p>
+            <p>
+              Here's how each model performed across both conditions:
             </p>
 
             <div className="my-4 overflow-x-auto">
@@ -128,6 +118,16 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               </table>
             </div>
 
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Web search found the right site but not the right answer
+            </h3>
+            <p>
+              When agents without MCP hit errors and turned to web search for help, they found legitimate documentation pages. But the detail they needed wasn't on any of those pages.
+            </p>
+            <p>
+              The information existed in the docs somewhere, it just wasn't where you naturally end up when something goes wrong. The MCP server, even broken, pointed agents in the right direction.
+            </p>
+
             <button
               onClick={() => {
                 onNavigate('docusign')
@@ -140,21 +140,95 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
           </div>
         </Section>
 
-        {/* ─── RESEND ─── */}
+        {/* ─── MORE TOOLING ─── */}
         <Section
-          id="resend"
-          chapterLabel="Benchmark 3"
-          headline="Resend: what happens when agents don't know the answer?"
+          id="more-tooling"
+          chapterLabel="Finding 2"
+          headline="Agents relying on the SDK were more confidently wrong"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Resend is a well-documented REST API, but some of its features aren't well-represented in training data. We ran six sessions across three tooling configurations and two prompt styles to see how agents behave when they hit the edge of what they know.
+              To test what happens when an SDK has gone through significant breaking changes, we ran agents against the same task three ways: with web search only, with web search and the SDK pre-installed, and with web search, the SDK, and the official MCP server.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              A pre-installed SDK poisoned the agent's context with outdated patterns
+            </h3>
+            <p>
+              The SDK condition actually scored lower than web search alone. Having the SDK installed meant agents could inspect the code directly, which made them more confident. But that confidence was misplaced.
             </p>
             <p>
-              The most striking finding was behavioral. In three non-MCP runs, the agent invented API constraints that don't exist, wrote them into code comments as if they were documented behavior, and built workarounds for them. With a tool to verify a claim, the agent checked; without one, it guessed and moved on.
+              The SDK they were working with had gone through breaking changes in a recent major version, and the agents had no way of knowing that the patterns they were using had been replaced. More access to the codebase just meant more confidence in the wrong answer.
+            </p>
+            <p>
+              The MCP condition was the only one with a perfect score, because it was the only one with the right context.
+            </p>
+            <p>
+              Here's how each condition scored across the four tasks:
+            </p>
+
+            <CorrectnessScorecard />
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The failures were invisible
+            </h3>
+            <p>
+              What made this particularly bad is that none of the outdated code produced an error. There were no compile errors, no type errors. We found the errors in the output at runtime.
+            </p>
+            <p>
+              When an agent is confidently wrong and the code appears to work, that's a hard problem to catch.
+            </p>
+
+            <button
+              onClick={() => {
+                onNavigate('vercel')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the Vercel AI SDK report →
+            </button>
+          </div>
+        </Section>
+
+        {/* ─── HALLUCINATIONS ─── */}
+        <Section
+          id="hallucinations"
+          chapterLabel="Finding 3"
+          headline="Great documentation doesn't prevent hallucinations"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <p>
+              We chose an API with really good documentation to test whether documentation quality alone is enough to stop agents from making things up.
+            </p>
+            <p>
+              We also tried two different prompt styles to see if writing more detailed prompts could close the gap.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Agents invented constraints that don't exist
+            </h3>
+            <p>
+              In every single run without MCP, agents fabricated at least one API limitation. They decided certain features weren't supported, wrote that into their code comments as if it was documented behavior, and then built workarounds for problems that weren't actually real.
+            </p>
+            <p>
+              No run with MCP produced a single fabricated constraint. When agents had a tool to check something against, they checked. When they didn't, they just guessed and kept going.
+            </p>
+            <p>
+              The table below shows what each agent claimed and what is actually true:
             </p>
 
             <FabricationTable />
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              More detailed prompts made no difference
+            </h3>
+            <p>
+              We tested each configuration with a simple prompt and with a much more detailed prompt that spelled out exactly what was needed. The detailed prompt improved some results, but it didn't stop fabrication.
+            </p>
+            <p>
+              When agents hit the edge of what they knew, they invented answers no matter how specific the instructions were. With MCP, the simple prompt got correct results every time.
+            </p>
 
             <button
               onClick={() => {
@@ -168,18 +242,32 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
           </div>
         </Section>
 
-        {/* ─── HOW TO HELP AGENTS ─── */}
+        {/* ─── NO DOCS ─── */}
         <Section
-          id="agents"
-          chapterLabel="Benchmark 4"
-          headline="How to help agents: private APIs and MCP documentation"
+          id="no-docs"
+          chapterLabel="Finding 4"
+          headline="Without any documentation, agents waste time and still get it wrong"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Private APIs present a different challenge from public ones: they're not indexed, and their documentation is often difficult to navigate even for human developers. We set up a restaurant enterprise with internal microservices and asked Claude to build a new dashboard twice: once with no documentation, once with a structured MCP documentation server.
+              We benchmarked what happens when you try to produce code for a private internal API with no public documentation at all, where the only way to understand the system is to read the code. We ran the same task with and without an MCP documentation server.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Without docs, the agent explored for a long time and still got it wrong
+            </h3>
+            <p>
+              Without any documentation to refer to, the agent had to read through source files to try and piece together how everything connected before it could write anything.
             </p>
             <p>
-              Without documentation, the agent spent 54 minutes exploring the codebase, built a working dashboard, but routed all requests through a single endpoint and ignored the service architecture entirely. With the MCP server, it queried the docs first, planned before building, and finished in 18 minutes with correct per-service routing.
+              It eventually produced code that ran, but it got the underlying structure wrong because it never fully understood how the different parts of the system were supposed to connect.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              With MCP, it built the right thing in less than half the time
+            </h3>
+            <p>
+              With the MCP server available, the agent understood the structure before touching any code and built the correct solution straight away. Here's how the two runs compared:
             </p>
 
             <div className="my-4 border border-stone-200 dark:border-stone-850 rounded overflow-hidden">
@@ -214,28 +302,73 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
           </div>
         </Section>
 
-        {/* ─── FULL BENCHMARK ─── */}
+        {/* ─── REPORTS ─── */}
         <Section
-          id="full"
-          chapterLabel="Benchmark 5"
-          headline="Full benchmark: 108 sessions across 4 APIs and 3 models"
+          id="reports"
+          chapterLabel="Reports"
+          headline="Read the full reports"
         >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-            <p>
-              The full benchmark ran 108 agent sessions across four APIs (Linear, Resend, Metabase, PandaDoc), three tooling configurations, and three models (Claude Opus, Claude Sonnet, GPT-5.4). The headline finding was a behavioral difference we didn't set out to measure: GPT-5.4 made 45 MCP calls across 12 sessions, while Claude Sonnet and Opus made 9 combined.
-            </p>
-
-            <KeyFindings />
-
-            <button
-              onClick={() => {
-                onNavigate('full')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
-              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
-            >
-              Read the full benchmark report →
-            </button>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              {
+                tab: 'vercel' as const,
+                subtitle: 'SDK migration benchmark',
+                label: 'Vercel AI SDK',
+                description: 'Does version-specific documentation change what an agent builds when an SDK has breaking changes between versions?',
+              },
+              {
+                tab: 'docusign' as const,
+                subtitle: 'Complex enterprise API',
+                label: 'DocuSign',
+                description: 'Does an MCP server help agents use a complex API correctly, and does it help bridge the gap between less and more capable models?',
+              },
+              {
+                tab: 'resend' as const,
+                subtitle: 'Well-documented API',
+                label: 'Resend',
+                description: 'Does great documentation prevent hallucinations, and can more detailed prompts close the gap that MCP covers?',
+              },
+              {
+                tab: 'agents' as const,
+                subtitle: 'Private APIs and MCP docs',
+                label: 'How to Help Agents',
+                description: 'What happens when there is no public documentation at all? We tested agents against a private internal API with and without an MCP server.',
+              },
+              {
+                tab: 'full' as const,
+                subtitle: '108 sessions, 4 APIs, 3 models',
+                label: 'Full Benchmark',
+                description: 'The complete dataset across all configurations, APIs, and models with methodology and results broken down in full.',
+              },
+            ].map(report => (
+              <div
+                key={report.tab}
+                className="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden"
+              >
+                <div className="px-4 py-3 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+                  <p className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold mb-0.5">
+                    {report.subtitle}
+                  </p>
+                  <p className="text-[14px] font-semibold text-ink dark:text-white font-sans">
+                    {report.label}
+                  </p>
+                </div>
+                <div className="px-4 py-3">
+                  <p className="text-[13px] text-stone-600 dark:text-stone-400 leading-relaxed mb-3">
+                    {report.description}
+                  </p>
+                  <button
+                    onClick={() => {
+                      onNavigate(report.tab)
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    }}
+                    className="text-[12px] font-semibold text-crimson hover:underline font-sans"
+                  >
+                    Read report →
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </Section>
 
