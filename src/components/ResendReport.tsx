@@ -19,7 +19,7 @@ const SECTIONS = [
   { id: 'hypothesis',    label: 'Introduction' },
   { id: 'methodology',   label: 'How we tested it' },
   { id: 'api-only',      label: 'API only' },
-  { id: 'sdk-only',      label: 'SDK only' },
+  { id: 'sdk-only',      label: 'SDK' },
   { id: 'sdk-mcp',       label: 'SDK + MCP' },
   { id: 'all-runs',      label: 'Results and conclusions' },
 ]
@@ -106,15 +106,15 @@ export default function ResendReport() {
               Three configurations, stacked incrementally
             </h3>
             <p>
-              <b>Raw HTTP</b> is the baseline. The agent has its training data and writes HTTP
-              requests directly.
+              <b>Raw HTTP</b> is the baseline. The agent has its training data and web search, and writes HTTP
+              requests directly. No SDK or MCP is installed.
             </p>
             <p>
-              <b>SDK only</b> adds the Resend Node.js SDK, a typed library with named methods and
-              known response shapes. 
+              <b>SDK</b> adds the Resend Node.js SDK on top of Raw HTTP: a typed library with named methods and
+              known response shapes. Web search remains available.
             </p>
             <p>
-              <b>SDK + MCP</b> adds the Resend docs MCP server on top of HTTP and the Resend SDK,
+              <b>SDK + MCP</b> adds the Resend docs MCP server on top of the SDK,
               creating a live tool the agent can query mid-session to look up documentation
               while it works. The agent was not instructed to use MCP on SDK + MCP runs, but
               the Resend MCP server was available in the environment.
@@ -186,7 +186,7 @@ export default function ResendReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              The agent uses only training data, without an installed library or live documentation.
+              The agent uses training data and web search, without an installed library or live documentation.
             </p>
 
             <p>
@@ -211,7 +211,7 @@ export default function ResendReport() {
               "Use raw HTTP requests only (fetch or axios). Do not use any Resend SDK or npm package."
             </div>
             <p>
-              No MCP server was available, and the agent drew entirely on training data.
+              No SDK or MCP server was available. The agent had training data and web search.
             </p>
 
             <AgentActivity
@@ -383,11 +383,11 @@ export default function ResendReport() {
         <Section
           id="sdk-only"
           chapterLabel="Results — SDK"
-          headline="SDK only: typed library, no MCP"
+          headline="SDK: typed library, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              The Resend Node.js SDK is pre-installed. The agent uses training data and SDK types, but no live documentation.
+              The Resend Node.js SDK is pre-installed. The agent uses training data, web search, and SDK types, but no live documentation.
             </p>
 
             <p>
@@ -410,8 +410,8 @@ export default function ResendReport() {
               "Use the Resend Node.js SDK (resend npm package)."
             </div>
             <p>
-              The SDK was pre-installed. No MCP was available. The agent had training data
-              and SDK types to work with.
+              The SDK was pre-installed. No MCP was available. The agent had training data,
+              web search, and SDK types to work with.
             </p>
 
             <AgentActivity
@@ -714,9 +714,6 @@ export default function ResendReport() {
               <li>The simple run was more active than any non-MCP run, but still recognisable in shape: 19 agent actions, MCP queries mid-session, and then done.</li>
               <li>The complex run was in a different category: 55 agent actions and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
             </ul>
-            <p>
-              Neither run queried any external sources, despite them being available.
-            </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Summary

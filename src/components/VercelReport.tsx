@@ -218,11 +218,11 @@ export default function VercelReport() {
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">MCP was the only condition with a perfect score</p>
-              <p>The SDK + MCP condition got all four tasks correct. Web-only scored 2.5/4 and SDK-only scored 1.5/4. Adding the SDK without a version-specific docs source made things worse, not better.</p>
+              <p>The MCP condition got all four tasks correct. Web scored 2.5/4 and SDK scored 1.5/4. Adding the SDK without a version-specific docs source made things worse, not better.</p>
             </div>
 
             <div>
-              <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">The SDK-only condition scored lower than web-only</p>
+              <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">The SDK condition scored lower than web</p>
               <p>The agent inspected the installed types confidently but searched for the wrong method names because it didn't know the v6 replacements existed. More tooling without better context produced more confident wrong answers.</p>
             </div>
 
@@ -252,29 +252,30 @@ export default function VercelReport() {
             </h3>
 
             <p>
-              The first condition is the baseline: no SDK installed, web search available.
-              The second adds the SDK, so the agent can inspect type definitions directly.
-              The third adds a docs MCP server on top of the installed SDK, with an explicit
-              prompt instructing the agent to query it before writing each file.
+              The first condition is the baseline: web search only, no SDK installed.
+              The second adds the pre-installed SDK, so the agent can inspect type definitions directly.
+              The third adds a docs MCP server on top, with an explicit prompt instructing
+              the agent to query it before writing each file. Each condition has access to
+              everything the previous one had, plus one more layer.
             </p>
 
             <div className="my-4 space-y-0">
               {[
                 {
-                  label: 'Web-only',
-                  setup: 'No SDK installed',
+                  label: 'Web',
+                  setup: 'Web only, no SDK installed',
                   tools: 'Web search',
                   prompt: 'Research the current version and APIs before writing any code.',
                 },
                 {
-                  label: 'SDK-only',
-                  setup: 'SDK installed in node_modules',
+                  label: 'SDK',
+                  setup: 'Web + pre-installed SDK',
                   tools: 'Web search + type inspection',
                   prompt: 'Inspect the installed packages to check the exact version and available exports.',
                 },
                 {
-                  label: 'SDK + MCP',
-                  setup: 'SDK installed + docs MCP server',
+                  label: 'MCP',
+                  setup: 'Web + pre-installed SDK + docs MCP server',
                   tools: 'Web search + type inspection + docs MCP',
                   prompt: 'Use the docs MCP tool first to get the current API shape, then verify against installed types.',
                 },
@@ -366,7 +367,7 @@ export default function VercelReport() {
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
               To make the scoring concrete, here is the tool-error handler task traced through
-              two conditions: web-only and SDK + MCP. This is the kind of session we reviewed
+              two conditions: Web and MCP. This is the kind of session we reviewed
               for every run in the benchmark, tool call by tool call, with the actual code
               and output alongside it.
             </p>
@@ -374,7 +375,7 @@ export default function VercelReport() {
             <TaskCard />
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              Web-only: what the agent does and why it goes wrong
+              Web: what the agent does and why it goes wrong
             </h3>
             <p>
               The agent searches for Vercel AI SDK tool error handling before writing
@@ -383,7 +384,7 @@ export default function VercelReport() {
             </p>
 
             <div className="my-6">
-              <ToolCallSequence label="Web-only — first pass" calls={WEB_FIRST_CALLS} />
+              <ToolCallSequence label="Web — first pass" calls={WEB_FIRST_CALLS} />
             </div>
 
             <InitialCodeViewer agent="web" />
@@ -397,11 +398,11 @@ export default function VercelReport() {
             </p>
 
             <div className="my-6">
-              <ToolCallSequence label="Web-only — debugging" calls={WEB_DEBUG_CALLS} />
+              <ToolCallSequence label="Web — debugging" calls={WEB_DEBUG_CALLS} />
             </div>
 
             <OutputBlock
-              label="Web-only output"
+              label="Web output"
               output={`{
   "toolCallId": "toolu_0127yV4xp7qBzc1m4wgCFerY",
   "toolName": "alwaysErrors",
@@ -418,7 +419,7 @@ export default function VercelReport() {
             </p>
 
             <EntireSessionLink
-              label="Web-only — full session transcript"
+              label="Web — full session transcript"
               transcriptHref="https://gisthost.github.io/?11281b85c534e01889c90d43494eb871/index.html"
               repoHref="https://github.com/jamesdanielwhitford/tool-error-web-only"
             />
@@ -426,7 +427,7 @@ export default function VercelReport() {
             <DocReferences refs={WEB_DOCS} />
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              SDK + MCP: the same task with current documentation available
+              MCP: the same task with current documentation available
             </h3>
             <p>
               The MCP agent has the same task and the same web search, plus an MCP server
@@ -436,7 +437,7 @@ export default function VercelReport() {
             </p>
 
             <div className="my-6">
-              <ToolCallSequence label="SDK + MCP — first pass" calls={MCP_FIRST_CALLS} />
+              <ToolCallSequence label="MCP — first pass" calls={MCP_FIRST_CALLS} />
             </div>
 
             <InitialCodeViewer agent="mcp" />
@@ -448,11 +449,11 @@ export default function VercelReport() {
             </p>
 
             <div className="my-6">
-              <ToolCallSequence label="SDK + MCP — debugging" calls={MCP_DEBUG_CALLS} />
+              <ToolCallSequence label="MCP — debugging" calls={MCP_DEBUG_CALLS} />
             </div>
 
             <OutputBlock
-              label="SDK + MCP output"
+              label="MCP output"
               output={`{
   "errored": true,
   "text": "",
@@ -473,7 +474,7 @@ export default function VercelReport() {
             <CodeComparison />
 
             <EntireSessionLink
-              label="SDK + MCP — full session transcript"
+              label="MCP — full session transcript"
               transcriptHref="https://gisthost.github.io/?c992aee978ca1d6110de1c342f53a549/index.html"
               repoHref="https://github.com/jamesdanielwhitford/tool-error-mcp"
             />
@@ -510,16 +511,16 @@ export default function VercelReport() {
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
               The three conditions produced different results through very different processes.
-              The web-only agent completed the task in 6 tool calls, the MCP agent in 37.
+              The Web agent completed the task in 6 tool calls, the MCP agent in 37.
             </p>
 
             <ToolCallBreakdown />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Web-only: one research pass, then write
+              Web: one research pass, then write
             </h3>
             <p>
-              The web-only agent ran a single subagent that searched for all four patterns
+              The Web agent ran a single subagent that searched for all four patterns
               at once, then wrote all four files from those results without re-checking.
               Where search returned the right page, the output was correct. Where it
               returned a partial result or missed a page entirely, that gap carried
@@ -527,10 +528,10 @@ export default function VercelReport() {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              SDK-only: more preparation, similar gaps
+              SDK: more preparation, similar gaps
             </h3>
             <p>
-              The SDK-only agent ran a second subagent specifically to inspect type
+              The SDK agent ran a second subagent specifically to inspect type
               definitions, checking method names and comparing response options. But its
               prompt named two methods to compare, both from v4. It did not search for the
               v6 replacement because it did not know the replacement existed. The type
@@ -538,7 +539,7 @@ export default function VercelReport() {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              SDK + MCP: research first, verify second, then write
+              MCP: research first, verify second, then write
             </h3>
             <p>
               The MCP agent queried the docs index and fetched full documentation pages
@@ -546,7 +547,7 @@ export default function VercelReport() {
               agent encountered the correct patterns before reaching for training memory.
               It then used type inspection to confirm what the docs described was present
               in the installed package, as verification rather than discovery. The result
-              was 37 tool calls versus 6 for the web-only agent, and a perfect score.
+              was 37 tool calls versus 6 for the Web agent, and a perfect score.
             </p>
           </div>
         </Section>
@@ -565,20 +566,20 @@ export default function VercelReport() {
             <TokenUsageChart />
 
             <p>
-              The web-only agent ran one search pass and wrote four files. That kept
+              The Web agent ran one search pass and wrote four files. That kept
               message tokens low. Search results are short, and the agent did not
               re-read anything.
             </p>
             <p>
-              The SDK-only agent added type inspection on top of web search. Reading
+              The SDK agent added type inspection on top of web search. Reading
               compiled declaration files is verbose, which pushed message tokens higher.
-              It used more context than the web-only condition and still got two files wrong.
+              It used more context than the Web condition and still got two files wrong.
             </p>
             <p>
               The MCP agent fetched four full documentation pages, each containing
               complete code examples and explanatory prose, then ran 12 type inspection
               steps to verify what the docs described against the installed package.
-              That combination drove message tokens to nearly five times the web-only
+              That combination drove message tokens to nearly five times the Web
               total and produced the only perfect score.
             </p>
           </div>
@@ -603,7 +604,7 @@ export default function VercelReport() {
             </h3>
             <p>
               All three agents described their output in the same confident tone. The
-              difference is that the web-only and SDK-only agents were wrong about two
+              difference is that the Web and SDK agents were wrong about two
               files each, with nothing in their summaries to signal it. An agent cannot
               express uncertainty about a mistake it does not know it made.
             </p>

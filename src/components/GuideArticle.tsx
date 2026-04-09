@@ -51,10 +51,10 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The Vercel AI SDK had significant breaking changes between v4 and v6. Tool field names were renamed, the error class for handling tool failures was removed, and streaming changed. An agent drawing on training data writes code that looks right but fails at runtime. We tested three conditions against four tasks that each targeted one of the changed patterns: web search only, with the SDK installed, and with a v6-specific docs MCP server.
+              The Vercel AI SDK had significant breaking changes between v4 and v6. Tool field names were renamed, the error class for handling tool failures was removed, and streaming changed. An agent drawing on training data writes code that looks right but fails at runtime. We tested three conditions against four tasks that each targeted one of the changed patterns: Web (web search only), SDK (web search plus the pre-installed SDK), and MCP (everything in SDK plus a v6-specific docs MCP server).
             </p>
             <p>
-              Only the MCP condition got a perfect score. The SDK-only condition scored lower than web-only: the agent inspected the installed types but searched for the wrong method names because it didn't know the v6 replacements existed.
+              Only the MCP condition got a perfect score. The SDK condition scored lower than Web: the agent inspected the installed types but searched for the wrong method names because it didn't know the v6 replacements existed.
             </p>
 
             <CorrectnessScorecard />

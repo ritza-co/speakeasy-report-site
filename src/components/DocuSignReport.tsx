@@ -461,7 +461,7 @@ const CODE_TABS = [
     label: 'opus — no MCP',
     note: 'correct URL from training data · anchor-based tabs',
     lines: [
-      { text: '# No MCP. No web search. Correct URL on the first write.' },
+      { text: '# No MCP. Web search available but unused. Correct URL on the first write.' },
       { text: 'BASE_URL = "https://demo.docusign.net/restapi"', highlight: 'green' as CodeHighlight },
       { text: '' },
       { text: '# Anchor strings embedded in the document body', highlight: 'green' as CodeHighlight },
