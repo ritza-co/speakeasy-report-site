@@ -6,15 +6,16 @@ import KeyFindings from './KeyFindings'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'vercel',   label: 'Vercel AI SDK' },
-  { id: 'resend',   label: 'Resend' },
-  { id: 'agents',   label: 'How to Help Agents' },
-  { id: 'full',     label: 'Full Benchmark' },
+  { id: 'overview',  label: 'Overview' },
+  { id: 'vercel',    label: 'Vercel AI SDK' },
+  { id: 'docusign',  label: 'DocuSign' },
+  { id: 'resend',    label: 'Resend' },
+  { id: 'agents',    label: 'How to Help Agents' },
+  { id: 'full',      label: 'Full Benchmark' },
 ]
 
 interface GuideArticleProps {
-  onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'full' | 'agents') => void
+  onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'full' | 'agents' | 'docusign') => void
 }
 
 export default function GuideArticle({ onNavigate }: GuideArticleProps) {
@@ -70,10 +71,79 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
           </div>
         </Section>
 
+        {/* ─── DOCUSIGN ─── */}
+        <Section
+          id="docusign"
+          chapterLabel="Benchmark 2"
+          headline="DocuSign: does an MCP server help agents use a complex API correctly?"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <p>
+              DocuSign has two separate environments with different base URLs, and credentials for one don't work with the other. It's exactly the kind of configuration detail that isn't reliably in training data. We ran six sessions across three models, each twice: once with web search only, once with a DocuSign MCP server added.
+            </p>
+            <p>
+              All six agents completed the task. But the gap between them tracked model capability, not tool access. Opus used the correct sandbox URL on the first attempt in both conditions. Haiku spent 27 tool calls finding it without MCP, and 16 with. The MCP server returned responses too large to read in full, but even the truncated preview was enough to change haiku's first guess.
+            </p>
+
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full font-sans border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-stone-200 dark:border-stone-800">
+                    <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Run</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Tool calls</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Context used</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">MCP calls</th>
+                    <th className="text-left py-2.5 pl-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">First attempt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { run: 'haiku-no-mcp',  calls: 27, ctx: '23%', mcp: 0, first: false, note: 'Discovered sandbox URL by trial-and-error' },
+                    { run: 'haiku-mcp',     calls: 16, ctx: '26%', mcp: 3, first: false, note: 'MCP outputs unreadable; used sandbox URL from training data' },
+                    { run: 'sonnet-no-mcp', calls: 10, ctx: '12%', mcp: 0, first: false, note: 'Queried OAuth userinfo endpoint to find correct base URI' },
+                    { run: 'sonnet-mcp',    calls: 13, ctx: '14%', mcp: 2, first: false, note: 'MCP outputs unreadable; fell back to same userinfo approach' },
+                    { run: 'opus-no-mcp',   calls: 8,  ctx: '11%', mcp: 0, first: true,  note: 'Used correct sandbox URL immediately; no debugging required' },
+                    { run: 'opus-mcp',      calls: 7,  ctx: '11%', mcp: 1, first: true,  note: 'MCP output unreadable; succeeded on first real execution' },
+                  ].map((row, i) => (
+                    <tr key={row.run} className={i % 2 === 0 ? 'bg-stone-50/60 dark:bg-stone-800/20' : ''}>
+                      <td className="py-2.5 pr-4 font-mono text-[12px] text-stone-600 dark:text-stone-400">{row.run}</td>
+                      <td className="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">{row.calls}</td>
+                      <td className="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">{row.ctx}</td>
+                      <td className="py-2.5 px-3 text-center">
+                        {row.mcp > 0
+                          ? <span className="text-stone-600 dark:text-stone-400">{row.mcp}</span>
+                          : <span className="text-stone-300 dark:text-stone-600">—</span>
+                        }
+                      </td>
+                      <td className="py-2.5 pl-3 text-stone-500 dark:text-stone-500 text-[12px]">
+                        {row.first
+                          ? <span className="text-emerald-600 dark:text-emerald-400">Yes. </span>
+                          : <span className="text-stone-400 dark:text-stone-500">No. </span>
+                        }
+                        {row.note}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <button
+              onClick={() => {
+                onNavigate('docusign')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the DocuSign report →
+            </button>
+          </div>
+        </Section>
+
         {/* ─── RESEND ─── */}
         <Section
           id="resend"
-          chapterLabel="Benchmark 2"
+          chapterLabel="Benchmark 3"
           headline="Resend: what happens when agents don't know the answer?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
@@ -101,7 +171,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         {/* ─── HOW TO HELP AGENTS ─── */}
         <Section
           id="agents"
-          chapterLabel="Benchmark 3"
+          chapterLabel="Benchmark 4"
           headline="How to help agents: private APIs and MCP documentation"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
@@ -147,7 +217,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         {/* ─── FULL BENCHMARK ─── */}
         <Section
           id="full"
-          chapterLabel="Benchmark 4"
+          chapterLabel="Benchmark 5"
           headline="Full benchmark: 108 sessions across 4 APIs and 3 models"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
