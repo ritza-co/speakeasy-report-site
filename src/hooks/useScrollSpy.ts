@@ -4,21 +4,28 @@ export function useScrollSpy(ids: string[]) {
   const [activeId, setActiveId] = useState(ids[0] ?? '')
 
   useEffect(() => {
-    const onScroll = () => {
-      const scrollY = window.scrollY + window.innerHeight * 0.35
-      for (let i = ids.length - 1; i >= 0; i--) {
-        const el = document.getElementById(ids[i])
-        if (el && el.offsetTop <= scrollY) {
-          setActiveId(ids[i])
-          return
-        }
-      }
-      setActiveId(ids[0])
-    }
+    const observers: IntersectionObserver[] = []
 
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => window.removeEventListener('scroll', onScroll)
+    ids.forEach(id => {
+      const el = document.getElementById(id)
+      if (!el) return
+
+      const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            setActiveId(id)
+          }
+        },
+        {
+          rootMargin: '-10% 0px -85% 0px',
+          threshold: 0,
+        }
+      )
+      observer.observe(el)
+      observers.push(observer)
+    })
+
+    return () => observers.forEach(o => o.disconnect())
   }, [ids])
 
   return activeId
