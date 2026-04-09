@@ -38,20 +38,20 @@ export default function SdkChangesTable() {
           </p>
           <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-3 mt-1">
             <div>
-              <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans mb-1">Before (v4)</p>
+              <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans mb-1">Before (v4)</p>
               <code className="block text-[12px] font-mono bg-stone-100 dark:bg-stone-900 text-stone-600 dark:text-stone-400 px-3 py-2 rounded leading-relaxed">
                 {row.before}
               </code>
             </div>
             <span className="text-stone-300 dark:text-stone-700 font-sans text-[16px] select-none mt-6">→</span>
             <div>
-              <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans mb-1">After (v6)</p>
+              <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans mb-1">After (v6)</p>
               <code className="block text-[12px] font-mono bg-stone-100 dark:bg-stone-900 text-ink dark:text-white px-3 py-2 rounded leading-relaxed">
                 {row.after}
               </code>
             </div>
           </div>
-          <p className="text-[12px] text-stone-400 dark:text-stone-500 font-sans mt-1">{row.note}</p>
+          <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans mt-1">{row.note}</p>
         </div>
       ))}
     </div>

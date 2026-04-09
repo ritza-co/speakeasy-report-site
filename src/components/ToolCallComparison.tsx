@@ -96,7 +96,7 @@ const MCP_CALLS = [
 export default function ToolCallComparison() {
   return (
     <div className="my-6 space-y-4">
-      <div className="flex flex-wrap gap-4 text-[12px] font-sans text-stone-500 dark:text-stone-400">
+      <div className="flex flex-wrap gap-4 text-[12px] font-sans text-stone-600 dark:text-stone-400">
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block" />
           correct API or working result
@@ -109,7 +109,7 @@ export default function ToolCallComparison() {
           <span className="w-2.5 h-2.5 rounded-full bg-stone-300 dark:bg-stone-600 inline-block" />
           intermediate step
         </span>
-        <span className="text-stone-400 dark:text-stone-500 italic">Each step links to the full transcript</span>
+        <span className="text-stone-600 dark:text-stone-400 italic">Each step links to the full transcript</span>
       </div>
       <div className="flex gap-8 flex-col md:flex-row">
         <ToolCallSequence label="Web-search agent" calls={WEB_SEARCH_CALLS} />

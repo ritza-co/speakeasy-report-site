@@ -37,6 +37,7 @@ export default function App() {
     }
   }, [])
 
+
   return (
     <div className="bg-parchment dark:bg-black min-h-screen">
       <ThemeToggle />
@@ -52,8 +53,8 @@ export default function App() {
                 <button
                   key={tab.id}
                   onClick={() => {
+                    window.scrollTo({ top: tabBarTop.current, behavior: 'instant' })
                     setActiveTab(tab.id)
-                    window.scrollTo({ top: tabBarTop.current, behavior: 'smooth' })
                   }}
                   className={`group flex flex-col gap-0.5 px-6 py-4 border-b-2 transition-all duration-200 text-left ${
                     isActive
@@ -64,11 +65,11 @@ export default function App() {
                   <span className={`text-[13px] font-medium transition-colors ${
                     isActive
                       ? 'text-ink dark:text-white'
-                      : 'text-stone-400 group-hover:text-stone-600 dark:group-hover:text-stone-300'
+                      : 'text-stone-600 dark:text-stone-400 group-hover:text-stone-600 dark:group-hover:text-stone-300'
                   }`}>
                     {tab.label}
                   </span>
-                  <span className="text-[10px] tracking-wide text-stone-400">
+                  <span className="text-[10px] tracking-wide text-stone-600 dark:text-stone-400">
                     {tab.subtitle}
                   </span>
                 </button>

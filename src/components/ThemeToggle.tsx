@@ -6,7 +6,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      className="fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center border border-stone-200 dark:border-stone-850 bg-white dark:bg-stone-900 text-stone-500 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-600 transition-colors duration-200"
+      className="fixed top-4 right-4 z-50 w-9 h-9 flex items-center justify-center border border-stone-200 dark:border-stone-850 bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-600 transition-colors duration-200"
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
     >
       {isDark ? (

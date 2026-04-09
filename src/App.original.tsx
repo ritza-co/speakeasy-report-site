@@ -282,7 +282,7 @@ export default function App() {
               <code className="bg-stone-100 dark:bg-stone-850 px-1 rounded text-[12px]">document.draft</code>{' '}
               status first.
             </p>
-            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-500 dark:text-stone-400">
+            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-600 dark:text-stone-400">
               The pattern is consistent across all four APIs. SDK wins when the library is
               mature and credentials are available. It gives agents a typed, discoverable
               interface that reduces exploration time and enables live validation. Bare wins

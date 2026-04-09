@@ -31,11 +31,11 @@ export default function ConceptScoreTable({ columns, rows, scores }: ConceptScor
         <table className="w-full font-sans border-collapse text-[13px]">
           <thead>
             <tr className="border-b border-stone-200 dark:border-stone-850">
-              <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">
+              <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">
                 Concept
               </th>
               {columns.map(col => (
-                <th key={col} className="py-2.5 px-4 text-center text-[10px] uppercase tracking-widest text-stone-400 font-normal min-w-[110px]">
+                <th key={col} className="py-2.5 px-4 text-center text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal min-w-[110px]">
                   {col}
                 </th>
               ))}
@@ -59,7 +59,7 @@ export default function ConceptScoreTable({ columns, rows, scores }: ConceptScor
         <div className="flex gap-4 pt-1">
           {scores.map(s => (
             <div key={s.label} className="flex items-baseline gap-2">
-              <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans">{s.label}</span>
+              <span className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans">{s.label}</span>
               <span className="font-serif text-lg font-bold text-ink dark:text-white">{s.value}</span>
             </div>
           ))}

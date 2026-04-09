@@ -168,11 +168,11 @@ export default function CodeComparison() {
             }`}
           >
             <span className={`text-[12px] font-semibold font-sans ${
-              active === tab.id ? 'text-ink dark:text-white' : 'text-stone-400'
+              active === tab.id ? 'text-ink dark:text-white' : 'text-stone-600 dark:text-stone-400'
             }`}>
               {tab.label}
             </span>
-            <span className="text-[11px] text-stone-400 font-sans">{tab.note}</span>
+            <span className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">{tab.note}</span>
           </button>
         ))}
       </div>

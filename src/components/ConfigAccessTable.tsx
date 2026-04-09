@@ -16,11 +16,11 @@ export default function ConfigAccessTable() {
       <table className="w-full font-sans border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-stone-200 dark:border-stone-850">
-            <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Configuration</th>
-            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Training data</th>
-            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Web search</th>
-            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Resend SDK</th>
-            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Resend MCP</th>
+            <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Configuration</th>
+            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Training data</th>
+            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Web search</th>
+            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Resend SDK</th>
+            <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Resend MCP</th>
           </tr>
         </thead>
         <tbody>

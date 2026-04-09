@@ -31,7 +31,7 @@ export default function ResendReport() {
     <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
         {/* ─── INTRODUCTION ─── */}
         <Section
@@ -185,7 +185,7 @@ export default function ResendReport() {
           headline="API only: No SDK, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+            <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
               The agent uses training data and web search, without an installed library or live documentation.
             </p>
 
@@ -207,7 +207,7 @@ export default function ResendReport() {
               Both runs used the same base prompts shown in the task section above, with
               one addition:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Use raw HTTP requests only (fetch or axios). Do not use any Resend SDK or npm package."
             </div>
             <p>
@@ -302,7 +302,7 @@ export default function ResendReport() {
               developer "confirm with Resend support" whether it works on broadcasts. The
               agent's response:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Broadcasts don't support attachments, so inline CID images won't work for
               broadcasts."
             </div>
@@ -386,7 +386,7 @@ export default function ResendReport() {
           headline="SDK: typed library, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+            <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
               The Resend Node.js SDK is pre-installed. The agent uses training data, web search, and SDK types, but no live documentation.
             </p>
 
@@ -406,7 +406,7 @@ export default function ResendReport() {
             <p>
               Both runs used the same base prompts with one addition:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Use the Resend Node.js SDK (resend npm package)."
             </div>
             <p>
@@ -475,7 +475,7 @@ export default function ResendReport() {
             <p>
               The agent's own summary of how it handled the subscription-tier requirement:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Tier is held in your customer record and injected into the email at send
               time (Resend's v4 contact API doesn't expose a free-form metadata bag, so
               the tier lives in your data layer)"
@@ -500,7 +500,7 @@ export default function ResendReport() {
               searching the SDK or flagging uncertainty, it declared a constraint and
               built around it. From its pre-write notes:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Inline logo: Broadcasts don't support attachments/CID the same way
               transactional emails do. I'll use a data URI (base64-encoded) for the
               inline logo in the HTML body, which works without attachments."
@@ -583,7 +583,7 @@ export default function ResendReport() {
           headline="SDK + MCP: typed library and live documentation server"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+            <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
               The Resend Node.js SDK is pre-installed, and the Resend MCP server is active. The agent can query live API documentation.
             </p>
 
@@ -687,7 +687,7 @@ export default function ResendReport() {
               For example, when the SDK didn't expose a Segments method, the agent
               inspected the installed package directly to confirm what was available:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "resend.segments isn't exposed on the SDK. Let me check the actual SDK
               surface."
             </div>
@@ -908,7 +908,7 @@ export default function ResendReport() {
         </Section>
 
         <footer className="pt-16 pb-24 border-t border-stone-200 dark:border-stone-850 mt-8">
-          <div className="flex items-center justify-between text-[11px] text-stone-400 font-sans">
+          <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-400 font-sans">
             <span>© 2026 Speakeasy</span>
             <span>Do AI Agents Need MCP Servers? — Benchmark Report</span>
           </div>

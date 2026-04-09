@@ -16,10 +16,10 @@ You have web search available. Use it to look up how the Vercel AI SDK handles t
         </p>
       </div>
       <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-t border-stone-200 dark:border-stone-800 flex gap-6">
-        <span className="text-[12px] text-stone-500 dark:text-stone-400 font-sans">
+        <span className="text-[12px] text-stone-600 dark:text-stone-400 font-sans">
           <span className="font-semibold text-ink dark:text-white">Model:</span> Claude Sonnet 4.6
         </span>
-        <span className="text-[12px] text-stone-500 dark:text-stone-400 font-sans">
+        <span className="text-[12px] text-stone-600 dark:text-stone-400 font-sans">
           <span className="font-semibold text-ink dark:text-white">Date:</span> 30 March 2026
         </span>
       </div>

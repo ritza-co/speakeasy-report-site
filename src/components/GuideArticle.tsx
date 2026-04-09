@@ -25,7 +25,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
     <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
         {/* ─── OVERVIEW ─── */}
         <Section
@@ -89,11 +89,11 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               <table className="w-full font-sans border-collapse text-[13px]">
                 <thead>
                   <tr className="border-b border-stone-200 dark:border-stone-800">
-                    <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Run</th>
-                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Tool calls</th>
-                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Context used</th>
-                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">MCP calls</th>
-                    <th className="text-left py-2.5 pl-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">First attempt</th>
+                    <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Run</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Tool calls</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Context used</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">MCP calls</th>
+                    <th className="text-left py-2.5 pl-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">First attempt</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -118,7 +118,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
                       <td className="py-2.5 pl-3 text-stone-500 dark:text-stone-500 text-[12px]">
                         {row.first
                           ? <span className="text-emerald-600 dark:text-emerald-400">Yes. </span>
-                          : <span className="text-stone-400 dark:text-stone-500">No. </span>
+                          : <span className="text-stone-600 dark:text-stone-400">No. </span>
                         }
                         {row.note}
                       </td>
@@ -184,8 +184,8 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
 
             <div className="my-4 border border-stone-200 dark:border-stone-850 rounded overflow-hidden">
               <div className="grid grid-cols-3 border-b border-stone-200 dark:border-stone-850">
-                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-stone-400 font-sans" />
-                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-stone-400 font-sans border-l border-stone-200 dark:border-stone-850">Without MCP</div>
+                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans" />
+                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans border-l border-stone-200 dark:border-stone-850">Without MCP</div>
                 <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-crimson font-sans border-l border-stone-200 dark:border-stone-850">With MCP</div>
               </div>
               {[

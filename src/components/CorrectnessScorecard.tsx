@@ -65,10 +65,10 @@ export default function CorrectnessScorecard() {
     <div className="my-6">
       {/* Header */}
       <div className="grid grid-cols-[1fr_100px_100px_100px] gap-2 pb-2 border-b border-stone-200 dark:border-stone-800">
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans">File</p>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans text-center">Web-only</p>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans text-center">SDK-only</p>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans text-center">SDK + MCP</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans">File</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans text-center">Web-only</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans text-center">SDK-only</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans text-center">SDK + MCP</p>
       </div>
 
       {/* Rows */}
@@ -79,7 +79,7 @@ export default function CorrectnessScorecard() {
         >
           <div>
             <p className="text-[13px] font-mono text-ink dark:text-white">{row.file}</p>
-            <p className="text-[11px] text-stone-400 dark:text-stone-500 font-sans mt-0.5">{row.description}</p>
+            <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-0.5">{row.description}</p>
           </div>
           <div className="flex justify-center"><Badge score={row.webOnly} /></div>
           <div className="flex justify-center"><Badge score={row.sdkOnly} /></div>
@@ -89,7 +89,7 @@ export default function CorrectnessScorecard() {
 
       {/* Totals */}
       <div className="grid grid-cols-[1fr_100px_100px_100px] gap-2 items-center pt-3">
-        <p className="text-[11px] text-stone-400 font-sans uppercase tracking-widest">Total</p>
+        <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans uppercase tracking-widest">Total</p>
         {TOTALS.map((t) => (
           <p key={t.label} className="text-[13px] font-semibold text-ink dark:text-white font-sans text-center">
             {t.score}

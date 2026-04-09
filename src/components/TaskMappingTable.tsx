@@ -34,7 +34,7 @@ export default function TaskMappingTable() {
           key={i}
           className={`grid grid-cols-[1fr_auto_1fr] items-start gap-4 py-3 px-0 border-t border-stone-200 dark:border-stone-800 ${i === MAPPINGS.length - 1 ? 'border-b' : ''}`}
         >
-          <p className="text-[13px] text-stone-500 dark:text-stone-400 italic font-sans leading-snug">
+          <p className="text-[13px] text-stone-600 dark:text-stone-400 italic font-sans leading-snug">
             {row.requirement}
           </p>
           <span className="text-stone-300 dark:text-stone-700 font-sans text-[16px] select-none mt-0.5">→</span>
@@ -42,7 +42,7 @@ export default function TaskMappingTable() {
             <p className="text-[13px] font-semibold text-ink dark:text-white font-mono leading-snug">
               {row.pattern}
             </p>
-            <p className="text-[11px] text-stone-400 dark:text-stone-500 font-sans mt-0.5">
+            <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-0.5">
               {row.note}
             </p>
           </div>

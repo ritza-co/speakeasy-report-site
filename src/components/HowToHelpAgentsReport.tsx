@@ -52,14 +52,14 @@ function DonutChart({ slices, title }: {
         <text x={cx} y={cy + 14} textAnchor="middle" fontSize={22} fontWeight="600" fontFamily="sans-serif" fill="#c83228">{total}</text>
       </svg>
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] uppercase tracking-widest text-stone-400 font-sans mb-3">{title}</p>
+        <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans mb-3">{title}</p>
         <div className="space-y-1.5">
           {paths.map((d, i) => (
             <div key={i} className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: d.color }} />
               <span className="text-[12px] text-stone-600 dark:text-stone-400 flex-1 truncate">{d.label}</span>
               <span className="text-[12px] text-stone-700 dark:text-stone-300 font-medium tabular-nums">{d.value}</span>
-              <span className="text-[10px] text-stone-400 w-7 text-right tabular-nums">{Math.round(d.pct * 100)}%</span>
+              <span className="text-[10px] text-stone-600 dark:text-stone-400 w-7 text-right tabular-nums">{Math.round(d.pct * 100)}%</span>
             </div>
           ))}
         </div>
@@ -75,17 +75,17 @@ function ComparisonBar({ label, noMcp, withMcp, max, format }: {
 }) {
   return (
     <div className="py-3 border-b border-stone-100 dark:border-stone-850 last:border-0">
-      <div className="text-[11px] text-stone-500 dark:text-stone-400 mb-1.5">{label}</div>
+      <div className="text-[11px] text-stone-600 dark:text-stone-400 mb-1.5">{label}</div>
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-[9px] w-16 text-stone-400 text-right shrink-0">No MCP</span>
+          <span className="text-[9px] w-16 text-stone-600 dark:text-stone-400 text-right shrink-0">No MCP</span>
           <div className="flex-1 h-4 bg-stone-100 dark:bg-stone-800 rounded overflow-hidden">
             <div className="h-full bg-stone-400 dark:bg-stone-500 rounded" style={{ width: `${(noMcp / max) * 100}%` }} />
           </div>
           <span className="text-[11px] text-stone-600 dark:text-stone-400 w-16 tabular-nums shrink-0">{format(noMcp)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[9px] w-16 text-stone-400 text-right shrink-0">With MCP</span>
+          <span className="text-[9px] w-16 text-stone-600 dark:text-stone-400 text-right shrink-0">With MCP</span>
           <div className="flex-1 h-4 bg-stone-100 dark:bg-stone-800 rounded overflow-hidden">
             <div className="h-full bg-crimson rounded" style={{ width: `${(withMcp / max) * 100}%` }} />
           </div>
@@ -135,7 +135,7 @@ function PromptBlock({ label, children }: { label: string; children: string }) {
     <div className="my-6 rounded overflow-hidden border border-stone-200 dark:border-stone-800">
       <div className="flex items-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
         <span className="w-2 h-2 rounded-full bg-crimson" />
-        <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans">{label}</span>
+        <span className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans">{label}</span>
       </div>
       <pre className="p-4 text-[12px] font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-950">
         {children}
@@ -153,9 +153,9 @@ function TokenTable({ rows }: { rows: { label: string; display: string; value: n
       <table className="w-full font-sans border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-stone-200 dark:border-stone-850">
-            <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pr-4">Type</th>
-            <th className="text-right text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 px-4">Tokens</th>
-            <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pl-4 w-1/2"></th>
+            <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pr-4">Type</th>
+            <th className="text-right text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 px-4">Tokens</th>
+            <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pl-4 w-1/2"></th>
           </tr>
         </thead>
         <tbody>
@@ -185,7 +185,7 @@ export default function HowToHelpAgentsReport() {
     <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
         {/* ─── INTRO ─── */}
         <Section id="introduction" chapterLabel="Introduction" headline="How MCP documentation changes what an agent builds">
@@ -681,9 +681,9 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               <table className="w-full font-sans border-collapse text-[13px]">
                 <thead>
                   <tr className="border-b border-stone-200 dark:border-stone-850">
-                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pr-6">Metric</th>
-                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 px-4">Without MCP docs</th>
-                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pl-4">With MCP docs</th>
+                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pr-6">Metric</th>
+                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 px-4">Without MCP docs</th>
+                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pl-4">With MCP docs</th>
                   </tr>
                 </thead>
                 <tbody>

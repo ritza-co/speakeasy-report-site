@@ -35,17 +35,17 @@ export default function ConfidenceQuotes() {
           className={`py-4 border-t border-stone-200 dark:border-stone-800 ${i === QUOTES.length - 1 ? 'border-b' : ''}`}
         >
           <div className="flex items-center gap-2 mb-2">
-            <p className="text-[11px] tracking-[0.2em] uppercase font-sans font-medium text-stone-500 dark:text-stone-400">
+            <p className="text-[11px] tracking-[0.2em] uppercase font-sans font-medium text-stone-600 dark:text-stone-400">
               {q.condition}
             </p>
             <span className={`text-[10px] font-sans px-1.5 py-0.5 rounded ${q.accurate ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400'}`}>
               {q.accurate ? 'Accurate' : 'Incorrect'}
             </span>
           </div>
-          <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans leading-relaxed mb-2">
+          <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans leading-relaxed mb-2">
             "{q.quote}"
           </blockquote>
-          <p className="text-[12px] text-stone-400 dark:text-stone-500 font-sans leading-relaxed">
+          <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
             {q.reality}
           </p>
         </div>

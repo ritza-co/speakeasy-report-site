@@ -27,7 +27,7 @@ export default function Hero() {
       {/* Center content */}
       <div className="relative z-10 text-center max-w-2xl px-6">
         <motion.p
-          className="text-[10px] tracking-[0.35em] uppercase text-stone-400 mb-8"
+          className="text-[10px] tracking-[0.35em] uppercase text-stone-600 dark:text-stone-400 mb-8"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.9 }}
@@ -72,10 +72,10 @@ export default function Hero() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.8, duration: 0.7 }}
       >
-        <span className="text-[9px] tracking-[0.35em] uppercase text-stone-400">
+        <span className="text-[9px] tracking-[0.35em] uppercase text-stone-600 dark:text-stone-400">
           Scroll down
         </span>
-        <div className="bounce-arrow text-stone-400">
+        <div className="bounce-arrow text-stone-600 dark:text-stone-400">
           <svg width="10" height="18" viewBox="0 0 10 18" fill="none">
             <line x1="5" y1="0" x2="5" y2="14" stroke="currentColor" strokeWidth="1.2" />
             <polyline points="1,10 5,15 9,10" fill="none" stroke="currentColor" strokeWidth="1.2" />

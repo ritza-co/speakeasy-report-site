@@ -125,7 +125,7 @@ export default function ConfidenceComparison() {
         <div key={i} className="border-t border-stone-200 dark:border-stone-800 pt-6">
           {/* Condition + badge */}
           <div className="flex items-center gap-2 mb-4">
-            <p className="text-[11px] tracking-[0.2em] uppercase font-sans font-medium text-stone-500 dark:text-stone-400">
+            <p className="text-[11px] tracking-[0.2em] uppercase font-sans font-medium text-stone-600 dark:text-stone-400">
               {entry.condition}
             </p>
             <span className={`text-[10px] font-sans px-1.5 py-0.5 rounded ${entry.accurate ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400' : 'bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400'}`}>
@@ -139,7 +139,7 @@ export default function ConfidenceComparison() {
           </p>
 
           {/* Verbatim quote */}
-          <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans leading-relaxed mb-4">
+          <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans leading-relaxed mb-4">
             "{entry.summaryLine}"
           </blockquote>
 
@@ -151,7 +151,7 @@ export default function ConfidenceComparison() {
           {/* Code comparisons */}
           {entry.comparisons.map((comp, j) => (
             <div key={j} className="mt-4">
-              <p className="text-[11px] tracking-[0.15em] uppercase text-stone-400 font-sans mb-2">{comp.label}</p>
+              <p className="text-[11px] tracking-[0.15em] uppercase text-stone-600 dark:text-stone-400 font-sans mb-2">{comp.label}</p>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className={`text-[10px] tracking-[0.2em] uppercase font-sans mb-1 ${comp.isMatch ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-400'}`}>
@@ -166,7 +166,7 @@ export default function ConfidenceComparison() {
                   <pre className="text-[11px] font-mono bg-stone-100 dark:bg-stone-900 text-ink dark:text-white px-3 py-3 rounded leading-relaxed overflow-x-auto whitespace-pre-wrap">{comp.correct}</pre>
                 </div>
               </div>
-              <p className="text-[12px] text-stone-400 dark:text-stone-500 font-sans mt-2">
+              <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans mt-2">
                 See the{' '}
                 <a
                   href={comp.docUrl}

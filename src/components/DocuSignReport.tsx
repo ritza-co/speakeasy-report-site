@@ -90,7 +90,7 @@ function SessionLinks() {
   return (
     <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
       <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-        <span className="text-[10px] tracking-[0.25em] uppercase text-stone-400 font-sans font-semibold">
+        <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">
           Full session transcripts
         </span>
       </div>
@@ -208,7 +208,7 @@ function WorkflowTabs() {
             className={`px-4 py-2 text-[13px] font-sans font-medium transition-colors rounded-t
               ${active === t.id
                 ? 'text-ink dark:text-white border-b-2 border-crimson -mb-px'
-                : 'text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300'
+                : 'text-stone-600 dark:text-stone-400 hover:text-stone-600 dark:hover:text-stone-300'
               }`}
           >
             {t.label}
@@ -349,7 +349,7 @@ function ToolContentSection() {
 
       <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-          <span className="text-[10px] tracking-[0.25em] uppercase text-stone-400 font-sans font-semibold">MCP response — haiku-mcp, first query</span>
+          <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">MCP response — haiku-mcp, first query</span>
         </div>
         <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`Output too large (64.6KB). Full output saved to: [path]/tool-results/toolu_016rcuSePhmDTmQEwtReiEuS.json
 
@@ -506,10 +506,10 @@ function CodeSection() {
                   : 'border-transparent bg-stone-50 dark:bg-stone-900 hover:bg-white dark:hover:bg-stone-950'
               }`}
             >
-              <span className={`text-[12px] font-semibold font-mono ${active === t.id ? 'text-ink dark:text-white' : 'text-stone-400'}`}>
+              <span className={`text-[12px] font-semibold font-mono ${active === t.id ? 'text-ink dark:text-white' : 'text-stone-600 dark:text-stone-400'}`}>
                 {t.label}
               </span>
-              <span className="text-[11px] text-stone-400 font-sans">{t.note}</span>
+              <span className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">{t.note}</span>
             </button>
           ))}
         </div>
@@ -538,7 +538,7 @@ export default function DocuSignReport() {
     <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
         {/* ─── HYPOTHESIS ─── */}
         <Section
@@ -635,11 +635,11 @@ export default function DocuSignReport() {
               <table className="w-full font-sans border-collapse text-[13px]">
                 <thead>
                   <tr className="border-b border-stone-200 dark:border-stone-800">
-                    <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Run</th>
-                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Tool calls</th>
-                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Context used</th>
-                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">MCP calls</th>
-                    <th className="text-left py-2.5 pl-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">First attempt</th>
+                    <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Run</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Tool calls</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Context used</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">MCP calls</th>
+                    <th className="text-left py-2.5 pl-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">First attempt</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -664,7 +664,7 @@ export default function DocuSignReport() {
                       <td className="py-2.5 pl-3 text-stone-500 dark:text-stone-500 text-[12px]">
                         {row.first
                           ? <span className="text-emerald-600 dark:text-emerald-400">Yes. </span>
-                          : <span className="text-stone-400 dark:text-stone-500">No. </span>
+                          : <span className="text-stone-600 dark:text-stone-400">No. </span>
                         }
                         {row.note}
                       </td>

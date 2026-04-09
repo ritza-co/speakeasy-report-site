@@ -22,11 +22,11 @@ export default function ModeComparisonTable() {
         <table className="w-full text-sm font-sans border-collapse">
           <thead>
             <tr className="border-b border-stone-200 dark:border-stone-850">
-              <th className="text-left py-3 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Method</th>
-              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Success</th>
-              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Avg time</th>
-              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Avg ctx tokens</th>
-              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">MCP calls</th>
+              <th className="text-left py-3 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Method</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Success</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Avg time</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Avg ctx tokens</th>
+              <th className="text-center py-3 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">MCP calls</th>
             </tr>
           </thead>
           <tbody>
@@ -67,14 +67,14 @@ export default function ModeComparisonTable() {
 
       {/* Broken out by prompt type sub-section */}
       <div>
-        <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-4">
+        <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-4">
           Broken out by model
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm font-sans border-collapse">
             <thead>
               <tr className="border-b border-stone-200 dark:border-stone-850">
-                <th className="text-left py-3 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Model</th>
+                <th className="text-left py-3 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Model</th>
                 {METHODS.map(m => (
                   <th key={m} className="text-center py-3 px-4 text-[10px] uppercase tracking-widest font-normal"
                     style={{ color: METHOD_COLORS[m] }}>
@@ -86,7 +86,7 @@ export default function ModeComparisonTable() {
             <tbody>
               {MODELS.map((model, i) => (
                 <tr key={model} className={i % 2 === 0 ? 'bg-stone-100/60 dark:bg-stone-850/30' : ''}>
-                  <td className="py-3 pr-6 text-[11px] uppercase tracking-widest text-stone-400"
+                  <td className="py-3 pr-6 text-[11px] uppercase tracking-widest text-stone-600 dark:text-stone-400"
                     style={{ color: MODEL_COLORS[model] }}>
                     {model}
                   </td>
@@ -97,12 +97,12 @@ export default function ModeComparisonTable() {
                         {d ? (
                           <>
                             <div className="text-ink dark:text-white font-medium">{pct(d.successRate)}</div>
-                            <div className="text-[11px] text-stone-400 mt-0.5">
+                            <div className="text-[11px] text-stone-600 dark:text-stone-400 mt-0.5">
                               {dur(d.avgElapsed)} · {ctx(d.avgTotalContext)}
                             </div>
                           </>
                         ) : (
-                          <span className="text-stone-400">—</span>
+                          <span className="text-stone-600 dark:text-stone-400">—</span>
                         )}
                       </td>
                     )
@@ -131,7 +131,7 @@ export default function ModeComparisonTable() {
               <div className="font-serif text-3xl font-bold text-ink dark:text-white">
                 <CountUp to={Math.round(a.successRate * 100)} suffix="%" duration={900} />
               </div>
-              <div className="text-[10px] uppercase tracking-widest text-stone-400 mt-1">{method} success</div>
+              <div className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mt-1">{method} success</div>
               <div className="text-[12px] text-stone-500 mt-3">{dur(a.avgElapsed)} avg</div>
             </motion.div>
           )

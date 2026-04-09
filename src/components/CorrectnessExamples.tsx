@@ -136,13 +136,13 @@ export default function CorrectnessExamples() {
         <div key={i} className="border-t border-stone-200 dark:border-stone-800 pt-6">
           {/* Header */}
           <div className="flex items-center gap-2 mb-4">
-            <p className="text-[11px] tracking-[0.2em] uppercase font-sans font-medium text-stone-500 dark:text-stone-400">
+            <p className="text-[11px] tracking-[0.2em] uppercase font-sans font-medium text-stone-600 dark:text-stone-400">
               {ex.condition}
             </p>
             <span className={`text-[10px] font-sans px-1.5 py-0.5 rounded ${RESULT_BADGE[ex.result].className}`}>
               {RESULT_BADGE[ex.result].label}
             </span>
-            <span className="text-[11px] font-mono text-stone-400 dark:text-stone-500">{ex.file}</span>
+            <span className="text-[11px] font-mono text-stone-600 dark:text-stone-400">{ex.file}</span>
           </div>
 
           {/* Intro */}
@@ -167,12 +167,12 @@ export default function CorrectnessExamples() {
           </div>
 
           {/* Analysis */}
-          <p className="text-[13px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed mb-2">
+          <p className="text-[13px] text-stone-600 dark:text-stone-400 font-sans leading-relaxed mb-2">
             {ex.analysis}
           </p>
 
           {/* Doc link */}
-          <p className="text-[12px] text-stone-400 dark:text-stone-500 font-sans">
+          <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans">
             See the{' '}
             <a
               href={ex.docUrl}

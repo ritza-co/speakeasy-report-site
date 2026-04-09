@@ -12,7 +12,7 @@ export default function EntireSessionLink({ label, transcriptHref, repoHref }: E
         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
       </svg>
       <div className="flex-1 min-w-0">
-        <p className="text-[11px] tracking-[0.2em] uppercase text-stone-400 font-sans mb-0.5">Session capture</p>
+        <p className="text-[11px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans mb-0.5">Session capture</p>
         <p className="text-[13px] text-ink dark:text-white font-sans mb-2">{label}</p>
         <div className="flex flex-wrap gap-4">
           <a href={transcriptHref} target="_blank" rel="noopener noreferrer" className="text-[12px] text-crimson hover:underline font-sans">

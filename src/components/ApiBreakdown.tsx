@@ -93,14 +93,14 @@ export default function ApiBreakdown() {
                 <h3 className="font-serif text-xl text-ink dark:text-white">{TOOL_LABELS[tool]}</h3>
                 <Stars n={TOOL_DIFFICULTY[tool]} />
               </div>
-              <p className="text-[11px] text-stone-400 mb-5 leading-relaxed">
+              <p className="text-[11px] text-stone-600 dark:text-stone-400 mb-5 leading-relaxed">
                 {TOOL_DESCRIPTIONS[tool]}
               </p>
 
               <div className="space-y-3">
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-stone-400 uppercase tracking-wider">Success rate</span>
+                    <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wider">Success rate</span>
                     <span className="font-medium text-ink dark:text-white">{Math.round(agg.successRate * 100)}%</span>
                   </div>
                   <div className="w-full h-1.5 bg-stone-200 dark:bg-stone-850 rounded-full overflow-hidden">
@@ -116,7 +116,7 @@ export default function ApiBreakdown() {
 
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-stone-400 uppercase tracking-wider">Avg total ctx</span>
+                    <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wider">Avg total ctx</span>
                     <span className="font-medium text-ink dark:text-white">
                       {(agg.avgTotalContext / 1_000_000).toFixed(2)}M
                     </span>
@@ -126,7 +126,7 @@ export default function ApiBreakdown() {
 
                 <div>
                   <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-stone-400 uppercase tracking-wider">Avg duration</span>
+                    <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wider">Avg duration</span>
                     <span className="font-medium text-ink dark:text-white">
                       {Math.floor(agg.avgElapsed / 60)}m {Math.round(agg.avgElapsed % 60)}s
                     </span>
@@ -136,7 +136,7 @@ export default function ApiBreakdown() {
 
                 {totalMcp > 0 && (
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-stone-400 uppercase tracking-wider">MCP calls</span>
+                    <span className="text-stone-600 dark:text-stone-400 uppercase tracking-wider">MCP calls</span>
                     <span className="font-medium text-ink dark:text-white">{totalMcp} total</span>
                   </div>
                 )}
@@ -144,7 +144,7 @@ export default function ApiBreakdown() {
 
               {activeMethod === 'all' && (
                 <div className="mt-5 pt-4 border-t border-stone-200 dark:border-stone-850">
-                  <p className="text-[9px] uppercase tracking-widest text-stone-400 mb-2">By method</p>
+                  <p className="text-[9px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">By method</p>
                   <div className="space-y-1">
                     {METHODS.map(m => {
                       const mr = aggregate(BENCHMARKS.filter(r => r.tool === tool && r.method === m))

@@ -165,7 +165,7 @@ const MCP_DOCS = [
 function OutputBlock({ label, output }: { label: string; output: string }) {
   return (
     <div className="my-6">
-      <div className="text-[11px] font-sans font-semibold text-stone-400 uppercase tracking-wide mb-1">{label}</div>
+      <div className="text-[11px] font-sans font-semibold text-stone-600 dark:text-stone-400 uppercase tracking-wide mb-1">{label}</div>
       <div className="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
         <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 dark:bg-stone-950 text-stone-200 p-4 overflow-x-auto">{output}</pre>
       </div>
@@ -180,7 +180,7 @@ export default function VercelReport() {
     <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
         {/* ─── HYPOTHESIS ─── */}
         <Section
@@ -287,7 +287,7 @@ export default function VercelReport() {
                   <p className="text-[13px] font-semibold text-ink dark:text-white font-sans">{row.label}</p>
                   <div className="space-y-0.5">
                     <p className="text-[13px] text-stone-600 dark:text-stone-400 font-sans">{row.setup}. {row.tools}.</p>
-                    <p className="text-[12px] text-stone-400 dark:text-stone-500 font-sans italic">"{row.prompt}"</p>
+                    <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans italic">"{row.prompt}"</p>
                   </div>
                 </div>
               ))}
