@@ -16,10 +16,10 @@ import TestEnvironmentCard from './TestEnvironmentCard'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'hypothesis',    label: 'Hypothesis' },
+  { id: 'hypothesis',    label: 'Introduction' },
   { id: 'methodology',   label: 'How we tested it' },
   { id: 'api-only',      label: 'API only' },
-  { id: 'sdk-only',      label: 'SDK only' },
+  { id: 'sdk-only',      label: 'SDK' },
   { id: 'sdk-mcp',       label: 'SDK + MCP' },
   { id: 'all-runs',      label: 'Results and conclusions' },
 ]
@@ -28,47 +28,55 @@ export default function ResendReport() {
   const activeId = useScrollSpy(SECTIONS.map(s => s.id))
 
   return (
-    <>
+    <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
-        {/* ─── HYPOTHESIS ─── */}
+        {/* ─── INTRODUCTION ─── */}
         <Section
           id="hypothesis"
           chapterLabel="Introduction"
-          headline="Does live API context change what an agent builds?"
+          headline="When an agent doesn't know the answer, does it say so?"
         >
           <div className="prose-custom space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              When an AI agent integrates an API it knows from training data, it
-              occasionally reaches a point where it does not know the correct approach.
-              The question is what it does next. Does it search for the answer, flag
-              its uncertainty, or proceed as if it knows?
+              Resend is a widely used email API with good documentation and strong
+              representation in LLM training data. We chose it because it gives the
+              agent a reasonable chance of doing well without any extra tooling. If MCP
+              still changes behavior on an API the agent already knows, that is a
+              stronger result than testing against something obscure.
+            </p>
+
+            <p>
+              We ran six sessions across three tooling configurations and two prompt
+              styles, all against the same task. The headline finding was behavioral.
+              In three non-MCP runs, the agent invented API constraints that don't exist,
+              wrote them into code comments as documented behavior, and built workarounds
+              for them. With a tool to verify a claim, the agent checked. Without one,
+              it guessed and moved on.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Hypothesis 1: Live documentation access improves correctness
+              MCP eliminated fabrication
             </h3>
             <p>
-              Giving the agent access to a live MCP server for the API should change that
-              behavior. Live documentation access should reduce fabricated API constraints,
-              improve architectural correctness, and increase the chance of a working
-              implementation for features the agent does not know well.
+              Every non-MCP run produced at least one fabricated constraint. The agent
+              claimed CID inline images were unsupported by Resend broadcasts, and in
+              the SDK runs, that the SDK did not support <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code> on
+              attachments. Both claims are false. Both were stated with confidence, written
+              into comments, and worked around. No MCP run fabricated a constraint.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Hypothesis 2: Prompt precision can substitute live documentation access
+              A more detailed prompt did not help
             </h3>
             <p>
-              A developer who knows the correct API surface can write it into the prompt
-              explicitly. Does that narrow the gap between MCP and no MCP? Or does
-              fabrication persist regardless of how specific the instructions are?
-            </p>
-
-            <p>
-              To test both, we ran six sessions (three tooling configurations crossed with
-              two prompt styles) all against the same task.
+              We ran each tooling configuration with two prompts: a simple natural-language
+              description and a detailed developer-style prompt with numbered steps and
+              explicit output requirements. The complex prompt improved scores in some runs,
+              but it did not prevent fabrication. When the agent hit the edge of what it
+              knew, it invented an answer regardless of how specific the instructions were.
             </p>
           </div>
         </Section>
@@ -82,24 +90,31 @@ export default function ResendReport() {
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p>
               We ran six benchmark sessions across three tooling configurations and two
-              prompt styles, all against the same task. Each run used Claude Code with the
-              same underlying question: Can the agent correctly map a plain-English
-              description of an integration task to the right API features?
+              prompt styles, all against the same task.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              What we were testing
+            </h3>
+            <p>
+              Does giving an agent access to live API documentation reduce fabrication?
+              And can a more precise prompt substitute for that access, if the developer
+              already knows the correct API surface and writes it into the instructions?
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Three configurations, stacked incrementally
             </h3>
             <p>
-              <b>Raw HTTP</b> is the baseline. The agent has its training data and writes HTTP
-              requests directly.
+              <b>Raw HTTP</b> is the baseline. The agent has its training data and web search, and writes HTTP
+              requests directly. No SDK or MCP is installed.
             </p>
             <p>
-              <b>SDK only</b> adds the Resend Node.js SDK, a typed library with named methods and
-              known response shapes. 
+              <b>SDK</b> adds the Resend Node.js SDK on top of Raw HTTP: a typed library with named methods and
+              known response shapes. Web search remains available.
             </p>
             <p>
-              <b>SDK + MCP</b> adds the Resend docs MCP server on top of HTTP and the Resend SDK,
+              <b>SDK + MCP</b> adds the Resend docs MCP server on top of the SDK,
               creating a live tool the agent can query mid-session to look up documentation
               while it works. The agent was not instructed to use MCP on SDK + MCP runs, but
               the Resend MCP server was available in the environment.
@@ -170,8 +185,8 @@ export default function ResendReport() {
           headline="API only: No SDK, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              The agent uses only training data, without an installed library or live documentation.
+            <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
+              The agent uses training data and web search, without an installed library or live documentation.
             </p>
 
             <p>
@@ -192,11 +207,11 @@ export default function ResendReport() {
               Both runs used the same base prompts shown in the task section above, with
               one addition:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Use raw HTTP requests only (fetch or axios). Do not use any Resend SDK or npm package."
             </div>
             <p>
-              No MCP server was available, and the agent drew entirely on training data.
+              No SDK or MCP server was available. The agent had training data and web search.
             </p>
 
             <AgentActivity
@@ -287,7 +302,7 @@ export default function ResendReport() {
               developer "confirm with Resend support" whether it works on broadcasts. The
               agent's response:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Broadcasts don't support attachments, so inline CID images won't work for
               broadcasts."
             </div>
@@ -368,11 +383,11 @@ export default function ResendReport() {
         <Section
           id="sdk-only"
           chapterLabel="Results — SDK"
-          headline="SDK only: typed library, no MCP"
+          headline="SDK: typed library, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
-              The Resend Node.js SDK is pre-installed. The agent uses training data and SDK types, but no live documentation.
+            <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
+              The Resend Node.js SDK is pre-installed. The agent uses training data, web search, and SDK types, but no live documentation.
             </p>
 
             <p>
@@ -391,12 +406,12 @@ export default function ResendReport() {
             <p>
               Both runs used the same base prompts with one addition:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Use the Resend Node.js SDK (resend npm package)."
             </div>
             <p>
-              The SDK was pre-installed. No MCP was available. The agent had training data
-              and SDK types to work with.
+              The SDK was pre-installed. No MCP was available. The agent had training data,
+              web search, and SDK types to work with.
             </p>
 
             <AgentActivity
@@ -460,7 +475,7 @@ export default function ResendReport() {
             <p>
               The agent's own summary of how it handled the subscription-tier requirement:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Tier is held in your customer record and injected into the email at send
               time (Resend's v4 contact API doesn't expose a free-form metadata bag, so
               the tier lives in your data layer)"
@@ -485,7 +500,7 @@ export default function ResendReport() {
               searching the SDK or flagging uncertainty, it declared a constraint and
               built around it. From its pre-write notes:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "Inline logo: Broadcasts don't support attachments/CID the same way
               transactional emails do. I'll use a data URI (base64-encoded) for the
               inline logo in the HTML body, which works without attachments."
@@ -568,7 +583,7 @@ export default function ResendReport() {
           headline="SDK + MCP: typed library and live documentation server"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p className="text-stone-500 dark:text-stone-400 italic text-[13px]">
+            <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
               The Resend Node.js SDK is pre-installed, and the Resend MCP server is active. The agent can query live API documentation.
             </p>
 
@@ -672,7 +687,7 @@ export default function ResendReport() {
               For example, when the SDK didn't expose a Segments method, the agent
               inspected the installed package directly to confirm what was available:
             </p>
-            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-500 dark:text-stone-400 italic font-sans">
+            <div className="border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1 my-3 text-[13px] text-stone-600 dark:text-stone-400 italic font-sans">
               "resend.segments isn't exposed on the SDK. Let me check the actual SDK
               surface."
             </div>
@@ -699,9 +714,6 @@ export default function ResendReport() {
               <li>The simple run was more active than any non-MCP run, but still recognisable in shape: 19 agent actions, MCP queries mid-session, and then done.</li>
               <li>The complex run was in a different category: 55 agent actions and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
             </ul>
-            <p>
-              Neither run queried any external sources, despite them being available.
-            </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Summary
@@ -896,12 +908,12 @@ export default function ResendReport() {
         </Section>
 
         <footer className="pt-16 pb-24 border-t border-stone-200 dark:border-stone-850 mt-8">
-          <div className="flex items-center justify-between text-[11px] text-stone-400 font-sans">
+          <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-400 font-sans">
             <span>© 2026 Speakeasy</span>
             <span>Do AI Agents Need MCP Servers? — Benchmark Report</span>
           </div>
         </footer>
       </main>
-    </>
+    </div>
   )
 }

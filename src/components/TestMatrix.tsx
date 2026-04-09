@@ -20,7 +20,7 @@ function SuccessCell({ rate }: { rate: number }) {
 function Badge({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="inline-flex items-center gap-1.5 border border-stone-200 dark:border-stone-850 bg-white dark:bg-stone-900 px-3 py-1.5 text-[11px] font-sans">
-      <span className="text-stone-400 uppercase tracking-widest text-[9px]">{label}</span>
+      <span className="text-stone-600 dark:text-stone-400 uppercase tracking-widest text-[9px]">{label}</span>
       <span className="font-medium text-ink dark:text-white">{value}</span>
     </div>
   )
@@ -38,14 +38,14 @@ export default function TestMatrix() {
 
       {/* Heatmap: Tool × Method */}
       <div className="mb-8">
-        <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-4">
+        <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-4">
           Success rate — by API and method
         </p>
         <div className="overflow-x-auto">
           <table className="text-sm font-sans border-collapse">
             <thead>
               <tr>
-                <th className="text-left py-2 pr-6 text-[10px] font-normal text-stone-400 uppercase tracking-widest w-28" />
+                <th className="text-left py-2 pr-6 text-[10px] font-normal text-stone-600 dark:text-stone-400 uppercase tracking-widest w-28" />
                 {METHODS.map(m => (
                   <th key={m} className="py-2 px-4 text-center min-w-[90px]">
                     <div className="flex flex-col items-center gap-1">
@@ -59,7 +59,7 @@ export default function TestMatrix() {
             <tbody>
               {TOOLS.map(tool => (
                 <tr key={tool}>
-                  <td className="py-1 pr-6 text-[11px] text-stone-400 uppercase tracking-widest">
+                  <td className="py-1 pr-6 text-[11px] text-stone-600 dark:text-stone-400 uppercase tracking-widest">
                     {TOOL_LABELS[tool]}
                   </td>
                   {METHODS.map(method => {
@@ -75,14 +75,14 @@ export default function TestMatrix() {
 
       {/* Heatmap: Model × Method */}
       <div className="mb-8">
-        <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-4">
+        <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-4">
           Success rate — by model and method
         </p>
         <div className="overflow-x-auto">
           <table className="text-sm font-sans border-collapse">
             <thead>
               <tr>
-                <th className="text-left py-2 pr-6 text-[10px] font-normal text-stone-400 uppercase tracking-widest w-36" />
+                <th className="text-left py-2 pr-6 text-[10px] font-normal text-stone-600 dark:text-stone-400 uppercase tracking-widest w-36" />
                 {METHODS.map(m => (
                   <th key={m} className="py-2 px-8 text-center min-w-[110px] text-[11px] font-normal text-ink">
                     {m}
@@ -93,7 +93,7 @@ export default function TestMatrix() {
             <tbody>
               {MODELS.map(model => (
                 <tr key={model}>
-                  <td className="py-1 pr-6 text-[11px] text-stone-400">{model}</td>
+                  <td className="py-1 pr-6 text-[11px] text-stone-600 dark:text-stone-400">{model}</td>
                   {METHODS.map(method => {
                     const agg = aggregate(BENCHMARKS.filter(r => r.model === model && r.method === method))
                     return agg ? <SuccessCell key={method} rate={agg.successRate} /> : <td key={method} />

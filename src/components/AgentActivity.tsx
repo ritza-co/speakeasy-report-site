@@ -45,7 +45,7 @@ export default function AgentActivity({ runs }: AgentActivityProps) {
           key={run.label}
           className={`border-t border-stone-200 dark:border-stone-800 py-4 ${i === runs.length - 1 ? 'border-b' : ''}`}
         >
-          <p className={`text-[10px] uppercase tracking-widest font-sans mb-3 ${run.promptStyle === 'simple' ? 'text-stone-400' : 'text-crimson'}`}>
+          <p className={`text-[10px] uppercase tracking-widest font-sans mb-3 ${run.promptStyle === 'simple' ? 'text-stone-600 dark:text-stone-400' : 'text-crimson'}`}>
             {run.label}
           </p>
           <div className="flex flex-wrap gap-2">

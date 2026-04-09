@@ -32,15 +32,15 @@ export default function FabricationTable() {
       <table className="w-full font-sans border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-stone-200 dark:border-stone-850">
-            <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal w-[110px]">Run</th>
-            <th className="text-left py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">What the agent claimed</th>
-            <th className="text-left py-2.5 pl-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">What is actually true</th>
+            <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal w-[110px]">Run</th>
+            <th className="text-left py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">What the agent claimed</th>
+            <th className="text-left py-2.5 pl-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">What is actually true</th>
           </tr>
         </thead>
         <tbody>
           {ROWS.map((row, i) => (
             <tr key={row.run} className={`align-top ${i % 2 === 0 ? 'bg-stone-100/50 dark:bg-stone-850/20' : ''}`}>
-              <td className={`py-3 pr-4 font-medium text-[12px] ${row.promptStyle === 'complex' ? 'text-crimson' : 'text-stone-500 dark:text-stone-400'}`}>
+              <td className={`py-3 pr-4 font-medium text-[12px] ${row.promptStyle === 'complex' ? 'text-crimson' : 'text-stone-600 dark:text-stone-400'}`}>
                 {row.run}
               </td>
               <td className="py-3 px-4 text-stone-600 dark:text-stone-400 italic leading-relaxed">

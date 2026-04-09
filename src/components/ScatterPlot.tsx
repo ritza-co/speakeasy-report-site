@@ -61,7 +61,7 @@ function Tooltip({ data }: { data: TooltipData }) {
       transition={{ duration: 0.12 }}
     >
       <div className="flex justify-between gap-4 mb-1">
-        <span className="text-stone-400">{TOOL_LABELS[r.tool]}</span>
+        <span className="text-stone-600 dark:text-stone-400">{TOOL_LABELS[r.tool]}</span>
         <span className="text-stone-300">avg of 3 runs</span>
       </div>
       <div className="space-y-0.5 text-stone-300">
@@ -74,19 +74,19 @@ function Tooltip({ data }: { data: TooltipData }) {
       </div>
       <div className="mt-2 pt-2 border-t border-stone-700 space-y-0.5">
         <div className="flex justify-between gap-4">
-          <span className="text-stone-400">Time</span><span>{r.elapsed}</span>
+          <span className="text-stone-600 dark:text-stone-400">Time</span><span>{r.elapsed}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className="text-stone-400">Output</span>
+          <span className="text-stone-600 dark:text-stone-400">Output</span>
           <span>{r.tokens.output.toLocaleString()}</span>
         </div>
         <div className="flex justify-between gap-4">
-          <span className="text-stone-400">Total ctx</span>
+          <span className="text-stone-600 dark:text-stone-400">Total ctx</span>
           <span>{(r.tokens.total_context / 1_000_000).toFixed(2)}M</span>
         </div>
         {r.mcp_calls > 0 && (
           <div className="flex justify-between gap-4">
-            <span className="text-stone-400">MCP calls</span><span>{r.mcp_calls}</span>
+            <span className="text-stone-600 dark:text-stone-400">MCP calls</span><span>{r.mcp_calls}</span>
           </div>
         )}
       </div>
@@ -122,7 +122,7 @@ export default function ScatterPlot() {
     <div className="w-full">
       <div className="flex flex-wrap gap-6 mb-6 text-xs font-sans">
         <div>
-          <p className="text-[9px] uppercase tracking-widest text-stone-400 mb-2">Method</p>
+          <p className="text-[9px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">Method</p>
           <div className="flex gap-1.5">
             {(['Bare', 'SDK', 'SDK+MCP'] as Method[]).map(m => (
               <Pill key={m} label={m} active={methods.includes(m)}
@@ -131,7 +131,7 @@ export default function ScatterPlot() {
           </div>
         </div>
         <div>
-          <p className="text-[9px] uppercase tracking-widest text-stone-400 mb-2">API</p>
+          <p className="text-[9px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">API</p>
           <div className="flex gap-1.5 flex-wrap">
             {(['Linear', 'Resend', 'Metabase', 'Pandadoc'] as Tool[]).map(t => (
               <Pill key={t} label={TOOL_LABELS[t]} active={tools.includes(t)}
@@ -140,7 +140,7 @@ export default function ScatterPlot() {
           </div>
         </div>
         <div>
-          <p className="text-[9px] uppercase tracking-widest text-stone-400 mb-2">Model</p>
+          <p className="text-[9px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mb-2">Model</p>
           <div className="flex gap-1.5">
             {(['Opus', 'Sonnet', 'GPT-5.4'] as Model[]).map(m => (
               <Pill key={m} label={m} active={models.includes(m)}
@@ -150,7 +150,7 @@ export default function ScatterPlot() {
         </div>
       </div>
 
-      <p className="text-[11px] text-stone-400 font-sans mb-3">
+      <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mb-3">
         Showing <strong className="text-ink dark:text-white">{activeSet.size * 3}</strong> of 108 sessions — each point is the average of 3 runs
       </p>
 

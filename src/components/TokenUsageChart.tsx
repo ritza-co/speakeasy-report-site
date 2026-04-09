@@ -61,7 +61,7 @@ export default function TokenUsageChart() {
         <div key={c.label}>
           <div className="flex items-baseline justify-between mb-2">
             <p className="text-[13px] font-semibold text-ink dark:text-white font-sans">{c.label}</p>
-            <p className="text-[11px] text-stone-400 font-sans">
+            <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">
               {fmt(c.total)} / 200k &nbsp;·&nbsp; {Math.round((c.total / MAX_CONTEXT) * 100)}% of limit
             </p>
           </div>
@@ -90,7 +90,7 @@ export default function TokenUsageChart() {
             {c.categories.map((cat, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <div className={`w-2 h-2 rounded-sm flex-shrink-0 ${cat.color} dark:${cat.darkColor}`} />
-                <span className="text-[11px] text-stone-400 dark:text-stone-500 font-sans">
+                <span className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">
                   {cat.label}: {Math.round((cat.tokens / c.total) * 100)}%
                 </span>
               </div>
@@ -101,7 +101,7 @@ export default function TokenUsageChart() {
 
       {/* Callout */}
       <div className="mt-2 border-l-2 border-stone-300 dark:border-stone-700 pl-4 py-1">
-        <p className="text-[13px] text-stone-500 dark:text-stone-400 font-sans leading-relaxed">
+        <p className="text-[13px] text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
           The fixed overhead — system prompt, system tools, memory files, and skills —
           was identical across all three conditions (~17k tokens). Every difference
           between the bars comes from messages and, in the MCP condition, the two

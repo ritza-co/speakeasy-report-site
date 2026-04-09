@@ -20,12 +20,12 @@ export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
 
   return (
     <div className="my-4">
-      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-sans mb-4">
+      <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans mb-4">
         Token activity — all runs
       </p>
 
       {/* Legend */}
-      <div className="flex gap-5 mb-4 text-[10px] font-sans text-stone-400">
+      <div className="flex gap-5 mb-4 text-[10px] font-sans text-stone-600 dark:text-stone-400">
         <span><span className="inline-block w-2.5 h-2.5 bg-stone-300 dark:bg-stone-700 mr-1.5 align-middle" />Cache read</span>
         <span><span className="inline-block w-2.5 h-2.5 bg-crimson/70 mr-1.5 align-middle" />Output</span>
       </div>
@@ -43,7 +43,7 @@ export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
           return (
             <div key={run.id} className={`flex flex-col items-center flex-1 transition-opacity duration-300 ${opacity}`}>
               {/* Total token label */}
-              <div className="text-[10px] text-stone-400 font-sans mb-1 text-center">
+              <div className="text-[10px] text-stone-600 dark:text-stone-400 font-sans mb-1 text-center">
                 {isVisible ? fmt(run.cacheRead + run.output) : ''}
               </div>
 
@@ -64,9 +64,9 @@ export default function TokenBar({ visibleIds, highlightIds }: TokenBarProps) {
               {/* Label */}
               <div className="mt-2 text-center space-y-0.5">
                 <div className="text-[10px] text-stone-500 font-sans leading-tight">{run.prompt}</div>
-                <div className="text-[9px] uppercase tracking-widest text-stone-400 font-sans leading-tight">{run.config}</div>
+                <div className="text-[9px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans leading-tight">{run.config}</div>
                 {isVisible && (
-                  <div className="text-[9px] text-stone-400 font-sans">{run.turns}a</div>
+                  <div className="text-[9px] text-stone-600 dark:text-stone-400 font-sans">{run.turns}a</div>
                 )}
               </div>
             </div>

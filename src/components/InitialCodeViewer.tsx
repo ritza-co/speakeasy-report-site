@@ -99,7 +99,7 @@ export default function InitialCodeViewer({ agent }: Props) {
         <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">
           First draft
         </span>
-        <span className="text-[11px] text-stone-400 font-sans">{NOTES[agent]}</span>
+        <span className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">{NOTES[agent]}</span>
       </div>
       <div className="overflow-x-auto bg-white dark:bg-stone-950 p-4">
         <pre className="text-[12px] leading-relaxed font-mono m-0 bg-transparent">

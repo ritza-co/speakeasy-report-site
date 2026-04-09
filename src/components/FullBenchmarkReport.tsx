@@ -35,10 +35,10 @@ export default function FullBenchmarkReport() {
   const activeId = useScrollSpy(SECTIONS.map(s => s.id))
 
   return (
-    <div>
+    <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
         {/* ─── INTRODUCTION ─── */}
         <Section
@@ -391,7 +391,7 @@ When you are done, write a short report covering:
               model on this API.
             </p>
 
-            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-500 dark:text-stone-400 mt-6">
+            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-600 dark:text-stone-400 mt-6">
               We can already note something. Integration using the API is faster only
               if the service is well-known and agents are trained on it, or if the
               service has very simple documentation.
@@ -482,7 +482,7 @@ When you are done, write a short report covering:
               status first.
             </p>
 
-            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-500 dark:text-stone-400 mt-6">
+            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-600 dark:text-stone-400 mt-6">
               The SDK improved integration quality when the library was mature and the
               environment was correctly configured. It gave agents a typed,
               discoverable interface that reduced exploration time and enabled live
@@ -612,7 +612,7 @@ When you are done, write a short report covering:
               to the correct PandaDoc recipient roles.
             </p>
 
-            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-500 dark:text-stone-400 mt-6">
+            <blockquote className="border-l-2 border-stone-300 dark:border-stone-700 pl-5 italic text-stone-600 dark:text-stone-400 mt-6">
               MCP did not necessarily teach agents how to integrate these tools. MCP
               gave them access to the actual state of the environment they were
               integrating into: a real team ID to run tests against, template roles,
@@ -629,7 +629,7 @@ When you are done, write a short report covering:
                     <div className="font-serif text-3xl font-bold text-ink dark:text-white">
                       <CountUp to={mcp} duration={900} />
                     </div>
-                    <div className="text-[10px] uppercase tracking-widest text-stone-400 mt-1">
+                    <div className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 mt-1">
                       {method} MCP calls
                     </div>
                     <div className="text-[12px] text-stone-500 mt-2">
@@ -767,7 +767,7 @@ When you are done, write a short report covering:
         </Section>
 
         <footer className="pt-16 pb-24 border-t border-stone-200 dark:border-stone-850 mt-8">
-          <div className="flex items-center justify-between text-[11px] text-stone-400 font-sans">
+          <div className="flex items-center justify-between text-[11px] text-stone-600 dark:text-stone-400 font-sans">
             <span>© 2026 Speakeasy</span>
             <span>Do Agents Need Help with Integrating Popular APIs? — Benchmark Report</span>
           </div>

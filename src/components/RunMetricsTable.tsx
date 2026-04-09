@@ -24,12 +24,12 @@ export default function RunMetricsTable() {
       <table className="w-full font-sans border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-stone-200 dark:border-stone-850">
-            <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Run</th>
-            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Score</th>
-            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Actions</th>
-            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Output tokens</th>
-            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Cache read</th>
-            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-400 font-normal">MCP calls</th>
+            <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Run</th>
+            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Score</th>
+            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Actions</th>
+            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Output tokens</th>
+            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Cache read</th>
+            <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">MCP calls</th>
           </tr>
         </thead>
         <tbody>
@@ -45,7 +45,7 @@ export default function RunMetricsTable() {
               <td className="py-2.5 px-3 text-center">
                 {run.mcpCalls > 0
                   ? <span className="text-emerald-600 dark:text-emerald-400 font-medium">{run.mcpCalls}</span>
-                  : <span className="text-stone-400">0</span>
+                  : <span className="text-stone-600 dark:text-stone-400">0</span>
                 }
               </td>
             </tr>

@@ -80,10 +80,10 @@ export default function ErrorDetectabilityTable() {
     <div className="my-6 space-y-0">
       {/* Header */}
       <div className="grid grid-cols-[80px_90px_1fr_100px] gap-3 pb-2 border-b border-stone-200 dark:border-stone-800">
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans">File</p>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans">Condition</p>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans">Error</p>
-        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-sans">Detectability</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans">File</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans">Condition</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans">Error</p>
+        <p className="text-[10px] tracking-[0.2em] uppercase text-stone-600 dark:text-stone-400 font-sans">Detectability</p>
       </div>
 
       {ROWS.map((row, i) => (
@@ -92,10 +92,10 @@ export default function ErrorDetectabilityTable() {
           className={`grid grid-cols-[80px_90px_1fr_100px] gap-3 items-start py-3 border-b border-stone-200 dark:border-stone-800`}
         >
           <p className="text-[12px] font-mono text-ink dark:text-white leading-snug">{row.file}</p>
-          <p className="text-[12px] text-stone-500 dark:text-stone-400 font-sans leading-snug">{row.condition}</p>
+          <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans leading-snug">{row.condition}</p>
           <div>
             <p className="text-[12px] text-stone-600 dark:text-stone-300 font-sans leading-snug">{row.error}</p>
-            <p className="text-[11px] text-stone-400 dark:text-stone-500 font-sans mt-0.5 leading-snug">{row.why}</p>
+            <p className="text-[11px] text-stone-600 dark:text-stone-400 font-sans mt-0.5 leading-snug">{row.why}</p>
           </div>
           <div className="flex justify-start">
             <Badge type={row.detectability} />

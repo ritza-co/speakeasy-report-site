@@ -1,397 +1,245 @@
-import TOC from './TOC'
 import Section from './Section'
-import TaskCard from './TaskCard'
-import ToolCallSequence from './ToolCallSequence'
-import InitialCodeViewer from './InitialCodeViewer'
-import CodeComparison from './CodeComparison'
-import DocReferences from './DocReferences'
-import EntireSessionLink from './EntireSessionLink'
-import ReportSeriesLinks from './ReportSeriesLinks'
+import TOC from './TOC'
+import CorrectnessScorecard from './CorrectnessScorecard'
+import FabricationTable from './FabricationTable'
+import KeyFindings from './KeyFindings'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'context',    label: 'Is web search enough?' },
-  { id: 'web-agent',  label: 'Agent with web search' },
-  { id: 'mcp-agent',  label: 'Agent with documentation access' },
-  { id: 'conclusion', label: 'What changes with better context' },
+  { id: 'overview',  label: 'Overview' },
+  { id: 'vercel',    label: 'Vercel AI SDK' },
+  { id: 'docusign',  label: 'DocuSign' },
+  { id: 'resend',    label: 'Resend' },
+  { id: 'agents',    label: 'How to Help Agents' },
+  { id: 'full',      label: 'Full Benchmark' },
 ]
-
-const GIST_WEB = 'https://gisthost.github.io/?11281b85c534e01889c90d43494eb871/page-001.html'
-const GIST_MCP = 'https://gisthost.github.io/?c992aee978ca1d6110de1c342f53a549/page-001.html'
-
-const WEB_FIRST_CALLS = [
-  {
-    tool: 'Agent (web search)',
-    description: 'Search web for Vercel AI SDK tool error handling',
-    outcome: 'neutral' as const,
-    href: `${GIST_WEB}#msg-0001`,
-  },
-  {
-    tool: 'Write',
-    description: 'Write initial index.ts — tool() with parameters key, try/catch pattern',
-    outcome: 'neutral' as const,
-    href: `${GIST_WEB}#msg-0018`,
-  },
-  {
-    tool: 'Bash',
-    description: 'Run index.ts — fails: input_schema.type field required',
-    outcome: 'failed' as const,
-    href: `${GIST_WEB}#msg-0020`,
-  },
-]
-
-const WEB_DEBUG_CALLS = [
-  {
-    tool: 'Bash ×4',
-    description: 'Inspect node_modules: zod schema output, ai version, zod version, zodSchema wrapper',
-    outcome: 'neutral' as const,
-    href: `${GIST_WEB}#msg-0025`,
-  },
-  {
-    tool: 'Bash',
-    description: 'Run again with zodSchema fix — still fails, input property stripped',
-    outcome: 'failed' as const,
-    href: `${GIST_WEB}#msg-0050`,
-  },
-  {
-    tool: 'Bash',
-    description: 'Downgrade: npm install ai@4 @ai-sdk/anthropic@1 zod@3',
-    outcome: 'failed' as const,
-    href: `${GIST_WEB}#msg-0055`,
-  },
-  {
-    tool: 'Edit',
-    description: 'Rewrite for SDK v4: tool() + parameters + ToolExecutionError catch',
-    outcome: 'neutral' as const,
-    href: `${GIST_WEB}#msg-0059`,
-  },
-  {
-    tool: 'Bash',
-    description: 'Run on v4 — works',
-    outcome: 'found' as const,
-    href: `${GIST_WEB}#msg-0063`,
-  },
-]
-
-const MCP_FIRST_CALLS = [
-  {
-    tool: 'Agent (search_docs)',
-    description: 'Look up tool error handling in Vercel AI SDK v6 docs',
-    outcome: 'found' as const,
-    href: `${GIST_MCP}#msg-0004`,
-  },
-  {
-    tool: 'Write',
-    description: 'Write index.ts — inputSchema + step.content loop',
-    outcome: 'neutral' as const,
-    href: `${GIST_MCP}#msg-0012`,
-  },
-  {
-    tool: 'Bash (tsc)',
-    description: 'Type-check — two issues: lib config + tool() overload with never return',
-    outcome: 'neutral' as const,
-    href: `${GIST_MCP}#msg-0015`,
-  },
-]
-
-const MCP_DEBUG_CALLS = [
-  {
-    tool: 'Bash ×6',
-    description: 'Inspect node_modules types to understand tool() overload resolution',
-    outcome: 'neutral' as const,
-    href: `${GIST_MCP}#msg-0018`,
-  },
-  {
-    tool: 'Edit',
-    description: 'Fix: inline tool object with inputSchema instead of tool() helper',
-    outcome: 'neutral' as const,
-    href: `${GIST_MCP}#msg-0044`,
-  },
-  {
-    tool: 'Bash (tsc)',
-    description: 'Type-check — index.ts clean, only node_modules noise remaining',
-    outcome: 'found' as const,
-    href: `${GIST_MCP}#msg-0046`,
-  },
-]
-
-const WEB_DOCS = [
-  {
-    label: 'Migration guide: parameters → inputSchema (v4 to v5)',
-    href: 'https://ai-sdk.dev/docs/migration-guides/migration-guide-5-0#tool-definition-changes-parameters--inputschema',
-    note: 'Documents the rename of the tool field name that the web-search agent used.',
-  },
-  {
-    label: 'Migration guide: ToolExecutionError removed (v4 to v5)',
-    href: 'https://ai-sdk.dev/docs/migration-guides/migration-guide-5-0#tool-execution-error-handling',
-    note: 'Documents the removal of ToolExecutionError and introduction of tool-error content parts.',
-  },
-  {
-    label: 'Tool calling: handling errors',
-    href: 'https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling#handling-errors',
-    note: 'Shows the current pattern: step.content.filter(part => part.type === "tool-error").',
-  },
-]
-
-const MCP_DOCS = [
-  {
-    label: 'Tool calling: inputSchema field',
-    href: 'https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling',
-    note: 'Defines inputSchema as the field for tool input parameters (using z.object() directly, not zodSchema()).',
-  },
-  {
-    label: 'Tool calling: steps and step.content',
-    href: 'https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling#steps',
-    note: 'Documents the steps property and how to iterate over step content.',
-  },
-  {
-    label: 'Tool calling: handling errors',
-    href: 'https://ai-sdk.dev/docs/ai-sdk-core/tools-and-tool-calling#handling-errors',
-    note: 'Confirms tool-error as the content part type and .error as the property for the thrown error.',
-  },
-]
-
-function OutputBlock({ label, output }: { label: string; output: string }) {
-  return (
-    <div className="my-6">
-      <div className="text-[11px] font-sans font-semibold text-stone-400 uppercase tracking-wide mb-1">{label}</div>
-      <div className="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-        <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 dark:bg-stone-950 text-stone-200 p-4 overflow-x-auto">{output}</pre>
-      </div>
-    </div>
-  )
-}
 
 interface GuideArticleProps {
-  onNavigate: (tab: 'resend' | 'vercel') => void
+  onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'full' | 'agents' | 'docusign') => void
 }
 
 export default function GuideArticle({ onNavigate }: GuideArticleProps) {
   const activeId = useScrollSpy(SECTIONS.map(s => s.id))
 
   return (
-    <>
+    <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
-        {/* ─── CONTEXT ─── */}
+        {/* ─── OVERVIEW ─── */}
         <Section
-          id="context"
-          chapterLabel="The problem"
-          headline="Is web search enough context for AI agents?"
-          subheadline="A look at what happens when an AI agent encounters a recently updated SDK"
+          id="overview"
+          chapterLabel="Introduction"
+          headline="Do agents produce better code when you give them better context?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              AI agents generate code from two sources: their training data and whatever context arrives in the prompt. The quality of that output depends on the quality of both. For developers using agents today, the practical question is what good context looks like and how to get it in reliably.
+              AI agents generate code from their training data and whatever context arrives in the prompt. When an API or SDK changes after the training cutoff, that gap produces silent errors: code that compiles, type-checks, and then fails at runtime using a pattern that was correct two versions ago.
             </p>
             <p>
-              Web search is the obvious answer and it does improve things. But for APIs and SDKs that update frequently, training data often contains outdated patterns. Web search helps, but it has its own reliability problems. Results vary, agents don't always apply what they find, and once an agent is mid-session debugging a failed run it rarely goes back to re-read documentation it found earlier.
-            </p>
-            <p>
-              This article looks at a specific case: two agents given the same task against a recently updated SDK. One has web search. The other has web search plus an MCP server exposing the SDK's current documentation directly. We look at what each agent produces, where things go wrong, and why the outcomes differ.
-            </p>
-            <p className="text-[13px] text-stone-500 dark:text-stone-500 border-l-2 border-stone-200 dark:border-stone-700 pl-4">
-              Both sessions were run against live APIs with real tool calls. Code, tool call sequences, and full transcripts are in public GitHub repositories (links throughout this article).
+              We ran a series of benchmarks to measure how much this matters and what actually closes the gap. All sessions ran against real APIs using agents including Claude Code and GPT-5.4, scored on whether the agent produced code that reflects current best practices.
             </p>
           </div>
         </Section>
 
-        {/* ─── WEB AGENT ─── */}
+        {/* ─── VERCEL ─── */}
         <Section
-          id="web-agent"
-          chapterLabel="Condition 1"
-          headline="Agent with web search"
+          id="vercel"
+          chapterLabel="Benchmark 1"
+          headline="Vercel AI SDK: does version-specific documentation change the output?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The Vercel AI SDK has gone through several major versions with breaking changes. Tool definition field names were renamed across versions. The error class for handling tool failures was removed and replaced with a different pattern. An agent working from training data alone may have learned any of these generations without knowing which is current.
+              The Vercel AI SDK had significant breaking changes between v4 and v6. Tool field names were renamed, the error class for handling tool failures was removed, and streaming changed. An agent drawing on training data writes code that looks right but fails at runtime. We tested three conditions against four tasks that each targeted one of the changed patterns: Web (web search only), SDK (web search plus the pre-installed SDK), and MCP (everything in SDK plus a v6-specific docs MCP server).
             </p>
             <p>
-              The task given to both agents targets this area directly: tool error handling.
+              Only the MCP condition got a perfect score. The SDK condition scored lower than Web: the agent inspected the installed types but searched for the wrong method names because it didn't know the v6 replacements existed.
             </p>
 
-            <TaskCard />
+            <CorrectnessScorecard />
 
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              First pass
-            </h3>
-            <p>
-              The agent searches for Vercel AI SDK tool error handling before writing anything. It finds relevant documentation and writes an initial implementation.
-            </p>
-
-            <div className="my-6">
-              <ToolCallSequence label="Web-search agent — first pass" calls={WEB_FIRST_CALLS} />
-            </div>
-
-            <p>
-              The initial code uses field names and error-handling patterns from an older version of the SDK. The code always returns success, regardless of whether the tool threw.
-            </p>
-
-            <InitialCodeViewer agent="web" />
-
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              Debugging and the downgrade decision
-            </h3>
-            <p>
-              When the code fails with a schema validation error, the agent digs through node_modules internals trying to resolve it. After two failed attempts, it takes a different path. It downgrades the entire SDK to v4, where its training data is reliable, and rewrites the implementation to match.
-            </p>
-
-            <div className="my-6">
-              <ToolCallSequence label="Web-search agent — debugging" calls={WEB_DEBUG_CALLS} />
-            </div>
-
-            <p>
-              The downgraded code runs, but the project is now on an older SDK version the developer didn't ask for, using an error-handling pattern that was removed two major versions ago.
-            </p>
-
-            <OutputBlock
-              label="Output"
-              output={`{
-  "toolCallId": "toolu_0127yV4xp7qBzc1m4wgCFerY",
-  "toolName": "alwaysErrors",
-  "args": { "input": "test" },
-  "errored": true,
-  "errorMessage": "This tool always fails intentionally."
-}`}
-            />
-
-            <p>
-              The output looks correct. Nothing here signals a problem. But the project is now pinned to SDK v4, and any further code the agent produces in this session will be written against v4 patterns that no longer exist in the current version.
-            </p>
-
-            <EntireSessionLink
-              label="Web-search agent — full session transcript"
-              transcriptHref="https://gisthost.github.io/?11281b85c534e01889c90d43494eb871/index.html"
-              repoHref="https://github.com/jamesdanielwhitford/tool-error-web-only"
-            />
-
-            <DocReferences refs={WEB_DOCS} />
+            <button
+              onClick={() => {
+                onNavigate('vercel')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the Vercel AI SDK report →
+            </button>
           </div>
         </Section>
 
-        {/* ─── MCP AGENT ─── */}
+        {/* ─── DOCUSIGN ─── */}
         <Section
-          id="mcp-agent"
-          chapterLabel="Condition 2"
-          headline="Agent with documentation access"
+          id="docusign"
+          chapterLabel="Benchmark 2"
+          headline="DocuSign: does an MCP server help agents use a complex API correctly?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The second agent has the same task, same model, and web search, plus an MCP server exposing the current Vercel AI SDK v6 documentation. It can query the documentation at any point in the session, not just at the start.
+              DocuSign has two separate environments with different base URLs, and credentials for one don't work with the other. It's exactly the kind of configuration detail that isn't reliably in training data. We ran six sessions across three models, each twice: once with web search only, once with a DocuSign MCP server added.
             </p>
-
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              First pass
-            </h3>
             <p>
-              The agent queries the docs before writing anything, finds the current tool error handling section, and produces an implementation that uses the right field names and the right approach. The first draft is close but not quite right.
+              All six agents completed the task. But the gap between them tracked model capability, not tool access. Opus used the correct sandbox URL on the first attempt in both conditions. Haiku spent 27 tool calls finding it without MCP, and 16 with. The MCP server returned responses too large to read in full, but even the truncated preview was enough to change haiku's first guess.
             </p>
 
-            <div className="my-6">
-              <ToolCallSequence label="MCP agent — first pass" calls={MCP_FIRST_CALLS} />
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full font-sans border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-stone-200 dark:border-stone-800">
+                    <th className="text-left py-2.5 pr-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Run</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Tool calls</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Context used</th>
+                    <th className="text-center py-2.5 px-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">MCP calls</th>
+                    <th className="text-left py-2.5 pl-3 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">First attempt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { run: 'haiku-no-mcp',  calls: 27, ctx: '23%', mcp: 0, first: false, note: 'Discovered sandbox URL by trial-and-error' },
+                    { run: 'haiku-mcp',     calls: 16, ctx: '26%', mcp: 3, first: false, note: 'MCP outputs unreadable; used sandbox URL from training data' },
+                    { run: 'sonnet-no-mcp', calls: 10, ctx: '12%', mcp: 0, first: false, note: 'Queried OAuth userinfo endpoint to find correct base URI' },
+                    { run: 'sonnet-mcp',    calls: 13, ctx: '14%', mcp: 2, first: false, note: 'MCP outputs unreadable; fell back to same userinfo approach' },
+                    { run: 'opus-no-mcp',   calls: 8,  ctx: '11%', mcp: 0, first: true,  note: 'Used correct sandbox URL immediately; no debugging required' },
+                    { run: 'opus-mcp',      calls: 7,  ctx: '11%', mcp: 1, first: true,  note: 'MCP output unreadable; succeeded on first real execution' },
+                  ].map((row, i) => (
+                    <tr key={row.run} className={i % 2 === 0 ? 'bg-stone-50/60 dark:bg-stone-800/20' : ''}>
+                      <td className="py-2.5 pr-4 font-mono text-[12px] text-stone-600 dark:text-stone-400">{row.run}</td>
+                      <td className="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">{row.calls}</td>
+                      <td className="py-2.5 px-3 text-center text-stone-600 dark:text-stone-400">{row.ctx}</td>
+                      <td className="py-2.5 px-3 text-center">
+                        {row.mcp > 0
+                          ? <span className="text-stone-600 dark:text-stone-400">{row.mcp}</span>
+                          : <span className="text-stone-300 dark:text-stone-600">—</span>
+                        }
+                      </td>
+                      <td className="py-2.5 pl-3 text-stone-500 dark:text-stone-500 text-[12px]">
+                        {row.first
+                          ? <span className="text-emerald-600 dark:text-emerald-400">Yes. </span>
+                          : <span className="text-stone-600 dark:text-stone-400">No. </span>
+                        }
+                        {row.note}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
-            <InitialCodeViewer agent="mcp" />
-
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              Debugging and the type check fix
-            </h3>
-            <p>
-              The agent hits a TypeScript type error and works through it by inspecting the type definitions. The approach to error handling stays intact throughout.
-            </p>
-
-            <div className="my-6">
-              <ToolCallSequence label="MCP agent — debugging" calls={MCP_DEBUG_CALLS} />
-            </div>
-
-            <p>
-              The final code correctly identifies and surfaces tool errors, matching what the current documentation shows.
-            </p>
-
-            <OutputBlock
-              label="Output"
-              output={`{
-  "errored": true,
-  "text": "",
-  "errorMessage": "This tool always fails."
-}`}
-            />
-
-            <EntireSessionLink
-              label="MCP agent — full session transcript"
-              transcriptHref="https://gisthost.github.io/?c992aee978ca1d6110de1c342f53a549/index.html"
-              repoHref="https://github.com/jamesdanielwhitford/tool-error-mcp"
-            />
-
-            <DocReferences refs={MCP_DOCS} />
+            <button
+              onClick={() => {
+                onNavigate('docusign')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the DocuSign report →
+            </button>
           </div>
         </Section>
 
-        {/* ─── CONCLUSION ─── */}
+        {/* ─── RESEND ─── */}
         <Section
-          id="conclusion"
-          chapterLabel="Takeaway"
-          headline="What changes with better context"
+          id="resend"
+          chapterLabel="Benchmark 3"
+          headline="Resend: what happens when agents don't know the answer?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Both agents hit errors and kept working, but they made different decisions when their first approach failed. The web-search agent, unable to resolve the schema error with the documentation it had read, changed the environment to match what it knew by downgrading to an older version. The MCP agent, with access to the current docs throughout the session, fixed the code and stayed on the current version.
-            </p>
-
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-6 mb-3">
-              Final outputs
-            </h3>
-            <p>
-              Both agents produced code that runs, but the difference is in what version each is running and whether the error-handling approach matches what the current SDK actually expects.
-            </p>
-
-            <CodeComparison />
-
-            <p>
-              The outputs look identical in shape: both report <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">errored: true</code> and surface the error message. Nothing in either output signals that one agent silently downgraded the SDK. A developer reviewing the terminal output would have no reason to check the <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">package.json</code>, and future code produced in the same session would continue to use v4 patterns that no longer work on the current SDK.
+              Resend is a well-documented REST API, but some of its features aren't well-represented in training data. We ran six sessions across three tooling configurations and two prompt styles to see how agents behave when they hit the edge of what they know.
             </p>
             <p>
-              The web-search agent found accurate documentation in its first tool call, but reading docs early in a session doesn't guarantee the agent applies that information correctly when debugging later. The MCP agent had a way to consult the documentation at the moment it needed it, not just at session start, and that produced the different result.
+              The most striking finding was behavioral. In three non-MCP runs, the agent invented API constraints that don't exist, wrote them into code comments as if they were documented behavior, and built workarounds for them. With a tool to verify a claim, the agent checked; without one, it guessed and moved on.
             </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-6 mb-3">
-              Context cost
-            </h3>
+            <FabricationTable />
+
+            <button
+              onClick={() => {
+                onNavigate('resend')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the Resend report →
+            </button>
+          </div>
+        </Section>
+
+        {/* ─── HOW TO HELP AGENTS ─── */}
+        <Section
+          id="agents"
+          chapterLabel="Benchmark 4"
+          headline="How to help agents: private APIs and MCP documentation"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Adding an MCP server didn't increase context consumption. Both sessions ended at the same context usage, with the MCP agent slightly lower.
+              Private APIs present a different challenge from public ones: they're not indexed, and their documentation is often difficult to navigate even for human developers. We set up a restaurant enterprise with internal microservices and asked Claude to build a new dashboard twice: once with no documentation, once with a structured MCP documentation server.
             </p>
-            <div className="flex gap-4 my-5">
-              <div className="flex-1 border border-stone-200 dark:border-stone-700 rounded-lg p-4">
-                <div className="text-[11px] font-sans font-semibold text-stone-400 uppercase tracking-wide mb-2">Web search only</div>
-                <div className="text-2xl font-mono font-bold text-ink dark:text-white">37k</div>
-                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-1">of 200k tokens used (18%)</div>
-                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-3">19.9k in messages</div>
+            <p>
+              Without documentation, the agent spent 54 minutes exploring the codebase, built a working dashboard, but routed all requests through a single endpoint and ignored the service architecture entirely. With the MCP server, it queried the docs first, planned before building, and finished in 18 minutes with correct per-service routing.
+            </p>
+
+            <div className="my-4 border border-stone-200 dark:border-stone-850 rounded overflow-hidden">
+              <div className="grid grid-cols-3 border-b border-stone-200 dark:border-stone-850">
+                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans" />
+                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans border-l border-stone-200 dark:border-stone-850">Without MCP</div>
+                <div className="px-4 py-2.5 text-[10px] uppercase tracking-widest text-crimson font-sans border-l border-stone-200 dark:border-stone-850">With MCP</div>
               </div>
-              <div className="flex-1 border border-stone-200 dark:border-stone-700 rounded-lg p-4">
-                <div className="text-[11px] font-sans font-semibold text-stone-400 uppercase tracking-wide mb-2">Web search + MCP</div>
-                <div className="text-2xl font-mono font-bold text-ink dark:text-white">36k</div>
-                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-1">of 200k tokens used (18%)</div>
-                <div className="text-[12px] text-stone-500 dark:text-stone-400 mt-3">18.8k in messages</div>
-              </div>
+              {[
+                { metric: 'Time',             noMcp: '54 min',          mcp: '18 min' },
+                { metric: 'Cache reads',      noMcp: '11.7M tokens',    mcp: '2.7M tokens' },
+                { metric: 'Order updates',    noMcp: 'Not working',     mcp: 'Working' },
+                { metric: 'API architecture', noMcp: 'Single endpoint', mcp: 'Correct per service' },
+              ].map(row => (
+                <div key={row.metric} className="grid grid-cols-3 border-b border-stone-100 dark:border-stone-850 last:border-0">
+                  <div className="px-4 py-2.5 text-[13px] font-medium text-stone-600 dark:text-stone-400">{row.metric}</div>
+                  <div className="px-4 py-2.5 text-[13px] text-stone-500 dark:text-stone-500 border-l border-stone-100 dark:border-stone-850">{row.noMcp}</div>
+                  <div className="px-4 py-2.5 text-[13px] text-ink dark:text-white font-medium border-l border-stone-100 dark:border-stone-850">{row.mcp}</div>
+                </div>
+              ))}
             </div>
+
+            <button
+              onClick={() => {
+                onNavigate('agents')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the How to Help Agents report →
+            </button>
+          </div>
+        </Section>
+
+        {/* ─── FULL BENCHMARK ─── */}
+        <Section
+          id="full"
+          chapterLabel="Benchmark 5"
+          headline="Full benchmark: 108 sessions across 4 APIs and 3 models"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The MCP agent used fewer message tokens because it resolved the type error in fewer exchanges. Better context produced better output and a shorter path to get there.
+              The full benchmark ran 108 agent sessions across four APIs (Linear, Resend, Metabase, PandaDoc), three tooling configurations, and three models (Claude Opus, Claude Sonnet, GPT-5.4). The headline finding was a behavioral difference we didn't set out to measure: GPT-5.4 made 45 MCP calls across 12 sessions, while Claude Sonnet and Opus made 9 combined.
             </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white mt-6 mb-3">
-              Where this fits in a larger picture
-            </h3>
-            <p>
-              The reports below run the same question across multiple tasks and APIs, with scored results. If you're building systems where agents write code against libraries that change, the reports show how documentation access affects outcomes at scale.
-            </p>
+            <KeyFindings />
 
-            <ReportSeriesLinks onNavigate={onNavigate} />
+            <button
+              onClick={() => {
+                onNavigate('full')
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
+              className="text-[13px] font-semibold text-crimson hover:underline font-sans"
+            >
+              Read the full benchmark report →
+            </button>
           </div>
         </Section>
 
       </main>
-    </>
+    </div>
   )
 }

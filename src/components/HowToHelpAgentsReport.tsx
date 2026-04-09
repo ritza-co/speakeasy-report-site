@@ -4,7 +4,8 @@ import MermaidDiagram from './MermaidDiagram'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'setup',       label: 'Setup' },
+  { id: 'introduction', label: 'Introduction' },
+  { id: 'setup',        label: 'Setup' },
   { id: 'no-mcp',      label: 'Building without a docs MCP server' },
   { id: 'with-mcp',    label: 'Building with MCP docs' },
   { id: 'comparison',  label: 'Run comparison' },
@@ -51,14 +52,14 @@ function DonutChart({ slices, title }: {
         <text x={cx} y={cy + 14} textAnchor="middle" fontSize={22} fontWeight="600" fontFamily="sans-serif" fill="#c83228">{total}</text>
       </svg>
       <div className="flex-1 min-w-0">
-        <p className="text-[10px] uppercase tracking-widest text-stone-400 font-sans mb-3">{title}</p>
+        <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans mb-3">{title}</p>
         <div className="space-y-1.5">
           {paths.map((d, i) => (
             <div key={i} className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: d.color }} />
               <span className="text-[12px] text-stone-600 dark:text-stone-400 flex-1 truncate">{d.label}</span>
               <span className="text-[12px] text-stone-700 dark:text-stone-300 font-medium tabular-nums">{d.value}</span>
-              <span className="text-[10px] text-stone-400 w-7 text-right tabular-nums">{Math.round(d.pct * 100)}%</span>
+              <span className="text-[10px] text-stone-600 dark:text-stone-400 w-7 text-right tabular-nums">{Math.round(d.pct * 100)}%</span>
             </div>
           ))}
         </div>
@@ -74,17 +75,17 @@ function ComparisonBar({ label, noMcp, withMcp, max, format }: {
 }) {
   return (
     <div className="py-3 border-b border-stone-100 dark:border-stone-850 last:border-0">
-      <div className="text-[11px] text-stone-500 dark:text-stone-400 mb-1.5">{label}</div>
+      <div className="text-[11px] text-stone-600 dark:text-stone-400 mb-1.5">{label}</div>
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className="text-[9px] w-16 text-stone-400 text-right shrink-0">No MCP</span>
+          <span className="text-[9px] w-16 text-stone-600 dark:text-stone-400 text-right shrink-0">No MCP</span>
           <div className="flex-1 h-4 bg-stone-100 dark:bg-stone-800 rounded overflow-hidden">
             <div className="h-full bg-stone-400 dark:bg-stone-500 rounded" style={{ width: `${(noMcp / max) * 100}%` }} />
           </div>
           <span className="text-[11px] text-stone-600 dark:text-stone-400 w-16 tabular-nums shrink-0">{format(noMcp)}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[9px] w-16 text-stone-400 text-right shrink-0">With MCP</span>
+          <span className="text-[9px] w-16 text-stone-600 dark:text-stone-400 text-right shrink-0">With MCP</span>
           <div className="flex-1 h-4 bg-stone-100 dark:bg-stone-800 rounded overflow-hidden">
             <div className="h-full bg-crimson rounded" style={{ width: `${(withMcp / max) * 100}%` }} />
           </div>
@@ -134,7 +135,7 @@ function PromptBlock({ label, children }: { label: string; children: string }) {
     <div className="my-6 rounded overflow-hidden border border-stone-200 dark:border-stone-800">
       <div className="flex items-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
         <span className="w-2 h-2 rounded-full bg-crimson" />
-        <span className="text-[10px] uppercase tracking-widest text-stone-400 font-sans">{label}</span>
+        <span className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans">{label}</span>
       </div>
       <pre className="p-4 text-[12px] font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-950">
         {children}
@@ -152,9 +153,9 @@ function TokenTable({ rows }: { rows: { label: string; display: string; value: n
       <table className="w-full font-sans border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-stone-200 dark:border-stone-850">
-            <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pr-4">Type</th>
-            <th className="text-right text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 px-4">Tokens</th>
-            <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pl-4 w-1/2"></th>
+            <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pr-4">Type</th>
+            <th className="text-right text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 px-4">Tokens</th>
+            <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pl-4 w-1/2"></th>
           </tr>
         </thead>
         <tbody>
@@ -181,30 +182,43 @@ export default function HowToHelpAgentsReport() {
   const activeId = useScrollSpy(SECTIONS.map(s => s.id))
 
   return (
-    <>
+    <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
-      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
+      <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px] pt-16">
 
-        {/* ─── INTRO (before first section heading) ─── */}
-        <div className="pt-16 pb-4 space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-          <p>
-            Building API integrations with AI agents works well for public APIs: give them internet
-            access, and they can browse documentation, build context, and complete the integration.
-            Private APIs are a different story. Large enterprises run internal networks with APIs
-            that are not publicly indexed, and their documentation is often difficult to navigate
-            even for human developers.
-          </p>
-          <p>
-            So, how does an agent perform when it has no documentation versus when it has structured,
-            queryable documentation?
-          </p>
-          <p>
-            To find out, we set up a restaurant enterprise with microservices managing orders and a
-            dashboard, then asked Claude to build a new dashboard twice: once by exploring the
-            existing dashboard alone, and once with access to an MCP documentation server.
-          </p>
-        </div>
+        {/* ─── INTRO ─── */}
+        <Section id="introduction" chapterLabel="Introduction" headline="How MCP documentation changes what an agent builds">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <p>
+              Private APIs present a different challenge from public ones. They are not indexed,
+              agents cannot browse their documentation, and the codebase itself becomes the
+              only source of truth. We set up a restaurant enterprise with internal microservices
+              and asked Claude to build a new dashboard twice: once with no documentation, and
+              once with an MCP documentation server.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Without documentation, the agent explored for 54 minutes and still got the architecture wrong
+            </h3>
+            <p>
+              Without docs, the agent spent 54 minutes reading through the codebase,
+              reverse-engineering the service structure from source files. It built a working
+              dashboard, but routed all requests through a single endpoint and ignored the
+              service architecture entirely. Analytics, client data, and order management all
+              went through the orders endpoint.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              With MCP, it planned first, built correctly, and finished in 18 minutes
+            </h3>
+            <p>
+              With the MCP server, the agent queried the documentation before writing any code,
+              mapped the service boundaries, and built the dashboard with correct per-service
+              routing. It finished in 18 minutes using 2.7M cache reads instead of 11.7M.
+            </p>
+          </div>
+        </Section>
 
         {/* ─── SETUP ─── */}
         <Section id="setup" chapterLabel="Setup" headline="Setup">
@@ -667,9 +681,9 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               <table className="w-full font-sans border-collapse text-[13px]">
                 <thead>
                   <tr className="border-b border-stone-200 dark:border-stone-850">
-                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pr-6">Metric</th>
-                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 px-4">Without MCP docs</th>
-                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-400 font-normal py-2 pl-4">With MCP docs</th>
+                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pr-6">Metric</th>
+                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 px-4">Without MCP docs</th>
+                    <th className="text-left text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal py-2 pl-4">With MCP docs</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -723,6 +737,6 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
         </Section>
 
       </main>
-    </>
+    </div>
   )
 }

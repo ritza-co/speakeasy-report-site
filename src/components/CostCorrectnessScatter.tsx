@@ -29,7 +29,7 @@ const Y_TICKS = [0, 1, 2, 3, 4, 5, 6]
 export default function CostCorrectnessScatter() {
   return (
     <div className="my-4">
-      <p className="text-[10px] uppercase tracking-widest text-stone-400 font-sans mb-3">
+      <p className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans mb-3">
         Cache read tokens (k) vs concept score — all six runs
       </p>
       <div className="overflow-x-auto">
@@ -117,7 +117,7 @@ export default function CostCorrectnessScatter() {
         </svg>
       </div>
       <div className="flex gap-4 mt-2">
-        <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-stone-400 font-sans">
+        <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-stone-600 dark:text-stone-400 font-sans">
           <span className="inline-block w-2.5 h-2.5 rounded-full bg-stone-400 dark:bg-stone-500" /> Simple
         </span>
         <span className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-crimson font-sans">

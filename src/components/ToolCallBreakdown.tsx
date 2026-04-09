@@ -68,7 +68,7 @@ export default function ToolCallBreakdown() {
         <div key={condition.label}>
           <div className="flex items-baseline justify-between mb-2">
             <p className="text-[13px] font-semibold text-ink dark:text-white font-sans">{condition.label}</p>
-            <p className="text-[12px] text-stone-400 font-sans">{condition.total} tool calls</p>
+            <p className="text-[12px] text-stone-600 dark:text-stone-400 font-sans">{condition.total} tool calls</p>
           </div>
 
           {/* Stacked bar */}
@@ -88,7 +88,7 @@ export default function ToolCallBreakdown() {
             {condition.calls.map((call, i) => (
               <div key={i} className="flex items-center gap-1.5">
                 <div className={`w-2 h-2 rounded-sm flex-shrink-0 ${CATEGORY_COLORS[call.category]}`} />
-                <span className="text-[11px] text-stone-500 dark:text-stone-400 font-sans">
+                <span className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">
                   {call.name} ({call.count})
                 </span>
               </div>
@@ -102,7 +102,7 @@ export default function ToolCallBreakdown() {
         {Object.entries(CATEGORY_LABELS).map(([key, label]) => (
           <div key={key} className="flex items-center gap-1.5">
             <div className={`w-2.5 h-2.5 rounded-sm flex-shrink-0 ${CATEGORY_COLORS[key]}`} />
-            <span className="text-[11px] text-stone-400 font-sans">{label}</span>
+            <span className="text-[11px] text-stone-600 dark:text-stone-400 font-sans">{label}</span>
           </div>
         ))}
       </div>

@@ -20,7 +20,7 @@ export default function TestEnvironmentCard({
           className="grid grid-cols-[140px_1fr] border-b border-stone-200 dark:border-stone-800 last:border-b-0"
         >
           <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900">
-            <span className="text-[12px] font-semibold text-stone-500 dark:text-stone-400 font-sans uppercase tracking-wide">
+            <span className="text-[12px] font-semibold text-stone-600 dark:text-stone-400 font-sans uppercase tracking-wide">
               {field.label}
             </span>
           </div>

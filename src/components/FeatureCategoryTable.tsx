@@ -24,8 +24,8 @@ export default function FeatureCategoryTable() {
       <table className="w-full font-sans border-collapse text-[13px]">
         <thead>
           <tr className="border-b border-stone-200 dark:border-stone-850">
-            <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Feature</th>
-            <th className="text-left py-2.5 text-[10px] uppercase tracking-widest text-stone-400 font-normal">Result without MCP</th>
+            <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Feature</th>
+            <th className="text-left py-2.5 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Result without MCP</th>
           </tr>
         </thead>
         <tbody>
