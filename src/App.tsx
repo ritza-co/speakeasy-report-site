@@ -43,7 +43,7 @@ export default function App() {
       <Hero />
 
       {/* ─── TAB BAR ─── */}
-      <div id="tab-bar" ref={tabBarRef} className="sticky top-0 z-30 bg-parchment/95 dark:bg-black/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-850">
+      <div id="tab-bar" ref={tabBarRef} className="sticky top-0 z-10 bg-parchment/95 dark:bg-black/95 backdrop-blur-sm border-b border-stone-200 dark:border-stone-850">
         <div className="px-8 md:px-16 xl:pl-24 max-w-[1280px]">
           <div className="flex gap-0">
             {TABS.map((tab) => {

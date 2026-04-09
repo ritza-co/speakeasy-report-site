@@ -22,7 +22,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
   const activeId = useScrollSpy(SECTIONS.map(s => s.id))
 
   return (
-    <>
+    <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
       <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
@@ -240,6 +240,6 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         </Section>
 
       </main>
-    </>
+    </div>
   )
 }

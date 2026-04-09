@@ -182,7 +182,7 @@ export default function HowToHelpAgentsReport() {
   const activeId = useScrollSpy(SECTIONS.map(s => s.id))
 
   return (
-    <>
+    <div className="relative">
       <TOC sections={SECTIONS} activeId={activeId} />
 
       <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
@@ -737,6 +737,6 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
         </Section>
 
       </main>
-    </>
+    </div>
   )
 }
