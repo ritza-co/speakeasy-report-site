@@ -16,7 +16,7 @@ import TestEnvironmentCard from './TestEnvironmentCard'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'hypothesis',    label: 'Hypothesis' },
+  { id: 'hypothesis',    label: 'Introduction' },
   { id: 'methodology',   label: 'How we tested it' },
   { id: 'api-only',      label: 'API only' },
   { id: 'sdk-only',      label: 'SDK only' },
@@ -33,42 +33,50 @@ export default function ResendReport() {
 
       <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
 
-        {/* ─── HYPOTHESIS ─── */}
+        {/* ─── INTRODUCTION ─── */}
         <Section
           id="hypothesis"
           chapterLabel="Introduction"
-          headline="Does live API context change what an agent builds?"
+          headline="When an agent doesn't know the answer, does it say so?"
         >
           <div className="prose-custom space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              When an AI agent integrates an API it knows from training data, it
-              occasionally reaches a point where it does not know the correct approach.
-              The question is what it does next. Does it search for the answer, flag
-              its uncertainty, or proceed as if it knows?
+              Resend is a widely used email API with good documentation and strong
+              representation in LLM training data. We chose it because it gives the
+              agent a reasonable chance of doing well without any extra tooling. If MCP
+              still changes behavior on an API the agent already knows, that is a
+              stronger result than testing against something obscure.
+            </p>
+
+            <p>
+              We ran six sessions across three tooling configurations and two prompt
+              styles, all against the same task. The headline finding was behavioral.
+              In three non-MCP runs, the agent invented API constraints that don't exist,
+              wrote them into code comments as documented behavior, and built workarounds
+              for them. With a tool to verify a claim, the agent checked. Without one,
+              it guessed and moved on.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Hypothesis 1: Live documentation access improves correctness
+              MCP eliminated fabrication
             </h3>
             <p>
-              Giving the agent access to a live MCP server for the API should change that
-              behavior. Live documentation access should reduce fabricated API constraints,
-              improve architectural correctness, and increase the chance of a working
-              implementation for features the agent does not know well.
+              Every non-MCP run produced at least one fabricated constraint. The agent
+              claimed CID inline images were unsupported by Resend broadcasts, and in
+              the SDK runs, that the SDK did not support <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code> on
+              attachments. Both claims are false. Both were stated with confidence, written
+              into comments, and worked around. No MCP run fabricated a constraint.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Hypothesis 2: Prompt precision can substitute live documentation access
+              A more detailed prompt did not help
             </h3>
             <p>
-              A developer who knows the correct API surface can write it into the prompt
-              explicitly. Does that narrow the gap between MCP and no MCP? Or does
-              fabrication persist regardless of how specific the instructions are?
-            </p>
-
-            <p>
-              To test both, we ran six sessions (three tooling configurations crossed with
-              two prompt styles) all against the same task.
+              We ran each tooling configuration with two prompts: a simple natural-language
+              description and a detailed developer-style prompt with numbered steps and
+              explicit output requirements. The complex prompt improved scores in some runs,
+              but it did not prevent fabrication. When the agent hit the edge of what it
+              knew, it invented an answer regardless of how specific the instructions were.
             </p>
           </div>
         </Section>
@@ -82,9 +90,16 @@ export default function ResendReport() {
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p>
               We ran six benchmark sessions across three tooling configurations and two
-              prompt styles, all against the same task. Each run used Claude Code with the
-              same underlying question: Can the agent correctly map a plain-English
-              description of an integration task to the right API features?
+              prompt styles, all against the same task.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              What we were testing
+            </h3>
+            <p>
+              Does giving an agent access to live API documentation reduce fabrication?
+              And can a more precise prompt substitute for that access, if the developer
+              already knows the correct API surface and writes it into the instructions?
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">

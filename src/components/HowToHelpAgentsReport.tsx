@@ -4,7 +4,8 @@ import MermaidDiagram from './MermaidDiagram'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'setup',       label: 'Setup' },
+  { id: 'introduction', label: 'Introduction' },
+  { id: 'setup',        label: 'Setup' },
   { id: 'no-mcp',      label: 'Building without a docs MCP server' },
   { id: 'with-mcp',    label: 'Building with MCP docs' },
   { id: 'comparison',  label: 'Run comparison' },
@@ -186,25 +187,38 @@ export default function HowToHelpAgentsReport() {
 
       <main className="px-8 md:px-16 xl:pl-24 xl:pr-[320px] max-w-[1280px]">
 
-        {/* ─── INTRO (before first section heading) ─── */}
-        <div className="pt-16 pb-4 space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-          <p>
-            Building API integrations with AI agents works well for public APIs: give them internet
-            access, and they can browse documentation, build context, and complete the integration.
-            Private APIs are a different story. Large enterprises run internal networks with APIs
-            that are not publicly indexed, and their documentation is often difficult to navigate
-            even for human developers.
-          </p>
-          <p>
-            So, how does an agent perform when it has no documentation versus when it has structured,
-            queryable documentation?
-          </p>
-          <p>
-            To find out, we set up a restaurant enterprise with microservices managing orders and a
-            dashboard, then asked Claude to build a new dashboard twice: once by exploring the
-            existing dashboard alone, and once with access to an MCP documentation server.
-          </p>
-        </div>
+        {/* ─── INTRO ─── */}
+        <Section id="introduction" chapterLabel="Introduction" headline="How MCP documentation changes what an agent builds">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <p>
+              Private APIs present a different challenge from public ones. They are not indexed,
+              agents cannot browse their documentation, and the codebase itself becomes the
+              only source of truth. We set up a restaurant enterprise with internal microservices
+              and asked Claude to build a new dashboard twice: once with no documentation, and
+              once with an MCP documentation server.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Without documentation, the agent explored for 54 minutes and still got the architecture wrong
+            </h3>
+            <p>
+              Without docs, the agent spent 54 minutes reading through the codebase,
+              reverse-engineering the service structure from source files. It built a working
+              dashboard, but routed all requests through a single endpoint and ignored the
+              service architecture entirely. Analytics, client data, and order management all
+              went through the orders endpoint.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              With MCP, it planned first, built correctly, and finished in 18 minutes
+            </h3>
+            <p>
+              With the MCP server, the agent queried the documentation before writing any code,
+              mapped the service boundaries, and built the dashboard with correct per-service
+              routing. It finished in 18 minutes using 2.7M cache reads instead of 11.7M.
+            </p>
+          </div>
+        </Section>
 
         {/* ─── SETUP ─── */}
         <Section id="setup" chapterLabel="Setup" headline="Setup">

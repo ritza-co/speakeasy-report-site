@@ -10,11 +10,11 @@ import HowToHelpAgentsReport from './components/HowToHelpAgentsReport'
 type Tab = 'guide' | 'resend' | 'vercel' | 'full' | 'agents'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
-  { id: 'guide',  label: 'Introduction',      subtitle: 'AI agents and context' },
-  { id: 'vercel', label: 'Vercel AI SDK',     subtitle: 'SDK migration benchmark' },
-  { id: 'resend', label: 'Resend',            subtitle: 'Well-documented API' },
-  { id: 'full',   label: 'Full Benchmark',    subtitle: '108 sessions, 4 APIs, 3 models' },
+  { id: 'guide',  label: 'Introduction',       subtitle: 'AI agents and context' },
+  { id: 'vercel', label: 'Vercel AI SDK',      subtitle: 'SDK migration benchmark' },
+  { id: 'resend', label: 'Resend',             subtitle: 'Well-documented API' },
   { id: 'agents', label: 'How to Help Agents', subtitle: 'Private APIs & MCP docs' },
+  { id: 'full',   label: 'Full Benchmark',     subtitle: '108 sessions, 4 APIs, 3 models' },
 ]
 
 export default function App() {
