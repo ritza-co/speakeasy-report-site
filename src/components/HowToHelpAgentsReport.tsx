@@ -243,7 +243,7 @@ export default function HowToHelpAgentsReport() {
                 <span>An overview page showing general information about restaurant orders</span>
                 <div className="mt-3 ml-2">
                   <img
-                    src="/agents-report/original-overview-page.png"
+                    src="https://i.ritzastatic.com/static/628eb1c716e1f2fc2a1c0d4487ad5076/original-overview-page.png"
                     alt="Original overview page"
                     className="rounded border border-stone-200 dark:border-stone-800 max-w-full"
                   />
@@ -253,7 +253,7 @@ export default function HowToHelpAgentsReport() {
                 <span>A new order page for creating orders</span>
                 <div className="mt-3 ml-2">
                   <img
-                    src="/agents-report/original-new-order-page.png"
+                    src="https://i.ritzastatic.com/static/9e239e72ed8f06e3b66fe4c64f857c96/original-new-order-page.png"
                     alt="Original new order page"
                     className="rounded border border-stone-200 dark:border-stone-800 max-w-full"
                   />
@@ -293,7 +293,7 @@ export default function HowToHelpAgentsReport() {
                 <span>The terminal shows elapsed time after each prompt run</span>
                 <div className="mt-3 ml-2">
                   <img
-                    src="/agents-report/terminal-elapsed-time.png"
+                    src="https://i.ritzastatic.com/static/edb536a4f752084541bf142b51a6f9c6/terminal-elapsed-time.png"
                     alt="Terminal elapsed time"
                     className="rounded border border-stone-200 dark:border-stone-800 max-w-full"
                   />
@@ -303,7 +303,7 @@ export default function HowToHelpAgentsReport() {
                 <span>Tools like ccusage analyze Claude Code usage by session but do not report tool call counts</span>
                 <div className="mt-3 ml-2">
                   <img
-                    src="/agents-report/ccusage-session-stats.png"
+                    src="https://i.ritzastatic.com/static/556d2f75548b4e2087ebf14a0de23737/ccusage-session-stats.png"
                     alt="ccusage session stats"
                     className="rounded border border-stone-200 dark:border-stone-800 max-w-full"
                   />
@@ -436,7 +436,7 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
             </p>
 
             <img
-              src="/agents-report/no-mcp-dashboard.png"
+              src="https://i.ritzastatic.com/static/e28f6778f3266648ee0f0a38db646edb/no-mcp-dashboard.png"
               alt="No-MCP dashboard"
               className="rounded border border-stone-200 dark:border-stone-800 max-w-full my-2"
             />
@@ -448,7 +448,7 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
             </p>
 
             <img
-              src="/agents-report/reverse-engineering-chunks.png"
+              src="https://i.ritzastatic.com/static/7609ea7c23eab033955b77becca9ae34/reverse-engineering-chunks.png"
               alt="Reverse engineering chunks"
               className="rounded border border-stone-200 dark:border-stone-800 max-w-full my-2"
             />
@@ -459,7 +459,7 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
             </p>
 
             <img
-              src="/agents-report/brute-forcing-endpoints.png"
+              src="https://i.ritzastatic.com/static/d30db32249a5021801f039ff8ec888a0/brute-forcing-endpoints.png"
               alt="Brute forcing endpoints"
               className="rounded border border-stone-200 dark:border-stone-800 max-w-full my-2"
             />
@@ -626,7 +626,7 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
             </p>
 
             <img
-              src="/agents-report/mcp-dashboard.png"
+              src="https://i.ritzastatic.com/static/c370a762ad0e1f93822ddfe706727c50/mcp-dashboard.png"
               alt="MCP dashboard"
               className="rounded border border-stone-200 dark:border-stone-800 max-w-full my-2"
             />

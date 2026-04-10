@@ -10,11 +10,11 @@ const SECTIONS = [
   { id: 'more-tooling',   label: 'Agents relying on the SDK were more confidently wrong' },
   { id: 'hallucinations', label: 'Great documentation doesn\'t prevent hallucinations' },
   { id: 'no-docs',        label: 'Without any documentation, agents waste time and still get it wrong' },
-  { id: 'reports',        label: 'Read the full reports' },
+  { id: 'reports',        label: 'Read the reports' },
 ]
 
 interface GuideArticleProps {
-  onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'full' | 'agents' | 'docusign') => void
+  onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'agents' | 'docusign') => void
 }
 
 export default function GuideArticle({ onNavigate }: GuideArticleProps) {
@@ -34,17 +34,29 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              When using AI agents to write code, keeping them up to date is harder than it looks. Agents are trained on data up to a certain point, and if the tools or APIs they're working with have changed since then, the results will be wrong.
+              Agents can reach for different tools when writing code. Sometimes they rely only on their training data, sometimes they search the web for the latest information. Many platforms also offer MCP servers and SDKs which presumably help the agents build faster and more accurately, but there is ongoing debate about how effective or necessary these actually are.
             </p>
             <p>
-              Web search helps sometimes, but you're not in control of what the agent finds, and old or partial sources can quietly poison its output without any obvious error.
+              We checked how much they help by using agents to reach a defined goal in different scenarios for different products. Here is what we found:
             </p>
-            <p>
-              Documentation MCP servers are supposed to fix this. Instead of searching the web, the agent queries a server that holds up-to-date, official documentation and gets back only the most relevant results.
-            </p>
-            <p>
-              We ran a series of benchmarks to find out if that actually makes a difference in practice. We found that MCP servers consistently help agents produce more accurate, working code, and that without one, agents consistently hallucinate product features or use outdated patterns.
-            </p>
+            <ul className="space-y-3 pl-5 list-disc">
+              <li>
+                <strong className="text-ink dark:text-white font-medium">MCP helps, even when it is poorly implemented.</strong>{' '}
+                DocuSign's MCP server returned responses too large for the agent to read — every call was truncated. Agents with access to it still outperformed those without it. Even a fragment of the right documentation pointed agents in the right direction.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white font-medium">SDKs can make things worse on their own.</strong>{' '}
+                When testing the Vercel AI SDK — which had breaking changes in a recent major version — agents with the SDK installed scored lower than those with web search alone. They used the SDK to inspect the code, became more confident, and applied outdated patterns. Only the SDK combined with an MCP server produced a perfect score, because MCP gave agents the version-specific context the SDK code couldn't.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white font-medium">Great documentation does not prevent hallucinations.</strong>{' '}
+                Resend has excellent documentation and strong representation in agent training data. Every run without MCP still produced fabricated API constraints — features the agent claimed were unsupported, written into comments and worked around, that were actually fully supported. With MCP, there were no fabrications at all. More detailed prompts improved some scores but did not stop agents from inventing answers at the edge of what they knew.
+              </li>
+              <li>
+                <strong className="text-ink dark:text-white font-medium">Without any documentation, agents explore for a long time and still get it wrong.</strong>{' '}
+                We tested a simulated private microservices API with no public documentation. Without MCP, the agent spent 54 minutes reading source files to piece together how the system connected, and still got the architecture wrong. With an MCP documentation server, it understood the structure before writing any code, built the correct solution, and finished in 18 minutes.
+              </li>
+            </ul>
           </div>
         </Section>
 
@@ -135,7 +147,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               }}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
-              Read the DocuSign report →
+              MCP helps, even when broken →
             </button>
           </div>
         </Section>
@@ -186,7 +198,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               }}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
-              Read the Vercel AI SDK report →
+              SDKs can mislead agents →
             </button>
           </div>
         </Section>
@@ -237,7 +249,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               }}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
-              Read the Resend report →
+              Docs don't stop hallucinations →
             </button>
           </div>
         </Section>
@@ -297,7 +309,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               }}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
-              Read the How to Help Agents report →
+              No docs, no chance →
             </button>
           </div>
         </Section>
@@ -306,39 +318,33 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         <Section
           id="reports"
           chapterLabel="Reports"
-          headline="Read the full reports"
+          headline="Read the reports"
         >
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                tab: 'vercel' as const,
-                subtitle: 'SDK migration benchmark',
-                label: 'Vercel AI SDK',
-                description: 'Does version-specific documentation change what an agent builds when an SDK has breaking changes between versions?',
-              },
-              {
                 tab: 'docusign' as const,
-                subtitle: 'Complex enterprise API',
-                label: 'DocuSign',
+                subtitle: 'DocuSign',
+                label: 'MCP helps, even when broken',
                 description: 'Does an MCP server help agents use a complex API correctly, and does it help bridge the gap between less and more capable models?',
               },
               {
+                tab: 'vercel' as const,
+                subtitle: 'Vercel AI SDK',
+                label: 'SDKs can mislead agents',
+                description: 'Does version-specific documentation change what an agent builds when an SDK has breaking changes between versions?',
+              },
+              {
                 tab: 'resend' as const,
-                subtitle: 'Well-documented API',
-                label: 'Resend',
+                subtitle: 'Resend',
+                label: 'Docs don\'t stop hallucinations',
                 description: 'Does great documentation prevent hallucinations, and can more detailed prompts close the gap that MCP covers?',
               },
               {
                 tab: 'agents' as const,
-                subtitle: 'Private APIs and MCP docs',
-                label: 'How to Help Agents',
+                subtitle: 'Internal microservices',
+                label: 'No docs, no chance',
                 description: 'What happens when there is no public documentation at all? We tested agents against a private internal API with and without an MCP server.',
-              },
-              {
-                tab: 'full' as const,
-                subtitle: '108 sessions, 4 APIs, 3 models',
-                label: 'Full Benchmark',
-                description: 'The complete dataset across all configurations, APIs, and models with methodology and results broken down in full.',
               },
             ].map(report => (
               <div

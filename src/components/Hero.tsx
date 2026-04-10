@@ -26,22 +26,13 @@ export default function Hero() {
 
       {/* Center content */}
       <div className="relative z-10 text-center max-w-2xl px-6">
-        <motion.p
-          className="text-[10px] tracking-[0.35em] uppercase text-stone-600 dark:text-stone-400 mb-8"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.9 }}
-        >
-          Speakeasy · API Integration Benchmark · 2026
-        </motion.p>
-
         <motion.h1
           className="font-serif text-[clamp(2.6rem,5vw,4.2rem)] text-ink dark:text-white leading-[1.12] mb-5"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.55, duration: 1 }}
         >
-          Do AI Agents <em>Need</em><br />MCP Servers?
+          Does MCP help agents build?
         </motion.h1>
 
         <motion.p
@@ -50,8 +41,8 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 0.9 }}
         >
-          A benchmark measuring how much a live MCP documentation server changes
-          <br />what an AI agent builds.
+          We checked. MCP servers and other agent tooling can help,
+          <br />but context matters.
         </motion.p>
 
         <motion.button
@@ -61,7 +52,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1.35, duration: 0.7 }}
         >
-          Enter
+          Read
         </motion.button>
       </div>
 

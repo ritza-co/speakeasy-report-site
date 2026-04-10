@@ -4,19 +4,17 @@ import ThemeToggle from './components/ThemeToggle'
 import ResendReport from './components/ResendReport'
 import VercelReport from './components/VercelReport'
 import GuideArticle from './components/GuideArticle'
-import FullBenchmarkReport from './components/FullBenchmarkReport'
 import HowToHelpAgentsReport from './components/HowToHelpAgentsReport'
 import DocuSignReport from './components/DocuSignReport'
 
-type Tab = 'guide' | 'resend' | 'vercel' | 'full' | 'agents' | 'docusign'
+type Tab = 'guide' | 'resend' | 'vercel' | 'agents' | 'docusign'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
-  { id: 'guide',   label: 'Introduction',       subtitle: 'AI agents and context' },
-  { id: 'vercel',  label: 'Vercel AI SDK',      subtitle: 'SDK migration benchmark' },
-  { id: 'docusign', label: 'DocuSign',          subtitle: 'Complex enterprise API' },
-  { id: 'resend',  label: 'Resend',             subtitle: 'Well-documented API' },
-  { id: 'agents',  label: 'How to Help Agents', subtitle: 'Private APIs & MCP docs' },
-  { id: 'full',    label: 'Full Benchmark',     subtitle: '108 sessions, 4 APIs, 3 models' },
+  { id: 'guide',    label: 'Overview',                    subtitle: 'All findings' },
+  { id: 'docusign', label: 'MCP helps, even when broken', subtitle: 'DocuSign' },
+  { id: 'vercel',   label: 'SDKs can mislead agents',     subtitle: 'Vercel AI SDK' },
+  { id: 'resend',   label: 'Docs don\'t stop hallucinations', subtitle: 'Resend' },
+  { id: 'agents',   label: 'No docs, no chance',          subtitle: 'Internal microservices' },
 ]
 
 export default function App() {
@@ -84,7 +82,6 @@ export default function App() {
       {activeTab === 'vercel'   && <VercelReport />}
       {activeTab === 'docusign' && <DocuSignReport />}
       {activeTab === 'resend'   && <ResendReport />}
-      {activeTab === 'full'     && <FullBenchmarkReport />}
       {activeTab === 'agents'   && <HowToHelpAgentsReport />}
     </div>
   )
