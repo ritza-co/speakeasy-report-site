@@ -3,7 +3,7 @@ export default function TaskCard() {
     <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
       <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
         <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">
-          Task prompt — identical for both agents
+          Task prompt — identical across all conditions
         </span>
       </div>
       <div className="px-4 py-4">

@@ -34,11 +34,27 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Agents can reach for different tools when writing code. In additon to the training data they rely on, they can also search the web for the latest information, access Model Context Protocol (MCP) servers, and use software development kits (SDKs) created specifically for AI agents. Many platforms offer MCP servers and SDKs, presuming these resources help agents build faster and more accurately, but there is ongoing debate about how effective or necessary they actually are.
+              To produce better quality code, agents reach for a few different resources to try and gather accurate information:
+            </p>
+            <ul className="space-y-1 pl-5 list-disc text-stone-700 dark:text-stone-300 text-[15px]">
+              <li>Training data</li>
+              <li>Web search</li>
+              <li>SDKs</li>
+              <li>MCP servers</li>
+            </ul>
+            <p>
+              Many platforms offer MCP servers and SDKs, presuming these resources help agents build faster and more accurately, but there is ongoing debate about how effective or necessary they actually are.
             </p>
             <p>
-              To determine the impact SDKs and MCP servers on agent performance, we varied agents' access to tools and assessed how well they could reach a defined goal in four different scenarios. Here is what we found:
+              To determine the impact of SDKs and MCP servers on agent performance, we varied agents' access to tools and assessed how well they could reach a defined goal in four different scenarios:
             </p>
+            <ul className="space-y-1 pl-5 list-disc text-stone-700 dark:text-stone-300 text-[15px]">
+              <li>The complex API benchmark</li>
+              <li>The breaking changes benchmark</li>
+              <li>The well-documented API benchmark</li>
+              <li>The undocumented API benchmark</li>
+            </ul>
+            <p>Here is what we found:</p>
             <ul className="space-y-3 pl-5 list-disc">
               <li>
                 <strong className="text-ink dark:text-white font-medium">An MCP server helps, even when it's poorly implemented.</strong>{' '}
@@ -68,7 +84,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              We tested agents against a complex enterprise API where small configuration details can break everything. Using three different AI models, we got each model to run the same task twice: once with web search only, and once with the MCP server available as well.
+              In the complex API benchmark, we tested agents against a complex enterprise API where small configuration details can break everything. Using three different AI models, we got each model to run the same task twice: once with web search only, and once with the MCP server available as well.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -160,7 +176,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              To test what happens when an SDK has gone through significant breaking changes, we got an agent to run the same task three ways: with web search only, with web search and the SDK pre-installed, and with web search, the SDK, and the official MCP server.
+              In the breaking changes benchmark, we tested what happens when an SDK has gone through significant breaking changes. We got an agent to run the same task three ways: with web search only, with web search and the SDK pre-installed, and with web search, the SDK, and the official MCP server.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -211,7 +227,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              We chose the well-document Resend API to test whether documentation quality alone is enough to stop agents from making things up.
+              In the well-documented API benchmark, we chose an API with excellent documentation and strong representation in agent training data to test whether documentation quality alone is enough to stop agents from making things up.
             </p>
             <p>
               We also tried two different prompt styles to see whether writing more detailed prompts could close the gap.
@@ -262,7 +278,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              We benchmarked what happens when you try to produce code for a private internal API with no public documentation at all, where the only way to understand the system is to read the code. We ran the same task with and without an MCP documentation server.
+              In the undocumented API benchmark, we tested what happens when you try to produce code for a private internal API with no public documentation at all, where the only way to understand the system is to read the code. We ran the same task with and without an MCP documentation server.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -324,25 +340,25 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             {[
               {
                 tab: 'docusign' as const,
-                subtitle: 'DocuSign',
+                subtitle: 'Complex API benchmark',
                 label: 'MCP helps, even when broken',
                 description: 'Does an MCP server help agents use a complex API correctly, and does it help bridge the gap between less and more capable models?',
               },
               {
                 tab: 'vercel' as const,
-                subtitle: 'Vercel AI SDK',
+                subtitle: 'Breaking changes benchmark',
                 label: 'SDKs can mislead agents',
                 description: 'Does version-specific documentation change what an agent builds when an SDK has breaking changes between versions?',
               },
               {
                 tab: 'resend' as const,
-                subtitle: 'Resend',
+                subtitle: 'Well-documented API benchmark',
                 label: 'Docs don\'t stop hallucinations',
                 description: 'Does great documentation prevent hallucinations, and can more detailed prompts close the gap that MCP covers?',
               },
               {
                 tab: 'agents' as const,
-                subtitle: 'Internal microservices',
+                subtitle: 'Undocumented API benchmark',
                 label: 'No docs, no chance',
                 description: 'What happens when there is no public documentation at all? We tested agents against a private internal API with and without an MCP server.',
               },

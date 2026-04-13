@@ -186,7 +186,7 @@ export default function VercelReport() {
         <Section
           id="hypothesis"
           chapterLabel="Introduction"
-          headline="When an SDK changes, do the agents know?"
+          headline="When an SDK changes, does the agent know?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
@@ -291,6 +291,35 @@ export default function VercelReport() {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full font-sans border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-stone-200 dark:border-stone-800">
+                    <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Configuration</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Training data</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Web search</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Vercel AI SDK</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Vercel MCP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: 'Web',  trainingData: true, webSearch: true, sdk: false, mcp: false },
+                    { label: 'SDK',  trainingData: true, webSearch: true, sdk: true,  mcp: false },
+                    { label: 'MCP',  trainingData: true, webSearch: true, sdk: true,  mcp: true  },
+                  ].map((row, i) => (
+                    <tr key={row.label} className={i % 2 === 0 ? 'bg-stone-100/50 dark:bg-stone-850/20' : ''}>
+                      <td className="py-2.5 pr-6 font-medium text-ink dark:text-white">{row.label}</td>
+                      <td className="py-2.5 px-4 text-center">{row.trainingData ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                      <td className="py-2.5 px-4 text-center">{row.webSearch ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                      <td className="py-2.5 px-4 text-center">{row.sdk ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                      <td className="py-2.5 px-4 text-center">{row.mcp ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -603,8 +632,8 @@ export default function VercelReport() {
               Confidence reflects the quality of the source
             </h3>
             <p>
-              All three agents described their output in the same confident tone. The
-              difference is that the Web and SDK agents were wrong about two
+              All three runs produced output described in the same confident tone. The
+              difference is that the Web and SDK runs were wrong about two
               files each, with nothing in their summaries to signal it. An agent cannot
               express uncertainty about a mistake it does not know it made.
             </p>

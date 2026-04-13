@@ -593,6 +593,32 @@ export default function DocuSignReport() {
 
             <TaskCompare />
 
+            <div className="my-4 overflow-x-auto">
+              <table className="w-full font-sans border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-stone-200 dark:border-stone-800">
+                    <th className="text-left py-2.5 pr-6 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Configuration</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Training data</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">Web search</th>
+                    <th className="text-center py-2.5 px-4 text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-normal">DocuSign MCP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { label: 'No MCP', trainingData: true, webSearch: true, mcp: false },
+                    { label: 'MCP',    trainingData: true, webSearch: true, mcp: true  },
+                  ].map((row, i) => (
+                    <tr key={row.label} className={i % 2 === 0 ? 'bg-stone-100/50 dark:bg-stone-850/20' : ''}>
+                      <td className="py-2.5 pr-6 font-medium text-ink dark:text-white">{row.label}</td>
+                      <td className="py-2.5 px-4 text-center">{row.trainingData ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                      <td className="py-2.5 px-4 text-center">{row.webSearch ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                      <td className="py-2.5 px-4 text-center">{row.mcp ? <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Yes</span> : <span className="text-stone-300 dark:text-stone-700">—</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
             <p>
               The DocuSign MCP server exposes 36 tools. In this benchmark, agents used it as a documentation source: querying <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">searchDocusignDocs</code> to look up API details before writing code.
             </p>
