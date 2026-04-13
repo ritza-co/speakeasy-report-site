@@ -49,28 +49,28 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               To determine the impact of SDKs and MCP servers on agent performance, we varied agents' access to tools and assessed how well they could reach a defined goal in four different scenarios:
             </p>
             <ul className="space-y-1 pl-5 list-disc text-stone-700 dark:text-stone-300 text-[15px]">
-              <li>The complex API benchmark</li>
-              <li>The breaking changes benchmark</li>
-              <li>The well-documented API benchmark</li>
-              <li>The undocumented API benchmark</li>
+              <li><button onClick={() => { onNavigate('docusign'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The complex API benchmark</button> tested how well three agents could write a Python script to interact with DocuSign.</li>
+              <li><button onClick={() => { onNavigate('vercel'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The breaking changes benchmark</button> tested how well an agent could implement a TypeScript module for each of the patterns that changed between Vercel's AI SDK 4 and AI SDK 6.</li>
+              <li><button onClick={() => { onNavigate('resend'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The well-documented API benchmark</button> tested how well an agent could write a Node.js script that uses Resend to send personalized broadcast emails.</li>
+              <li><button onClick={() => { onNavigate('agents'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The undocumented API benchmark</button> tested how well an agent could build a dashboard for a restaurant enterprise with internal microservices.</li>
             </ul>
             <p>Here is what we found:</p>
             <ul className="space-y-3 pl-5 list-disc">
               <li>
                 <strong className="text-ink dark:text-white font-medium">An MCP server helps, even when it's poorly implemented.</strong>{' '}
-                DocuSign's MCP server returned responses too large for the agent to read, so every call was truncated. However, agents with access to it still outperformed those without it, showing that even a fragment of the right documentation points agents in the right direction.
+                DocuSign's MCP server returned responses too large for the agents to read, so every call was truncated. However, agents with access to it still outperformed those without it, showing that even a fragment of the right documentation points agents in the right direction.
               </li>
               <li>
                 <strong className="text-ink dark:text-white font-medium">Without additional resources, adding only an SDK can make things worse.</strong>{' '}
-                When testing the Vercel AI SDK — which had breaking changes in a recent major version — agents with access to the SDK installed scored lower than those with web search alone. They used the SDK to inspect the code, became more confident, and applied outdated patterns. Only using the SDK combined with an MCP server produced a perfect score, because the MCP server gave agents the version-specific context that the SDK code couldn't.
+                When testing the Vercel AI SDK, which had breaking changes in a recent major version, the agent scored lower when it had the SDK pre-installed than when it had access to web search alone. The agent used the SDK to inspect the code, became more confident, and applied outdated patterns. The agent only achieved a perfect score when it used the SDK combined with an MCP server, because the MCP server gave it the version-specific context that the SDK code couldn't.
               </li>
               <li>
                 <strong className="text-ink dark:text-white font-medium">Great documentation does not prevent hallucinations.</strong>{' '}
-                Resend has excellent documentation and strong representation in agent training data. However, every run without MCP still produced fabricated API constraints — features the agent claimed were unsupported, which it wrote into comments and worked around, but which were actually fully supported. When we gave the agent access to the MCP server, it didn't produce any fabrications. More detailed prompts improved some scores but did not stop agents from inventing answers at the edge of what they knew.
+                Resend has excellent documentation and strong representation in agent training data. However, the agent produced fabricated API constraints in every run when it didn't have access to the MCP server. The agent claimed certain features were unsupported, wrote them into comments, and came up with workarounds for them, even though Resend actually fully supported those features. When we gave the agent access to the MCP server, it didn't produce any fabrications. More detailed prompts improved some scores but did not stop the agent from inventing answers at the edge of what it knew.
               </li>
               <li>
                 <strong className="text-ink dark:text-white font-medium">Without any documentation, agents explore for a long time and still get it wrong.</strong>{' '}
-                We tested a simulated private microservices API with no public documentation. Without MCP, the agent spent 54 minutes reading source files to piece together how the system connected, and still got the architecture wrong. With an MCP documentation server, it understood the structure before writing any code, built the correct solution, and finished in 18 minutes.
+                We tested a simulated private microservices API with no public documentation. Without access to an MCP documentation server, the agent spent 54 minutes reading source files to piece together how the system connected, and still got the architecture wrong. With an MCP documentation server, it understood the structure before writing any code, built the correct solution, and finished in 18 minutes.
               </li>
             </ul>
           </div>
@@ -84,23 +84,23 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              In the complex API benchmark, we tested agents against a complex enterprise API where small configuration details can break everything. Using three different AI models, we got each model to run the same task twice: once with web search only, and once with the MCP server available as well.
+              In the complex API benchmark, we tested agents against an elaborate enterprise API where small configuration details can break everything. Using three different AI models, we got each model to run the same task twice: once with web search only, and once with the MCP server available as well.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               The MCP server was broken but still helped
             </h3>
             <p>
-              In every single run, the MCP server returned responses that were too large for the agent to read in full. All it ever got was a truncated preview before the response cut off; yet agents with truncated access to the server still did better than those without access.
+              In every single run, the MCP server returned responses that were too large for the agents to read in full. All they ever got was a truncated preview before the response cut off. Yet, agents with truncated access to the server still did better than those without access.
             </p>
             <p>
-              We tested three models with different capability levels. The smaller models struggled the most without MCP, spending a huge number of tool calls just trying to find basic configuration details they couldn't locate.
+              We tested three agent models with different capability levels. The smaller models struggled the most without access to the MCP server, making a huge number of tool calls just trying to find basic configuration details they couldn't locate.
             </p>
             <p>
-              With MCP, those same models got those details right on the first attempt, even though they could only view a fragment of the documentation.
+              With access to the MCP server, those same models got the details right on the first attempt, even though they could only view a fragment of the documentation.
             </p>
             <p>
-              Here's how each model performed across both conditions:
+              Here's how each model performed with and without MCP access:
             </p>
 
             <div className="my-4 overflow-x-auto">
@@ -153,7 +153,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               When agents without MCP hit errors and turned to web search for help, they found legitimate documentation pages. But the detail they needed wasn't on any of those pages.
             </p>
             <p>
-              The information was somewhere in the docs, it just wasn't where you naturally end up when something goes wrong. The MCP server, even with truncated calls, pointed agents in the right direction.
+              The information was somewhere in the docs; it just wasn't where you naturally end up when something goes wrong. The MCP server, even with truncated calls, pointed agents in the right direction.
             </p>
 
             <button
@@ -176,23 +176,23 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              In the breaking changes benchmark, we tested what happens when an SDK has gone through significant breaking changes. We got an agent to run the same task three ways: with web search only, with web search and the SDK pre-installed, and with web search, the SDK, and the official MCP server.
+              In the breaking changes benchmark, we tested what happens when an SDK has gone through significant breaking changes. We got an agent to run the same task three ways: with web search only; with web search and the SDK pre-installed; and with web search, the SDK, and the official MCP server.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               A pre-installed SDK poisoned the agent's context with outdated patterns
             </h3>
             <p>
-              Adding the SDK actually caused the agent to score lower than with web search alone. Having the SDK installed meant the agent could inspect the code directly, which made it more confident. However, that confidence was misplaced.
+              Adding the SDK actually caused the agent to score lower than when it relied on web search alone. Having the SDK installed meant the agent could inspect the code directly, which made it more confident. However, that confidence was misplaced.
             </p>
             <p>
-              The SDK had gone through breaking changes in a recent major version, and the agent had no way of knowing that the patterns it was using had been replaced. Providing it with more access to the codebase just meant it had more confidence in the wrong answer.
+              The SDK had gone through breaking changes in a recent major version, and the agent had no way of knowing that the patterns it was using had been replaced. Providing it with more access to the codebase just meant it had greater confidence in incorrect answers.
             </p>
             <p>
-              The agent only achieved a perfect score when it had access to MCP in addition to the SDK, finally providing the right context.
+              The agent only achieved a perfect score when it had access to the MCP server in addition to the SDK, which finally provided the right context.
             </p>
             <p>
-              Here's how it scored under different conditions across the four tasks:
+              Here's how it scored with access to different resources across the four tasks:
             </p>
 
             <CorrectnessScorecard />
@@ -204,7 +204,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               What made the agent's overconfidence particularly bad was that none of the outdated code produced an error. There were no compile errors or type errors. We found the errors in the output at runtime.
             </p>
             <p>
-              When an agent is confidently wrong and the code appears to work, it's a hard to catch any problems.
+              When an agent is confidently wrong and the code appears to work, it's hard to catch any problems.
             </p>
 
             <button
@@ -237,13 +237,13 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               The agent invented constraints that don't exist
             </h3>
             <p>
-              In every single run without MCP, the agent fabricated at least one API limitation. It decided certain features weren't supported, wrote that into its code comments as if it were documented behavior, and then built workarounds for problems that weren't actually real.
+              In every single run without MCP access, the agent fabricated at least one API limitation. It decided certain features weren't supported, wrote that into its code comments as if it were documented behavior, and then built workarounds for problems that weren't actually real.
             </p>
             <p>
-              No run with MCP produced a single fabricated constraint. When the agent had a tool to check something against, it checked. When it didn't, it just guessed and kept going.
+              In the runs with MCP access, the agent didn't produce any fabricated constraints. When the agent had a tool to check something against, it checked. When it didn't, it just guessed and kept going.
             </p>
             <p>
-              The table below shows what each agent claimed and what is actually true:
+              The table below shows what the agent claimed in each run and what was actually true:
             </p>
 
             <FabricationTable />
@@ -292,7 +292,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              With MCP, it built the right thing in less than half the time
+              With MCP, it built the right code in less than half the time
             </h3>
             <p>
               With the MCP server available, the agent understood the structure before touching any code and built the correct solution straight away. Here's how the two runs compared:
