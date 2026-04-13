@@ -186,7 +186,7 @@ export default function VercelReport() {
         <Section
           id="hypothesis"
           chapterLabel="Introduction"
-          headline="When an SDK changes, do the agents know?"
+          headline="When an SDK changes, does the agent know?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
@@ -632,8 +632,8 @@ export default function VercelReport() {
               Confidence reflects the quality of the source
             </h3>
             <p>
-              All three agents described their output in the same confident tone. The
-              difference is that the Web and SDK agents were wrong about two
+              All three runs produced output described in the same confident tone. The
+              difference is that the Web and SDK runs were wrong about two
               files each, with nothing in their summaries to signal it. An agent cannot
               express uncertainty about a mistake it does not know it made.
             </p>
