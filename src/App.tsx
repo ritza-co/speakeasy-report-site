@@ -11,7 +11,7 @@ type Tab = 'guide' | 'resend' | 'vercel' | 'agents' | 'docusign'
 
 const TABS: { id: Tab; label: string; subtitle: string }[] = [
   { id: 'guide',    label: 'Overview',                    subtitle: 'All findings' },
-  { id: 'docusign', label: 'MCP helps, even when broken', subtitle: 'DocuSign' },
+  { id: 'docusign', label: 'Model capability beats tooling', subtitle: 'DocuSign' },
   { id: 'vercel',   label: 'SDKs can mislead agents',     subtitle: 'Vercel AI SDK' },
   { id: 'resend',   label: 'Docs don\'t stop hallucinations', subtitle: 'Resend' },
   { id: 'agents',   label: 'No docs, no chance',          subtitle: 'Internal microservices' },
