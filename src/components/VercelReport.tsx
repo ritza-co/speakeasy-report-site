@@ -594,22 +594,34 @@ export default function VercelReport() {
 
             <TokenUsageChart />
 
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Web: the lightest approach, and still half wrong</h3>
             <p>
-              The Web agent ran one search pass and wrote four files. That kept
-              message tokens low. Search results are short, and the agent did not
-              re-read anything.
+              The Web agent ran one search pass and wrote four files, keeping message tokens low. Search results are short and the agent did not re-read anything.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">SDK: more context, same mistakes</h3>
             <p>
               The SDK agent added type inspection on top of web search. Reading
               compiled declaration files is verbose, which pushed message tokens higher.
               It used more context than the Web condition and still got two files wrong.
             </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">MCP: five times the tokens, the only perfect score</h3>
             <p>
               The MCP agent fetched four full documentation pages, each containing
               complete code examples and explanatory prose, then ran 12 type inspection
               steps to verify what the docs described against the installed package.
               That combination drove message tokens to nearly five times the Web
               total and produced the only perfect score.
+            </p>
+
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">The cost of a silent failure</h3>
+            <p>
+              The MCP condition used approximately five times the tokens of the web-only
+              condition and was the only condition where every file was correct. Web search
+              used fewer tokens and still got half the files wrong without any signal that
+              anything had failed. The five-times token cost of the MCP condition is the
+              price of knowing the output is correct.
             </p>
           </div>
         </Section>
@@ -629,19 +641,16 @@ export default function VercelReport() {
             <ConfidenceComparison />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Confidence reflects the quality of the source
+              Agents don't know what they don't know
             </h3>
             <p>
-              All three runs produced output described in the same confident tone. The
-              difference is that the Web and SDK runs were wrong about two
-              files each, with nothing in their summaries to signal it. An agent cannot
-              express uncertainty about a mistake it does not know it made.
+              All three agents described their output in the same confident tone, but two of them were wrong about two files each, with nothing in their summaries to signal it. An agent cannot express uncertainty about a mistake it does not know it made.
             </p>
             <p>
               The MCP agent's summaries were accurate because its research was accurate.
               It had read the correct patterns before writing, so when it described what
-              it built, the description matched the code. Confidence is a reflection of
-              what the model was given to work from.
+              it built, the description matched the code. The quality of the source
+              determines whether the self-description is true.
             </p>
           </div>
         </Section>

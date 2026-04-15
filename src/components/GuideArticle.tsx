@@ -57,8 +57,8 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             <p>Here is what we found:</p>
             <ul className="space-y-3 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white font-medium">An MCP server helps, even when it's poorly implemented.</strong>{' '}
-                DocuSign's MCP server returned responses too large for the agents to read, so every call was truncated. However, agents with access to it still outperformed those without it, showing that even a fragment of the right documentation points agents in the right direction.
+                <strong className="text-ink dark:text-white font-medium">Model capability determined the outcome more than tooling.</strong>{' '}
+                All six agents completed the DocuSign task, but code quality tracked model capability more than tool access. The same broken MCP server helped the weakest model and hurt the middle one, depending on what fragment it exposed.
               </li>
               <li>
                 <strong className="text-ink dark:text-white font-medium">Without additional resources, adding only an SDK can make things worse.</strong>{' '}
@@ -80,27 +80,24 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         <Section
           id="broken-mcp"
           chapterLabel="Finding 1"
-          headline="Even a broken MCP server outperformed no MCP server at all"
+          headline="Model capability determined the outcome more than tooling"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              In the complex API benchmark, we tested agents against an elaborate enterprise API where small configuration details can break everything. Using three different AI models, we got each model to run the same task twice: once with web search only, and once with the MCP server available as well.
+              We ran the same DocuSign task across three models, each once with web search only and once with the MCP server available. All six agents completed the task, but code quality and debugging efficiency tracked model capability more than tool access.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              The MCP server was broken but still helped
+              The same broken MCP helped one model and hurt another
             </h3>
             <p>
-              In every single run, the MCP server returned responses that were too large for the agents to read in full. All they ever got was a truncated preview before the response cut off. Yet, agents with truncated access to the server still did better than those without access.
+              In every run, the MCP server returned responses too large to read; agents only ever saw a truncated preview. For haiku, that fragment happened to contain the correct sandbox URL, so haiku-mcp got the environment right on the first attempt while haiku-no-mcp spent 27 tool calls discovering it by trial and error.
             </p>
             <p>
-              We tested three agent models with different capability levels. The smaller models struggled the most without access to the MCP server, making a huge number of tool calls just trying to find basic configuration details they couldn't locate.
+              For sonnet, the preview appears to have contained a fragment of a DocuSign example showing PDF document construction. Sonnet-no-mcp produced a minimal 60-line script, while sonnet-mcp produced a 130-line version that hand-crafted a valid PDF binary from scratch, doing unnecessary work the task never required. The API call was identical, but the broken MCP left a clear mark on everything around it.
             </p>
             <p>
-              With access to the MCP server, those same models got the details right on the first attempt, even though they could only view a fragment of the documentation.
-            </p>
-            <p>
-              Here's how each model performed with and without MCP access:
+              Each model's performance across both conditions:
             </p>
 
             <div className="my-4 overflow-x-auto">
@@ -147,13 +144,13 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </div>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Using web search, agents found the right site but not the right answer
+              Web search found the right pages but not the right answer
             </h3>
             <p>
-              When agents without MCP hit errors and turned to web search for help, they found legitimate documentation pages. But the detail they needed wasn't on any of those pages.
+              When agents without MCP hit errors and turned to web search, they found legitimate DocuSign documentation pages, but neither mentioned the sandbox address they needed. The information existed in the docs, just not on the pages you reach when debugging a 401.
             </p>
             <p>
-              The information was somewhere in the docs; it just wasn't where you naturally end up when something goes wrong. The MCP server, even with truncated calls, pointed agents in the right direction.
+              MCP matters most when model capability is lowest and training data coverage is thinnest; above a certain capability threshold, the agent finds another way regardless.
             </p>
 
             <button
@@ -163,7 +160,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               }}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
-              MCP helps, even when broken →
+              Model capability beats tooling →
             </button>
           </div>
         </Section>
@@ -340,9 +337,9 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             {[
               {
                 tab: 'docusign' as const,
-                subtitle: 'Complex API benchmark',
-                label: 'MCP helps, even when broken',
-                description: 'Does an MCP server help agents use a complex API correctly, and does it help bridge the gap between less and more capable models?',
+                subtitle: 'DocuSign',
+                label: 'Model capability beats tooling',
+                description: 'All six agents completed the task, but code quality tracked model strength more than tool access. The same broken MCP helped the weakest model and hurt the middle one.',
               },
               {
                 tab: 'vercel' as const,

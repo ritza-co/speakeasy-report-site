@@ -100,7 +100,7 @@ function ComparisonBar({ label, noMcp, withMcp, max, format }: {
 
 function Highlight({ number, title, children }: { number: number; title: string; children: React.ReactNode }) {
   return (
-    <div className="flex gap-4 py-5 border-b border-stone-100 dark:border-stone-800 last:border-0">
+    <div className="flex gap-4 py-5 px-4 border-b border-stone-100 dark:border-stone-800 last:border-0">
       <div className="shrink-0 w-6 h-6 rounded-full bg-crimson text-white text-[11px] font-semibold flex items-center justify-center mt-0.5 font-sans">
         {number}
       </div>
@@ -492,11 +492,71 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
         {/* ─── WITH MCP ─── */}
         <Section id="with-mcp" chapterLabel="Run 2" headline="Building with MCP docs">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <h3 className="font-serif text-xl text-ink dark:text-white mb-3">What the Speakeasy Docs MCP is</h3>
             <p>
-              We used the Speakeasy Docs MCP application to transform
-              the <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">README.md</code> files
-              from each service directory into indexable documentation, served through an MCP server.
+              <a href="https://github.com/speakeasy-api/docs-mcp" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">Speakeasy Docs MCP</a> is
+              an open-source tool that turns a directory of markdown files into a searchable MCP server.
+              You point it at your docs, run <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">docs-mcp build</code>,
+              and it produces an indexed corpus. The server then exposes two tools to any connected agent:
             </p>
+            <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
+              <li><code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">search_docs</code>: hybrid full-text and semantic search across the corpus. Returns ranked chunks with headings, breadcrumbs, and snippets.</li>
+              <li><code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code>: fetch a specific chunk by ID, with optional adjacent context. Returns the full markdown content of that section.</li>
+            </ul>
+            <p>
+              The indexer chunks markdown by heading level, attaches metadata to each chunk, and builds
+              a local <a href="https://lancedb.github.io/lancedb/" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">LanceDB</a> index.
+              At runtime the server runs locally with no external API calls. The agent searches
+              the corpus the same way it would search any other MCP tool: by calling
+              <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">search_docs</code>
+              with a natural-language query and following up with
+              <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">get_doc</code> to
+              retrieve the full content of relevant chunks.
+            </p>
+            <p>
+              For this benchmark we pointed it at the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">README.md</code> file
+              from each of the four microservice directories. Each README documented that service's
+              endpoints, request/response shapes, and data model. The result was an <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP
+              server that the agent could query instead of exploring the running services at runtime.
+              Here is what a typical exchange looked like, using the research subagent's first
+              search query:
+            </p>
+
+            <div className="my-4 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+              <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+                <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">search_docs — query</span>
+              </div>
+              <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`{ "query": "order status update endpoint" }`}</pre>
+            </div>
+
+            <div className="my-4 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+              <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+                <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">search_docs — response (hits, truncated)</span>
+              </div>
+              <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`{
+  "hits": [
+    {
+      "chunk_id": "services/order-service/README.md#post-order-order_idupdate",
+      "score": 0.94,
+      "heading": "POST /order/<order_id>/update",
+      "breadcrumb": "Order Service > Endpoints > POST /order/<order_id>/update",
+      "snippet": "Update an order's status. Request: { \\"status\\": \\"completed\\" }\\nValid values: active, completed, cancelled, pending_approval, pending",
+      "metadata": { "service": "order-service" }
+    },
+    ...
+  ]
+}`}</pre>
+            </div>
+
+            <p>
+              The agent then called <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> with
+              the returned <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">chunk_id</code> to
+              retrieve the full section, including the complete request/response schema. The research
+              subagent's 23 <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> calls
+              pulled the exact endpoint definitions for every feature it was about to implement.
+              The implementation subagent then wrote correct per-service routing without any exploratory API calls.
+            </p>
+
             <p>
               Here is the prompt we used. We gave Claude access to the MCP server
               named <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">orderify-docs</code>:

@@ -516,12 +516,40 @@ function CodeSection() {
         <CodeBlock lines={tab.lines} />
       </div>
 
-      <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">More complexity, worse code</h3>
+      <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">When a broken MCP made things worse</h3>
       <p>
-        Sonnet-MCP wrote the most technically ambitious script of the six: it generated a hand-crafted PDF from scratch, constructing valid binary with font definitions and a proper cross-reference table. The task was to send a contract, and all that extra work produced the same fragile pixel-coordinate tab placement, wrapped in considerably more code.
+        Sonnet-no-MCP and sonnet-mcp followed identical debugging paths. Both hit the wrong environment, recovered the same way, and succeeded. But the scripts they produced were dramatically different.
       </p>
       <p>
-        Opus-no-MCP wrote the simplest script and the most correct one: plain text document, anchor-based tabs, eight tool calls total. The quality difference came from what each model already knew, not from access to better tools or more documentation.
+        Sonnet-no-MCP produced a minimal, correct script. Sonnet-mcp produced a much larger one that hand-crafted a valid PDF from scratch, doing unnecessary work for a task that only required sending a contract. The surrounding code diverged significantly even though the API call was identical.
+      </p>
+
+      <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+        <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+          <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">sonnet-mcp — make_pdf_bytes()</span>
+        </div>
+        <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`def make_pdf_bytes(text: str) -> bytes:
+    """Create a minimal valid PDF containing the given text."""
+    # ... builds content stream, escapes PDF string literals ...
+
+    objects[1] = b"<< /Type /Catalog /Pages 2 0 R >>"
+    objects[2] = b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>"
+    objects[3] = b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] ... >>"
+    objects[4] = f"<< /Length {stream_length} >>\\nstream\\n".encode() + stream_bytes
+    objects[5] = b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+
+    # Assemble PDF, track byte offsets for cross-reference table
+    for obj_num in sorted(objects.keys()):
+        offsets[obj_num] = len(pdf)
+        pdf += f"{obj_num} 0 obj\\n".encode() + body + b"\\nendobj\\n"
+    # ... xref table, trailer, %%EOF`}</pre>
+      </div>
+
+      <p>
+        The MCP queries gave sonnet no help finding the right environment, since it already knew how to recover from that error. But the truncated preview it received appears to have included a fragment of a DocuSign documentation example showing PDF document construction. Unable to read the full response, sonnet appears to have treated that fragment as a hint about how documents should be prepared. The broken MCP was neutral for haiku, where the preview contained the right URL. For sonnet, it was actively disruptive, prompting unnecessary complexity while the API call itself went unchanged.
+      </p>
+      <p>
+        Opus wrote the simplest and most correct script in both conditions. The quality difference came from what each model already knew.
       </p>
 
       <p className="text-[13px] text-stone-500 dark:text-stone-500 border-l-2 border-stone-200 dark:border-stone-700 pl-4">
@@ -544,7 +572,7 @@ export default function DocuSignReport() {
         <Section
           id="hypothesis"
           chapterLabel="Introduction"
-          headline="Does an MCP server help agents use a complex API correctly?"
+          headline="Does model capability matter more than tooling?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
@@ -744,32 +772,32 @@ export default function DocuSignReport() {
         <Section
           id="conclusion"
           chapterLabel="Conclusion"
-          headline="Context helps, even when it's broken"
+          headline="Model capability determined the outcome more than tooling."
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              All six agents completed the task. But completing a task and understanding the API you're using are different things, and this benchmark tested both.
+              All six agents completed the task. But completing a task and writing production-ready code are different things, and the gap tracked model capability more than tool access.
             </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-2">Model capability set the ceiling</h3>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-2">Model capability determined the outcome</h3>
             <p>
-              The clearest finding is that model strength determined the outcome more than any tool. Opus succeeded immediately in both conditions. Sonnet hit one error and self-corrected with a single diagnostic step. Haiku required an extended debugging loop. Within each model pair, the no-MCP and MCP runs followed the same basic path; the tool changed what happened early in the session, but not how the agent reasoned its way through problems.
-            </p>
-            <p>
-              Code quality followed the same gradient. Haiku and sonnet both placed the signature field at a fixed pixel position (functional, but fragile). Opus used anchor strings in both runs, the approach DocuSign recommends, without being prompted. That gap came from what each model already knew, not from tool access.
+              Opus succeeded immediately in both conditions. Sonnet hit one error and self-corrected in a single step. Haiku required extended debugging loops (27 tool calls without MCP, 16 with). Within each model pair, the no-MCP and MCP runs followed the same basic path. Code quality followed the same pattern. Haiku and sonnet placed signature fields the same way in both conditions, while opus used the approach DocuSign recommends, without being prompted.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Web search and MCP failed differently</h3>
             <p>
-              Haiku was the only model to use web search after hitting an error. It found the right documentation pages (official, legitimate sources), and neither mentioned the sandbox address it needed. The information existed in DocuSign's docs, just not on the pages a developer reaches when debugging an authentication failure. Web search got it to the right place and it still came up empty.
+              Haiku was the only model to use web search after hitting an error. It found the right documentation pages, and neither mentioned the sandbox address it needed. The information existed in DocuSign's docs, just not on the pages a developer reaches when debugging a 401.
             </p>
             <p>
-              MCP failed differently. The documentation was there, the queries were relevant, but every response came back too large to read. Agents received a truncated preview and fell back on training data. And yet haiku-mcp still reached the correct environment on the first attempt; the fragment visible in the preview was enough. Web search sent haiku to a documentation gap, while MCP, even broken, pointed it in the right direction.
+              MCP failed differently. Every response came back too large to read, so agents got a truncated preview and fell back on training data. Haiku-mcp still reached the correct environment on the first attempt because the preview fragment mentioned the right address. That partial context was enough to change haiku's first guess.
             </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">A bad MCP server is still better than none</h3>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Partial context can help or hurt depending on the model</h3>
             <p>
-              That's the more useful framing for MCP in practice. A well-built documentation server is most valuable at the edges: smaller models, less familiar APIs, configuration details that aren't reliably in training data. Stronger models find their way regardless. At the edges, even partial context changes the outcome. If a broken server could do that, a well-built one should do considerably more.
+              The sonnet-mcp result complicates the simple "broken MCP still helped" story. For haiku, the preview fragment contained the right URL and changed the outcome for the better. For sonnet, the preview appears to have prompted unnecessary complexity in how the document was prepared, producing significantly more code for the same outcome. The API call went unchanged, but the broken MCP left a clear mark on everything around it.
+            </p>
+            <p>
+              A well-built MCP server is most valuable for smaller models, less familiar APIs, and configuration details that aren't reliably in training data. Stronger models find their way regardless. MCP matters most when model capability is lowest and training data coverage is thinnest. Above a certain capability threshold, the agent finds another way.
             </p>
           </div>
         </Section>
