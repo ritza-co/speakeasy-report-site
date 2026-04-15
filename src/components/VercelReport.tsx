@@ -236,7 +236,7 @@ export default function VercelReport() {
         {/* ─── METHODOLOGY ─── */}
         <Section
           id="methodology"
-          chapterLabel="How we tested it"
+          chapterLabel="Setup"
           headline="How we tested it"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">

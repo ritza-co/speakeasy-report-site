@@ -44,28 +44,39 @@ export default function ResendReport() {
               Resend is a widely used email API with good documentation and strong
               representation in LLM training data. We chose it because it gives the
               agent a reasonable chance of doing well without any extra tooling. If MCP
-              still changes behavior on an API the agent already knows, that is a
-              stronger result than testing against something obscure.
+              server access changes how an agent interacts with an API it already knows,
+              that is a stronger result than testing against something obscure.
+            </p>
+
+
+            <p>
+              We chose to use the Resent API because it is well represented in LLM training
+              data, which gives the non-MCP runs a reasonable chance of performing well
+              Resend is a widely used email platform with well-maintained documentation,
+              a clean SDK, and an official MCP server. If MCP still adds value to an API the
+              agent already knows, that is a stronger result than testing against an obscure
+              API with poor training coverage.
             </p>
 
             <p>
-              We ran six sessions across three tooling configurations and two prompt
-              styles, all against the same task. The headline finding was behavioral.
-              In three non-MCP runs, the agent invented API constraints that don't exist,
+              We ran six sessions using three tooling configurations and two prompt
+              styles to get the agent to complete the same task. The headline finding was behavioral.
+              In three non-MCP runs, the agent invented API constraints that didn't exist,
               wrote them into code comments as documented behavior, and built workarounds
-              for them. With a tool to verify a claim, the agent checked. Without one,
-              it guessed and moved on.
+              for them. When it had access to a tool for verifying a claim, the agent checked the tool.
+              When it didn't, it guessed and moved on.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               MCP eliminated fabrication
             </h3>
             <p>
-              Every non-MCP run produced at least one fabricated constraint. The agent
-              claimed CID inline images were unsupported by Resend broadcasts, and in
-              the SDK runs, that the SDK did not support <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code> on
-              attachments. Both claims are false. Both were stated with confidence, written
-              into comments, and worked around. No MCP run fabricated a constraint.
+              In every non-MCP run, the agent produced at least one fabricated constraint. The agent
+              claimed CID inline images were unsupported by Resend broadcasts. In
+              the SDK runs, it claimed that the SDK did not support <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code>
+              on attachments. Both claims were false, but the agent stated both with confidence,
+              them into comments, and created workarounds for them. None of runs when it had access
+              to the MCP server resulted in any fabricated constraints.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -73,24 +84,10 @@ export default function ResendReport() {
             </h3>
             <p>
               We ran each tooling configuration with two prompts: a simple natural-language
-              description and a detailed developer-style prompt with numbered steps and
+              description, and a detailed developer-style prompt with numbered steps and
               explicit output requirements. The complex prompt improved scores in some runs,
-              but it did not prevent fabrication. When the agent hit the edge of what it
+              but it didn't prevent fabrication. When the agent hit the edge of what it
               knew, it invented an answer regardless of how specific the instructions were.
-            </p>
-          </div>
-        </Section>
-
-        {/* ─── METHODOLOGY + THE TASK ─── */}
-        <Section
-          id="methodology"
-          chapterLabel="Introduction"
-          headline="How we tested it"
-        >
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
-            <p>
-              We ran six benchmark sessions across three tooling configurations and two
-              prompt styles, all against the same task.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -98,67 +95,72 @@ export default function ResendReport() {
             </h3>
             <p>
               Does giving an agent access to live API documentation reduce fabrication?
-              And can a more precise prompt substitute for that access, if the developer
-              already knows the correct API surface and writes it into the instructions?
+              And can a more precise prompt substitute access to an MCP documentation server if the
+              developer already knows the correct API surface and writes it into the instructions?
+            </p>
+          </div>
+        </Section>
+
+        {/* ─── METHODOLOGY + THE TASK ─── */}
+        <Section
+          id="methodology"
+          chapterLabel="Setup"
+          headline="How we tested it"
+        >
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
+            <p>
+              We ran six benchmark sessions, testing the two prompt styles with each of the
+              three tooling configurations.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Three configurations, stacked incrementally
             </h3>
             <p>
-              <b>Raw HTTP</b> is the baseline. The agent has its training data and web search, and writes HTTP
-              requests directly. No SDK or MCP is installed.
+              <b>Raw HTTP</b> was our baseline configuration. The agent could access its training data and web search,
+              and write HTTP requests directly. No SDK or MCP was installed.
             </p>
             <p>
-              <b>SDK</b> adds the Resend Node.js SDK on top of Raw HTTP: a typed library with named methods and
-              known response shapes. Web search remains available.
+              <b>SDK</b> added the Resend Node.js SDK on top of Raw HTTP: a typed library with named methods and
+              known response shapes. Web search remained available.
             </p>
             <p>
-              <b>SDK + MCP</b> adds the Resend docs MCP server on top of the SDK,
-              creating a live tool the agent can query mid-session to look up documentation
-              while it works. The agent was not instructed to use MCP on SDK + MCP runs, but
-              the Resend MCP server was available in the environment.
+              <b>SDK + MCP</b> added the Resend docs MCP server on top of the SDK,
+              creating a live tool the agent could query mid-session to look up documentation
+              while it worked. We didn't explicitly instruct the agent to use the MCP server on SDK + MCP runs,
+              but the Resend MCP server was available in the environment.
             </p>
 
             <ConfigAccessTable />
-
-            <p>
-              The API is Resend, a widely used email platform with well-maintained
-              documentation, a clean SDK, and an official MCP server. We chose Resend
-              because it is well represented in LLM training data, which gives the non-MCP runs
-              a reasonable chance of performing well. If MCP still adds value to an API the
-              agent already knows, that is a stronger result than testing against an obscure
-              API with poor training coverage.
-            </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               A task that requires composing several non-obvious API features
             </h3>
             <p>
-              All six runs received the same underlying task: Write a Node.js script that
-              sends a personalized broadcast email to a group of premium contacts. The
-              prompt does not name any Resend APIs. The agent must map plain-English
-              requirements to the correct API features itself, and several of those
-              mappings are non-obvious.
+              We set the agent the same task in each of the six benchmark sessions:
+              Write a Node.js script that sends a personalized broadcast email to a 
+              group of premium contacts. The prompt didn't name any Resend APIs. The
+              agent had to map plain-English requirements to the correct API features
+              itself, and several of those mappings were non-obvious.
             </p>
 
             <ConceptMappingTable />
 
             <p>
-              Each feature is documented individually. What makes the task hard is the
-              composition: The agent must recognize all six mappings, implement them in the
-              correct order, and know that some require multi-step flows that are not 
-              visible from the method names alone. None of this is stated in the prompt.
+              Resend documents each feature individually. What mad the task difficult was the
+              composition: The agent had to recognize all six mappings, implement them in the
+              correct order, and know that some required multi-step flows that aren't 
+              visible from the method names alone. None of this was stated in the prompts.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               Two prompts describing the same task
             </h3>
             <p>
-              The simple prompt describes the task as a non-technical user might: with natural
+              The simple prompt described the task as a non-technical user might: with natural
               language, no API names, and no structural requirements. The complex prompt
-              describes the same task as a developer would: with numbered steps, a specified
-              runtime, and explicit output expectations. Neither prompt names any Resend APIs.
+              described the same task as a developer would: with numbered steps, a specified
+              runtime, and explicit output expectations. Neither prompt named any Resend APIs.
             </p>
 
             <PromptCards
