@@ -6,10 +6,9 @@ import { useScrollSpy } from '../hooks/useScrollSpy'
 const SECTIONS = [
   { id: 'introduction', label: 'Introduction' },
   { id: 'setup',        label: 'Setup' },
-  { id: 'no-mcp',      label: 'Building without a docs MCP server' },
-  { id: 'with-mcp',    label: 'Building with MCP docs' },
-  { id: 'comparison',  label: 'Run comparison' },
-  { id: 'takeaways',   label: 'What this means for API providers' },
+  { id: 'results',      label: 'Results' },
+  { id: 'comparison',   label: 'Run comparison' },
+  { id: 'takeaways',    label: 'What this means for API providers' },
 ]
 
 const ARCH_DIAGRAM = `graph TD
@@ -132,14 +131,17 @@ function Callout({ children }: { children: React.ReactNode }) {
 
 function PromptBlock({ label, children }: { label: string; children: string }) {
   return (
-    <div className="my-6 rounded overflow-hidden border border-stone-200 dark:border-stone-800">
-      <div className="flex items-center gap-2 px-4 py-2 bg-stone-100 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-        <span className="w-2 h-2 rounded-full bg-crimson" />
-        <span className="text-[10px] uppercase tracking-widest text-stone-600 dark:text-stone-400 font-sans">{label}</span>
+    <div className="border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+      <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+        <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">
+          {label}
+        </span>
       </div>
-      <pre className="p-4 text-[12px] font-mono leading-relaxed overflow-x-auto whitespace-pre-wrap text-stone-700 dark:text-stone-300 bg-white dark:bg-stone-950">
-        {children}
-      </pre>
+      <div className="px-4 py-4">
+        <p className="text-[13px] font-mono text-ink dark:text-stone-200 leading-relaxed whitespace-pre-wrap">
+          {children}
+        </p>
+      </div>
     </div>
   )
 }
@@ -327,18 +329,24 @@ export default function HowToHelpAgentsReport() {
               <li><a href="https://github.com/ritza-co/orderify-microservices" className="text-crimson underline hover:no-underline">Orderify microservices</a></li>
               <li><a href="https://github.com/ritza-co/orderify-admins" className="text-crimson underline hover:no-underline">Orderify admins</a></li>
             </ul>
-          </div>
-        </Section>
 
-        {/* ─── WITHOUT MCP ─── */}
-        <Section id="no-mcp" chapterLabel="Run 1" headline="Building without a docs MCP server">
-          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The two runs
+            </h3>
             <p>
-              Without an MCP docs server, we asked Claude to build the application using the
-              following prompt:
+              We ran the same task twice using Claude Sonnet 4.6:
+            </p>
+            <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
+              <li>In the first run, Claude had no API documentation and had to discover the service structure by exploring the existing dashboard.</li>
+              <li>In the second run, Claude had access to an MCP server providing structured documentation for each microservice.</li>
+            </ul>
+
+            <p>
+              The only difference between the two runs was that the first prompt didn't mention MCP, whereas the second prompt instructed the agent to use a rely on the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP server:
             </p>
 
-            <PromptBlock label="Prompt — no MCP">
+            <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <PromptBlock label="Run 1 — No MCP">
 {`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. Here are the features it should have:
 ### Live Order Board
 - Orders displayed as cards in four columns: New, Preparing, Ready, Served
@@ -371,18 +379,111 @@ http://localhost:3001 for the existing dashboard.
 Only rely on the dashboard. This is what we have, as in a real scenario, you don't have access to the running server or directories. Only rely on the dashboard testing and findings.`}
             </PromptBlock>
 
-            <p>The prompt specified three things beyond the standard feature list:</p>
-            <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
-              <li>A way to move order status directly from the board</li>
-              <li>Additional analytics charts covering peak hours and top items</li>
-              <li>A client list page</li>
-            </ul>
-
+            <PromptBlock label="Run 2 — With MCP">
+{`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. You also have access to a docs MCP server where you can ask everything you need about the services and the endpoints: orderify-docs
+. Here are the features it should have:
+### Live Order Board
+- Orders displayed as cards in four columns: New, Preparing, Ready, Served
+- One-click to move an order to the next status
+- Each card shows table number, customer name, items, and a live wait timer
+- Board auto-refreshes every 15 seconds
+### Order Detail
+- Click any order to open a full breakdown
+- Shows every item with quantity and price, customer notes, total, and status history
+### New Order
+- Form accessible directly from the main screen
+- Staff pick items from the menu, set table number, customer name, and notes
+### Revenue Overview
+- Summary bar showing today's, this week's, and this month's revenue
+- Also shows average order value
+### Top Items
+- Ranked list of most ordered items by quantity
+### Peak Hours
+- Bar chart showing which hours of the day get the most orders
+### Daily Revenue Trend
+- Line chart of revenue per day over the last 30 days
+### Orders by Status
+- Donut chart breaking down all orders by current status
+### Revenue by Table
+- Each table's total revenue, order count, average spend, and last order time
+### Client List
+- All customers with their table and order history
+username: order-dashboard-user password: dashboard_secret_2024
+http://localhost:3001 for the existing dashboard.
+Only rely on the orderify-docs MCP server. This is what we have, as in a real scenario, you don't have access to the running server or directories. Before implementing any API call, query the orderify-docs MCP server to get the exact endpoint path, parameter names, identifier types, and request/response schema. Do not assume: look it up first.`}
+            </PromptBlock>
+            </div>
             <p>
-              Because we constrained Claude to using only the existing dashboard for exploration, it
-              had to discover the API structure, authentication method, and endpoint paths by itself.
+              We created the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP server
+              using <a href="https://github.com/speakeasy-api/docs-mcp" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">Speakeasy Docs MCP</a>,
+              an open-source tool that turns a directory of markdown files into a searchable MCP server.
+              You point it at your docs, run <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">docs-mcp build</code>,
+              and it produces an indexed corpus. The server then exposes two tools to any connected agent:
+            </p>
+            <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
+              <li><code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">search_docs</code> conducts hybrid full-text and semantic searches across the corpus, and returns ranked chunks with headings, breadcrumbs, and snippets.</li>
+              <li><code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> fetches a specific chunk by ID, with optional adjacent context, and returns the full markdown content of that section.</li>
+            </ul>
+            <p>
+              The indexer chunks markdown by heading level, attaches metadata to each chunk, and builds
+              a local <a href="https://lancedb.github.io/lancedb/" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">LanceDB</a> index.
+              At runtime the server runs locally with no external API calls. The agent searches
+              the corpus the same way it would search any other MCP tool: by calling
+              <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">search_docs</code>
+              with a natural-language query and following up with
+              <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">get_doc</code> to
+              retrieve the full content of relevant chunks.
+            </p>
+            <p>
+              For this benchmark we pointed it at the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">README.md</code> file
+              from each of the four microservice directories. Each README documented that service's
+              endpoints, request/response shapes, and data model. The result was an <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP
+              server that the agent could query instead of exploring the running services at runtime.
+              Here is what a typical exchange looked like, using the research subagent's first
+              search query:
             </p>
 
+            <div className="my-4 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+              <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+                <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">search_docs — query</span>
+              </div>
+              <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`{ "query": "order status update endpoint" }`}</pre>
+            </div>
+
+            <div className="my-4 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
+              <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
+                <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">search_docs — response (hits, truncated)</span>
+              </div>
+              <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`{
+  "hits": [
+    {
+      "chunk_id": "services/order-service/README.md#post-order-order_idupdate",
+      "score": 0.94,
+      "heading": "POST /order/<order_id>/update",
+      "breadcrumb": "Order Service > Endpoints > POST /order/<order_id>/update",
+      "snippet": "Update an order's status. Request: { \\"status\\": \\"completed\\" }\\nValid values: active, completed, cancelled, pending_approval, pending",
+      "metadata": { "service": "order-service" }
+    },
+    ...
+  ]
+}`}</pre>
+            </div>
+
+            <p>
+              The agent then called <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> with
+              the returned <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">chunk_id</code> to
+              retrieve the full section, including the complete request/response schema. The research
+              subagent's 23 <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> calls
+              pulled the exact endpoint definitions for every feature it was about to implement.
+              The implementation subagent then wrote correct per-service routing without any exploratory API calls.
+            </p>
+          </div>
+        </Section>
+
+        {/* ─── RESULTS ─── */}
+               <Section id="results" chapterLabel="Results" headline="How the agent performed without access to an MCP server">
+          <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
+            <h3 className="font-serif text-xl text-ink dark:text-white mb-3">Run 1: Without MCP docs</h3>
             <p>
               The run completed in 54 minutes and 11 seconds. The following table breaks down the
               token consumption:
@@ -488,122 +589,9 @@ Only rely on the dashboard. This is what we have, as in a real scenario, you don
             </HighlightBox>
           </div>
         </Section>
-
-        {/* ─── WITH MCP ─── */}
-        <Section id="with-mcp" chapterLabel="Run 2" headline="Building with MCP docs">
+        
+        <Section id="results" chapterLabel="Results" headline="How the agent performed with access to an MCP server">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-            <h3 className="font-serif text-xl text-ink dark:text-white mb-3">What the Speakeasy Docs MCP is</h3>
-            <p>
-              <a href="https://github.com/speakeasy-api/docs-mcp" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">Speakeasy Docs MCP</a> is
-              an open-source tool that turns a directory of markdown files into a searchable MCP server.
-              You point it at your docs, run <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">docs-mcp build</code>,
-              and it produces an indexed corpus. The server then exposes two tools to any connected agent:
-            </p>
-            <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
-              <li><code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">search_docs</code>: hybrid full-text and semantic search across the corpus. Returns ranked chunks with headings, breadcrumbs, and snippets.</li>
-              <li><code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code>: fetch a specific chunk by ID, with optional adjacent context. Returns the full markdown content of that section.</li>
-            </ul>
-            <p>
-              The indexer chunks markdown by heading level, attaches metadata to each chunk, and builds
-              a local <a href="https://lancedb.github.io/lancedb/" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">LanceDB</a> index.
-              At runtime the server runs locally with no external API calls. The agent searches
-              the corpus the same way it would search any other MCP tool: by calling
-              <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">search_docs</code>
-              with a natural-language query and following up with
-              <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">get_doc</code> to
-              retrieve the full content of relevant chunks.
-            </p>
-            <p>
-              For this benchmark we pointed it at the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">README.md</code> file
-              from each of the four microservice directories. Each README documented that service's
-              endpoints, request/response shapes, and data model. The result was an <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP
-              server that the agent could query instead of exploring the running services at runtime.
-              Here is what a typical exchange looked like, using the research subagent's first
-              search query:
-            </p>
-
-            <div className="my-4 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-              <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-                <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">search_docs — query</span>
-              </div>
-              <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`{ "query": "order status update endpoint" }`}</pre>
-            </div>
-
-            <div className="my-4 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
-              <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-                <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">search_docs — response (hits, truncated)</span>
-              </div>
-              <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`{
-  "hits": [
-    {
-      "chunk_id": "services/order-service/README.md#post-order-order_idupdate",
-      "score": 0.94,
-      "heading": "POST /order/<order_id>/update",
-      "breadcrumb": "Order Service > Endpoints > POST /order/<order_id>/update",
-      "snippet": "Update an order's status. Request: { \\"status\\": \\"completed\\" }\\nValid values: active, completed, cancelled, pending_approval, pending",
-      "metadata": { "service": "order-service" }
-    },
-    ...
-  ]
-}`}</pre>
-            </div>
-
-            <p>
-              The agent then called <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> with
-              the returned <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">chunk_id</code> to
-              retrieve the full section, including the complete request/response schema. The research
-              subagent's 23 <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">get_doc</code> calls
-              pulled the exact endpoint definitions for every feature it was about to implement.
-              The implementation subagent then wrote correct per-service routing without any exploratory API calls.
-            </p>
-
-            <p>
-              Here is the prompt we used. We gave Claude access to the MCP server
-              named <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">orderify-docs</code>:
-            </p>
-
-            <PromptBlock label="Prompt — with MCP">
-{`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. You also have access to a docs MCP server where you can ask everything you need about the services and the endpoints: orderify-docs
-. Here are the features it should have:
-### Live Order Board
-- Orders displayed as cards in four columns: New, Preparing, Ready, Served
-- One-click to move an order to the next status
-- Each card shows table number, customer name, items, and a live wait timer
-- Board auto-refreshes every 15 seconds
-### Order Detail
-- Click any order to open a full breakdown
-- Shows every item with quantity and price, customer notes, total, and status history
-### New Order
-- Form accessible directly from the main screen
-- Staff pick items from the menu, set table number, customer name, and notes
-### Revenue Overview
-- Summary bar showing today's, this week's, and this month's revenue
-- Also shows average order value
-### Top Items
-- Ranked list of most ordered items by quantity
-### Peak Hours
-- Bar chart showing which hours of the day get the most orders
-### Daily Revenue Trend
-- Line chart of revenue per day over the last 30 days
-### Orders by Status
-- Donut chart breaking down all orders by current status
-### Revenue by Table
-- Each table's total revenue, order count, average spend, and last order time
-### Client List
-- All customers with their table and order history
-username: order-dashboard-user password: dashboard_secret_2024
-http://localhost:3001 for the existing dashboard.
-Only rely on the orderify-docs MCP server. This is what we have, as in a real scenario, you don't have access to the running server or directories. Before implementing any API call, query the orderify-docs MCP server to get the exact endpoint path, parameter names, identifier types, and request/response schema. Do not assume: look it up first.`}
-            </PromptBlock>
-
-            <p>The prompt specified four things:</p>
-            <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
-              <li>A way to move order status directly from the board</li>
-              <li>Additional analytics charts covering peak hours and top items</li>
-              <li>A client list page</li>
-              <li>To query the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP server before implementing any API call</li>
-            </ul>
-
             <p>
               The run completed in 18 minutes and 24 seconds. The following table breaks down
               the token consumption:
@@ -720,8 +708,9 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
           </div>
         </Section>
 
+
         {/* ─── RUN COMPARISON ─── */}
-        <Section id="comparison" chapterLabel="Results" headline="Run Comparison">
+        <Section id="comparison" chapterLabel="Analysis" headline="Run Comparison">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
               The two runs targeted the same features, used the same model (Claude Sonnet 4.6), and
