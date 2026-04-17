@@ -34,43 +34,55 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              To produce better quality code, agents reach for a few different resources to try and gather accurate information:
+              To produce better quality code, agents reach for a few different resources to gather accurate information:
             </p>
             <ul className="space-y-1 pl-5 list-disc text-stone-700 dark:text-stone-300 text-[15px]">
-              <li>Training data</li>
-              <li>Web search</li>
-              <li>SDKs</li>
-              <li>MCP servers</li>
+              <li>Most often they rely on their <strong>training data</strong></li>
+              <li>Sometimes they conduct <strong>web searches</strong></li>
+              <li>If installed they can read <strong>SDKs</strong> directly to check the types a library expects</li>
+              <li>When configured, they consult <strong>MCP servers</strong> that expose documentation as callable tools</li>
             </ul>
             <p>
-              Many platforms offer MCP servers and SDKs, presuming these resources help agents build faster and more accurately, but there is ongoing debate about how effective or necessary they actually are.
+              Many platforms offer MCP servers and SDKs, presuming they help agents build faster and more accurately, but there is ongoing debate about how effective or necessary they actually are.
             </p>
             <p>
-              To determine the impact of SDKs and MCP servers on agent performance, we varied agents' access to tools and assessed how well they could reach a defined goal in four different scenarios:
+              To determine the impact of SDKs and MCP servers on agent performance, we varied agents' access to tools and assessed how well they could accomplish the following tasks:
             </p>
-            <ul className="space-y-1 pl-5 list-disc text-stone-700 dark:text-stone-300 text-[15px]">
-              <li><button onClick={() => { onNavigate('docusign'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The complex API benchmark</button> tested how well three agents could write a Python script to interact with DocuSign.</li>
-              <li><button onClick={() => { onNavigate('vercel'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The breaking changes benchmark</button> tested how well an agent could implement a TypeScript module for each of the patterns that changed between Vercel's AI SDK 4 and AI SDK 6.</li>
-              <li><button onClick={() => { onNavigate('resend'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The well-documented API benchmark</button> tested how well an agent could write a Node.js script that uses Resend to send personalized broadcast emails.</li>
-              <li><button onClick={() => { onNavigate('agents'); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="font-semibold text-crimson hover:underline font-sans">The undocumented API benchmark</button> tested how well an agent could build a dashboard for a restaurant enterprise with internal microservices.</li>
-            </ul>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {([
+                { tab: 'docusign' as const, name: '1. The complex API benchmark',        task: 'Write a Python script to interact with DocuSign.' },
+                { tab: 'vercel'   as const, name: '2. The breaking changes benchmark',   task: "Implement a TypeScript module for each of the patterns that changed between Vercel's AI SDK 4 and AI SDK 6." },
+                { tab: 'resend'   as const, name: '3. The well-documented API benchmark', task: 'Generate a Node.js script that uses Resend to send personalized broadcast emails.' },
+                { tab: 'agents'   as const, name: '4. The undocumented API benchmark',   task: 'Build a dashboard for a restaurant enterprise with internal microservices.' },
+              ]).map(b => (
+                <div key={b.tab} className="border border-stone-200 dark:border-stone-800 rounded-lg px-4 py-3 space-y-1">
+                  <button
+                    onClick={() => { onNavigate(b.tab); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                    className="font-semibold text-[14px] text-crimson hover:underline font-sans text-left"
+                  >
+                    {b.name}
+                  </button>
+                  <p className="text-[13px] text-stone-600 dark:text-stone-400 leading-relaxed">{b.task}</p>
+                </div>
+              ))}
+            </div>
             <p>Here is what we found:</p>
             <ul className="space-y-3 pl-5 list-disc">
               <li>
-                <strong className="text-ink dark:text-white font-medium">Model capability determined the outcome more than tooling.</strong>{' '}
-                All six agents completed the DocuSign task, but code quality tracked model capability more than tool access. The same broken MCP server helped the weakest model and hurt the middle one, depending on what fragment it exposed.
+                <strong className="text-ink dark:text-white font-medium">Model capability determined the outcome more than tooling:</strong>{' '}
+                In the complex API benchmark, the three agents completed the DocuSign task both with and without access to the DocuSign MCP server. The quality of the code they produced varied across the six runs, but code quality tracked model capability more than tool access. The same broken MCP server helped the weakest model and hurt the middle one, depending on the documentation fragment it exposed.
               </li>
               <li>
-                <strong className="text-ink dark:text-white font-medium">Without additional resources, adding only an SDK can make things worse.</strong>{' '}
-                When testing the Vercel AI SDK, which had breaking changes in a recent major version, the agent scored lower when it had the SDK pre-installed than when it had access to web search alone. The agent used the SDK to inspect the code, became more confident, and applied outdated patterns. The agent only achieved a perfect score when it used the SDK combined with an MCP server, because the MCP server gave it the version-specific context that the SDK code couldn't.
+                <strong className="text-ink dark:text-white font-medium">Without additional resources, adding only an SDK can make things worse:</strong>{' '}
+                In the breaking changes benchmark, the agent scored lower when it had the SDK pre-installed than when it had access to web search alone. It used the SDK to inspect the code, became more confident, and applied outdated patterns. The agent only achieved a perfect score when it used the SDK combined with an MCP server, because the MCP server gave it the version-specific context that the SDK code couldn't.
               </li>
               <li>
-                <strong className="text-ink dark:text-white font-medium">Great documentation does not prevent hallucinations.</strong>{' '}
-                Resend has excellent documentation and strong representation in agent training data. However, the agent produced fabricated API constraints in every run when it didn't have access to the MCP server. The agent claimed certain features were unsupported, wrote them into comments, and came up with workarounds for them, even though Resend actually fully supported those features. When we gave the agent access to the MCP server, it didn't produce any fabrications. More detailed prompts improved some scores but did not stop the agent from inventing answers at the edge of what it knew.
+                <strong className="text-ink dark:text-white font-medium">Great documentation does not prevent hallucinations:</strong>{' '}
+                In the well-documented benchmark, despite Resend's excellent documentation and strong representation in agent training data, the agent produced fabricated API constraints in every run it didn't have access to the MCP server. The agent claimed certain features were unsupported, wrote them into comments, and came up with workarounds for them, even though Resend actually fully supported those features. When we gave the agent access to the MCP server, it didn't produce any fabrications. More detailed prompts improved some scores but didn't stop the agent from inventing answers at the edge of what it knew.
               </li>
               <li>
                 <strong className="text-ink dark:text-white font-medium">Without any documentation, agents explore for a long time and still get it wrong.</strong>{' '}
-                We tested a simulated private microservices API with no public documentation. Without access to an MCP documentation server, the agent spent 54 minutes reading source files to piece together how the system connected, and still got the architecture wrong. With an MCP documentation server, it understood the structure before writing any code, built the correct solution, and finished in 18 minutes.
+                In the undocumented API benchmark, we tested a simulated private microservices API with no public documentation. Without access to an MCP docs server, the agent spent 54 minutes reading source files to piece together how the system connected, and still got the architecture wrong. With access to an MCP docs server, it understood the structure before writing any code, built the correct solution, and finished in 18 minutes.
               </li>
             </ul>
           </div>
@@ -84,17 +96,17 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              We ran the same DocuSign task across three models, each once with web search only and once with the MCP server available. All six agents completed the task, but code quality and debugging efficiency tracked model capability more than tool access.
+              We ran the same DocuSign task across three agent models. For each model, we ran the task once with web search only and once with the MCP server available. In all six runs, the agent completed the task, but code quality and debugging efficiency tracked model capability more than tool access.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               The same broken MCP helped one model and hurt another
             </h3>
             <p>
-              In every run, the MCP server returned responses too large to read; agents only ever saw a truncated preview. For haiku, that fragment happened to contain the correct sandbox URL, so haiku-mcp got the environment right on the first attempt while haiku-no-mcp spent 27 tool calls discovering it by trial and error.
+              In every single run, the MCP server returned responses that were too large for the agent to read in full. All it ever got was a truncated preview before the response cut off. And yet, agents that had the server available still did better than those that didn't.
             </p>
             <p>
-              For sonnet, the preview appears to have contained a fragment of a DocuSign example showing PDF document construction. Sonnet-no-mcp produced a minimal 60-line script, while sonnet-mcp produced a 130-line version that hand-crafted a valid PDF binary from scratch, doing unnecessary work the task never required. The API call was identical, but the broken MCP left a clear mark on everything around it.
+              For Sonnet, the preview appeared to contain a fragment of a DocuSign example showing PDF document construction. Sonnet-no-MCP produced a minimal 60-line script, while Sonnet-MCP produced a 130-line version that hand-crafted a valid PDF binary from scratch, doing unnecessary work the task never required. The API call was identical, but the broken MCP left a clear mark on everything around it.
             </p>
             <p>
               Each model's performance across both conditions:
@@ -113,12 +125,12 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
                 </thead>
                 <tbody>
                   {[
-                    { run: 'haiku-no-mcp',  calls: 27, ctx: '23%', mcp: 0, first: false, note: 'Discovered sandbox URL by trial-and-error' },
-                    { run: 'haiku-mcp',     calls: 16, ctx: '26%', mcp: 3, first: false, note: 'MCP outputs unreadable; used sandbox URL from training data' },
-                    { run: 'sonnet-no-mcp', calls: 10, ctx: '12%', mcp: 0, first: false, note: 'Queried OAuth userinfo endpoint to find correct base URI' },
-                    { run: 'sonnet-mcp',    calls: 13, ctx: '14%', mcp: 2, first: false, note: 'MCP outputs unreadable; fell back to same userinfo approach' },
-                    { run: 'opus-no-mcp',   calls: 8,  ctx: '11%', mcp: 0, first: true,  note: 'Used correct sandbox URL immediately; no debugging required' },
-                    { run: 'opus-mcp',      calls: 7,  ctx: '11%', mcp: 1, first: true,  note: 'MCP output unreadable; succeeded on first real execution' },
+                    { run: 'Haiku-no-MCP',  calls: 27, ctx: '23%', mcp: 0, first: false, note: 'Discovered sandbox URL by trial-and-error' },
+                    { run: 'Haiku-MCP',     calls: 16, ctx: '26%', mcp: 3, first: false, note: 'MCP outputs unreadable; used sandbox URL from training data' },
+                    { run: 'Sonnet-no-MCP', calls: 10, ctx: '12%', mcp: 0, first: false, note: 'Queried OAuth userinfo endpoint to find correct base URI' },
+                    { run: 'Sonnet-MCP',    calls: 13, ctx: '14%', mcp: 2, first: false, note: 'MCP outputs unreadable; fell back to same userinfo approach' },
+                    { run: 'Opus-no-MCP',   calls: 8,  ctx: '11%', mcp: 0, first: true,  note: 'Used correct sandbox URL immediately; no debugging required' },
+                    { run: 'Opus-MCP',      calls: 7,  ctx: '11%', mcp: 1, first: true,  note: 'MCP output unreadable; succeeded on first real execution' },
                   ].map((row, i) => (
                     <tr key={row.run} className={i % 2 === 0 ? 'bg-stone-50/60 dark:bg-stone-800/20' : ''}>
                       <td className="py-2.5 pr-4 font-mono text-[12px] text-stone-600 dark:text-stone-400">{row.run}</td>
@@ -144,13 +156,13 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </div>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Web search found the right pages but not the right answer
+              With web search, agents found the right pages but not the right answer
             </h3>
             <p>
-              When agents without MCP hit errors and turned to web search, they found legitimate DocuSign documentation pages, but neither mentioned the sandbox address they needed. The information existed in the docs, just not on the pages you reach when debugging a 401.
+              When agents without MCP access hit errors and turned to web search, they found legitimate DocuSign documentation pages, but the pages didn't mention the sandbox address they needed. The information existed in the docs, just not on the pages one reaches when debugging a <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">401</code>.
             </p>
             <p>
-              MCP matters most when model capability is lowest and training data coverage is thinnest; above a certain capability threshold, the agent finds another way regardless.
+              MCP matters most when model capability is lowest and training data coverage is thinnest; agents above a certain capability threshold will find another way regardless.
             </p>
 
             <button
@@ -189,7 +201,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               The agent only achieved a perfect score when it had access to the MCP server in addition to the SDK, which finally provided the right context.
             </p>
             <p>
-              Here's how it scored with access to different resources across the four tasks:
+              The following table shows how the agent's score for each task varied based on the resources it could access:
             </p>
 
             <CorrectnessScorecard />
@@ -275,7 +287,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              In the undocumented API benchmark, we tested what happens when you try to produce code for a private internal API with no public documentation at all, where the only way to understand the system is to read the code. We ran the same task with and without an MCP documentation server.
+              In the undocumented API benchmark, we tested what happens when you try to produce code for a private internal API with no public documentation at all, where the only way to understand the system is to read the code. We ran the same task (building a dashboard) with and without an MCP documentation server.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -339,7 +351,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
                 tab: 'docusign' as const,
                 subtitle: 'DocuSign',
                 label: 'Model capability beats tooling',
-                description: 'All six agents completed the task, but code quality tracked model strength more than tool access. The same broken MCP helped the weakest model and hurt the middle one.',
+                description: 'All the agents completed the task, but code quality tracked model strength more than tool access. The same broken MCP helped the weakest model and hurt the middle one.',
               },
               {
                 tab: 'vercel' as const,
