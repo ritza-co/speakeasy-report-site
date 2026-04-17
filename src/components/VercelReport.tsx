@@ -190,26 +190,28 @@ export default function VercelReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              When an SDK releases a major version, an agent's training data becomes
-              partially outdated. This benchmark tests whether giving the agent access
+              When an organization releases a major SDK version, agents' training data become
+              partially outdated. This benchmark tests whether giving an agent access
               to a curated, version-specific docs index changes the quality of its output.
             </p>
 
             <p>
               The Vercel AI SDK went through a significant restructuring between version 4
               and version 6. The new version handles streaming, message format, and
-              structured output differently. Some of the old patterns still exist in the
-              codebase but are no longer the right approach. Others are gone entirely and
-              were replaced with new abstractions that did not exist before.
+              structured output differently. Some of the old patterns still remain in the
+              codebase but are no longer the right approach. Others have been removed entirely
+              and replaced with new abstractions.
             </p>
 
             <p>
-              This creates a specific kind of problem for an AI agent. Its training data
+              This update creates a specific kind of problem for an AI agent. Its training data
               contains a large amount of material about how the SDK worked before the
               rewrite. The newer patterns are documented but less represented, and in some
-              cases the old method names still appear in the types alongside their
-              replacements. When an agent writes code for v6, it is drawing on a mix of
-              current and outdated knowledge.
+              cases, the old method names still appear in the types alongside their
+              replacements. When an agent writes code for the AI SDK 6, it draws on a mix of
+              current and outdated knowledge. To measure how much that matters, we ran the
+              same task three times with different tooling configurations: implement four TypeScript modules,
+              each built around a core pattern that changed between v4 and v6.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -218,12 +220,12 @@ export default function VercelReport() {
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">MCP was the only condition with a perfect score</p>
-              <p>The MCP condition got all four tasks correct. Web scored 2.5/4 and SDK scored 1.5/4. Adding the SDK without a version-specific docs source made things worse, not better.</p>
+              <p>When the agent had access to the MCP server, it got all four tasks correct. With only web search, it scored 2.5/4. When we prompted it to use the SDK, its score decreased to 1.5/4. Adding the SDK without a version-specific docs source made things worse, not better.</p>
             </div>
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">The SDK condition scored lower than web</p>
-              <p>The agent inspected the installed types confidently but searched for the wrong method names because it didn't know the v6 replacements existed. More tooling without better context produced more confident wrong answers.</p>
+              <p>The agent inspected the installed types confidently but searched for the wrong method names, because it didn't know about the v6 replacements. When given more tooling without better context, the agent produced more confident wrong answers.</p>
             </div>
 
             <div>
@@ -242,21 +244,20 @@ export default function VercelReport() {
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
               We ran the same task across three conditions, with no changes to the task
-              itself, only to what the agent had available when completing it.
+              itself, only to which tools the agent had available when completing it.
             </p>
 
             <TestEnvironmentCard />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Three conditions, each adding one layer
+              Three tooling configurations, each adding a layer
             </h3>
 
             <p>
-              The first condition is the baseline: web search only, no SDK installed.
-              The second adds the pre-installed SDK, so the agent can inspect type definitions directly.
-              The third adds a docs MCP server on top, with an explicit prompt instructing
-              the agent to query it before writing each file. Each condition has access to
-              everything the previous one had, plus one more layer.
+              The first configuration was the baseline. The agent could use only web search.
+              The second added the pre-installed SDK, in addition to web access, so the agent could inspect type definitions directly.
+              The third added a docs MCP server on top of the SDK and web search, with an explicit prompt instructing
+              the agent to query it before writing each file. 
             </p>
 
             <div className="my-4 space-y-0">
@@ -353,22 +354,30 @@ export default function VercelReport() {
             </h3>
 
             <p>
-              To test each condition, we wrote a prompt that asks the agent to implement four
-              TypeScript modules, one for each pattern that changed between v4 and v6.
+              To test each condition, we wrote a prompt that asked the agent to implement four
+              TypeScript modules, one for each pattern that changed between the AI SDK 4 and 6.
             </p>
 
             <p>
-              Between v4 and v6, four core patterns changed: structured output, streaming
-              responses, message handling, and passing data to the model. None of these changes
-              produce a compile error if you use the old pattern. The code type-checks and runs.
-              The failure shows up at runtime or in the shape of the output.
+              Between versions 4 and 6, four core patterns changed in the AI SDK:
+            </p>
+            <ul>
+              <li>Structured output</li>
+              <li>Streaming responses</li>
+              <li>Message handling</li>
+              <li>Passing data to the model</li>
+            </ul>
+            <p>
+              None of these changes produce a compile error if you use the old pattern.
+              The code type-checks and runs, and the failure only shows up at runtime
+              or in the shape of the output.
             </p>
 
             <SdkChangesTable />
 
             <p>
-              The prompt we constructed describes each module in plain language, without naming
-              any version, any changed method, or any deprecated pattern. The agent has to
+              The prompt we constructed described each module in plain language, without naming
+              any specific versions, changed methods, or deprecated patterns. The agent had to
               figure out the correct v6 approach from context alone.
             </p>
 
@@ -379,10 +388,16 @@ export default function VercelReport() {
             </h3>
 
             <p>
-              Each of the four files was scored on whether the agent used the correct v6
-              pattern: full pass if correct, partial if mostly right but missing one step,
-              fail if it uses the old pattern or gets the approach wrong entirely. The
-              maximum score is 4.
+              For each of the four files, we scored the agent based on whether it used the correct v6
+              pattern:
+            </p>
+            <ul>
+              <li><strong>Full pass</strong> if correct</li>
+              <li><strong>Partial</strong> if mostly right but missing one step</li>
+              <li><strong>Fail</strong> if it used the old pattern or got the approach wrong entirely</li>
+            </ul>
+            <p>
+              The maximum score was 4.
             </p>
           </div>
         </Section>
@@ -391,25 +406,25 @@ export default function VercelReport() {
         <Section
           id="example"
           chapterLabel="Testing workflow"
-          headline="What a test run looks like"
+          headline="What a test run looked like"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              To make the scoring concrete, here is the tool-error handler task traced through
-              two conditions: Web and MCP. This is the kind of session we reviewed
-              for every run in the benchmark, tool call by tool call, with the actual code
+              To demonstrate the scoring, let's look at two of the task runs in detail:
+              the first session, when the agent had only web search, and the third session, when it had MCP access.
+              These are the kinds of sessions we reviewed for every run in the benchmark, tool call by tool call, with the actual code
               and output alongside it.
             </p>
 
             <TaskCard />
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              Web: what the agent does and why it goes wrong
+              Web search: What the agent did and why it went wrong
             </h3>
             <p>
-              The agent searches for Vercel AI SDK tool error handling before writing
-              anything, finds relevant documentation, and writes an initial implementation.
-              The code uses field names and error-handling patterns from an older SDK version.
+              The agent searched for Vercel AI SDK tool error handling before writing
+              anything, found relevant documentation, and wrote an initial implementation.
+              In the code, it used field names and error-handling patterns from an older SDK version.
             </p>
 
             <div className="my-6">
@@ -419,10 +434,10 @@ export default function VercelReport() {
             <InitialCodeViewer agent="web" />
 
             <p>
-              When the code fails with a schema validation error, the agent digs through
-              node_modules internals. After two failed attempts, it downgrades the entire
-              SDK to v4, where its training data is reliable. The code now runs, but the
-              project is on an older version the developer didn't ask for, using an
+              When the code failed with a schema validation error, the agent dug through
+              <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">node_modules</code> internals. After two failed attempts, it downgraded the entire
+              SDK to v4, where its training data was reliable. The code then ran, but the
+              project was on an older version that the developer hadn't asked for, using an
               error-handling pattern removed two major versions ago.
             </p>
 
@@ -442,9 +457,9 @@ export default function VercelReport() {
             />
 
             <p>
-              A developer reviewing the terminal result would have no reason to check <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">package.json</code>.
-              The output is structurally correct, but the project has been quietly moved to a different
-              SDK version using a pattern the current version no longer supports.
+              A developer reviewing the terminal result would have had no reason to check <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">package.json</code>.
+              The output was structurally correct, but the agent had quietly moved the project to a different
+              SDK version using a pattern no longer supported by the current version.
             </p>
 
             <EntireSessionLink
@@ -456,13 +471,12 @@ export default function VercelReport() {
             <DocReferences refs={WEB_DOCS} />
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">
-              MCP: the same task with current documentation available
+              MCP: How the agent did the same task with current documentation available
             </h3>
             <p>
-              The MCP agent has the same task and the same web search, plus an MCP server
-              exposing the current v6 documentation. It queries the docs before writing,
-              finds the current error handling section, and produces an implementation
-              using the right field names from the start.
+              When the agent could access an MCP server exposing the current AI SDK 6 documentation, 
+              it queried the docs before writing, found the current error-handling section,
+              and produced an implementation using the right field names from the start.
             </p>
 
             <div className="my-6">
@@ -472,9 +486,9 @@ export default function VercelReport() {
             <InitialCodeViewer agent="mcp" />
 
             <p>
-              The agent hits a TypeScript type error and works through it by inspecting
-              the type definitions. The error handling approach stays intact throughout,
-              and the agent fixes the code rather than the environment.
+              The agent hit a TypeScript type error and worked through it by inspecting
+              the type definitions. The error-handling approach stayed intact throughout,
+              and the agent fixed the code rather than the environment.
             </p>
 
             <div className="my-6">
@@ -494,10 +508,10 @@ export default function VercelReport() {
               What the comparison shows
             </h3>
             <p>
-              The terminal outputs look nearly identical, but the difference is in what version
-              each is running and whether the error-handling approach matches what the
-              current SDK expects. The terminal output alone doesn't show that — the scoring
-              criterion is whether the code reflects the correct v6 pattern.
+              In both runs, the agent produced nearly identical terminal output.
+              They differed in which SDK version the agent used and whether the error-handling 
+              matched the AI SDK 6 API. Terminal output alone couldn't reveal this — the scoring
+              criterion was that the code should follow the correct v6 pattern.
             </p>
 
             <CodeComparison />
@@ -516,12 +530,12 @@ export default function VercelReport() {
         <Section
           id="correctness"
           chapterLabel="Results"
-          headline="Is the code correct?"
+          headline="Was the code correct?"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              Each condition produced four files. Below is the overall scorecard, followed
-              by one example from each condition that best illustrates why it succeeded or
+              For each run, the agent produced four files. Below is the overall scorecard, followed
+              by an example from each that best illustrates why that tooling configuration succeeded or
               where it fell short.
             </p>
 
@@ -539,44 +553,45 @@ export default function VercelReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The three conditions produced different results through very different processes.
-              The Web agent completed the task in 6 tool calls, the MCP agent in 37.
+              The three tooling configurations produced different results through very different processes.
+              With web search, the agent completed the task in six tool calls; with MCP access, it completed
+              the task in 37 tool calls.
             </p>
 
             <ToolCallBreakdown />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Web: one research pass, then write
+              Web search: One research pass, then writing
             </h3>
             <p>
-              The Web agent ran a single subagent that searched for all four patterns
-              at once, then wrote all four files from those results without re-checking.
-              Where search returned the right page, the output was correct. Where it
+              When it only had access to web search, the agent ran a single subagent that searched for all
+              four patterns at once, then wrote all four files from those results without checking
+              again. Where the web search returned the right page, the output was correct. Where it
               returned a partial result or missed a page entirely, that gap carried
               straight through to the code.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              SDK: more preparation, similar gaps
+              SDK: More preparation, similar gaps
             </h3>
             <p>
-              The SDK agent ran a second subagent specifically to inspect type
+              When it had access to the SDK, the agent ran a second subagent specifically to inspect type
               definitions, checking method names and comparing response options. But its
-              prompt named two methods to compare, both from v4. It did not search for the
-              v6 replacement because it did not know the replacement existed. The type
-              inspection confirmed what the agent already believed rather than correcting it.
+              prompt named two methods for the subagent to compare, both from the AI SDK 4. It didn't search
+              for the AI SDK 6 replacements because it didn't know those replacements existed. The type
+              inspection confirmed what the agent already believed, rather than correcting it.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP: research first, verify second, then write
+              MCP: Research first, verification second, then writing
             </h3>
             <p>
-              The MCP agent queried the docs index and fetched full documentation pages
-              before writing each file. The index contains only current v6 docs, so the
-              agent encountered the correct patterns before reaching for training memory.
-              It then used type inspection to confirm what the docs described was present
+              When the agent could access both the MCP server and the SDK, it queried the docs index and
+              fetched full documentation pages before writing each file. The index contained only the
+              current AI SDK 6 docs, so the agent encountered the correct patterns before reaching for
+              training memory. It then used type inspection to confirm what the docs described was present
               in the installed package, as verification rather than discovery. The result
-              was 37 tool calls versus 6 for the Web agent, and a perfect score.
+              was 37 tool calls (compared to six tool calls in the web-only run) and a perfect score.
             </p>
           </div>
         </Section>
@@ -589,38 +604,38 @@ export default function VercelReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The breakdown below shows how token usage was distributed across each condition.
+              The breakdown below shows the token use for each run.
             </p>
 
             <TokenUsageChart />
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Web: the lightest approach, and still half wrong</h3>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Web: The lightest approach, and still half wrong</h3>
             <p>
-              The Web agent ran one search pass and wrote four files, keeping message tokens low. Search results are short and the agent did not re-read anything.
+              With only web search, the agent ran one search pass and wrote four files, keeping message tokens low. The search results were short and the agent didn't reread anything.
             </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">SDK: more context, same mistakes</h3>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">SDK: More context, but the same mistakes</h3>
             <p>
-              The SDK agent added type inspection on top of web search. Reading
-              compiled declaration files is verbose, which pushed message tokens higher.
-              It used more context than the Web condition and still got two files wrong.
+              With the SDK installed, the agent added type inspection on top of web search. Reading
+              compiled declaration files was verbose, which pushed message tokens higher.
+              It used more context than the web-only configuration and still got two files wrong.
             </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">MCP: five times the tokens, the only perfect score</h3>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">MCP: Five times the tokens, and the only perfect score</h3>
             <p>
-              The MCP agent fetched four full documentation pages, each containing
+              With MCP access, the agent fetched four full documentation pages, each containing
               complete code examples and explanatory prose, then ran 12 type inspection
               steps to verify what the docs described against the installed package.
-              That combination drove message tokens to nearly five times the Web
+              That combination drove message tokens to nearly five times the web run
               total and produced the only perfect score.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">The cost of a silent failure</h3>
             <p>
-              The MCP condition used approximately five times the tokens of the web-only
-              condition and was the only condition where every file was correct. Web search
+              While the MCP run, with all three tools, used many more tokens than the web-only
+              run, it was the only tooling configuration where every file was correct. Web search
               used fewer tokens and still got half the files wrong without any signal that
-              anything had failed. The five-times token cost of the MCP condition is the
+              anything had failed. The higher token cost of the MCP configuration is the
               price of knowing the output is correct.
             </p>
           </div>
@@ -634,8 +649,8 @@ export default function VercelReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              At the end of each session, the agent described what it had built. Below
-              are those verbatim closing summaries alongside the actual code produced.
+              At the end of each run, the agent described what it had built. Here, we
+              show the agent's verbatim closing summaries alongside the actual code it produced.
             </p>
 
             <ConfidenceComparison />
@@ -644,10 +659,12 @@ export default function VercelReport() {
               Agents don't know what they don't know
             </h3>
             <p>
-              All three agents described their output in the same confident tone, but two of them were wrong about two files each, with nothing in their summaries to signal it. An agent cannot express uncertainty about a mistake it does not know it made.
+              In all three sessions, the agent described its output in the same confident tone, but it was wrong
+              about two files in two of its runs, with nothing in the summaries to signal the error. An agent cannot
+              express uncertainty about a mistake it doesn't know it's made.
             </p>
             <p>
-              The MCP agent's summaries were accurate because its research was accurate.
+              The agent's summary of the MCP session was accurate because its research was accurate.
               It had read the correct patterns before writing, so when it described what
               it built, the description matched the code. The quality of the source
               determines whether the self-description is true.
@@ -673,9 +690,9 @@ export default function VercelReport() {
               no signal to tell the agent which patterns are current.
             </p>
             <p>
-              A curated docs index removes that ambiguity. When the agent's source
-              contains only current documentation, its output reflects that. Better
-              source material is the most direct way to improve output quality.
+              A curated docs index, in the form of an MCP server, removes that ambiguity.
+              When the agent's source contains only current documentation, its output reflects that.
+              Better source material is the most direct way to improve output quality.
             </p>
           </div>
         </Section>
