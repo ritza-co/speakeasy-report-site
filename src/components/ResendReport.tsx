@@ -182,7 +182,7 @@ export default function ResendReport() {
         {/* ─── API ONLY ─── */}
         <Section
           id="api-only"
-          chapterLabel="Results — Raw HTTP"
+          chapterLabel="Results"
           headline="API only: No SDK, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
@@ -383,7 +383,7 @@ export default function ResendReport() {
         {/* ─── SDK ONLY ─── */}
         <Section
           id="sdk-only"
-          chapterLabel="Results — SDK"
+          chapterLabel="Results"
           headline="SDK: Typed library, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
@@ -581,7 +581,7 @@ export default function ResendReport() {
         {/* ─── SDK + MCP ─── */}
         <Section
           id="sdk-mcp"
-          chapterLabel="Results — SDK + MCP"
+          chapterLabel="Results"
           headline="SDK + MCP: Typed library and live documentation server"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
@@ -770,7 +770,7 @@ export default function ResendReport() {
         {/* ─── ALL SIX RUNS + CONCLUSIONS ─── */}
         <Section
           id="all-runs"
-          chapterLabel="Results and conclusions"
+          chapterLabel="Analysis and conclusion"
           headline="What the data shows"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
