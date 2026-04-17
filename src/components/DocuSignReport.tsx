@@ -80,12 +80,12 @@ function GistLink({ label, href }: { label: string; href: string }) {
 
 function SessionLinks() {
   const sessions = [
-    { run: 'haiku-no-mcp',  href: 'https://gisthost.github.io/?03739716d9df6893fd6bd28913d8c088/index.html' },
-    { run: 'haiku-mcp',     href: 'https://gisthost.github.io/?62a38f4a4546d315204ebe189b9c47e6/index.html' },
-    { run: 'sonnet-no-mcp', href: 'https://gisthost.github.io/?7f399efa2d7d90218e3747583bdf8550/index.html' },
-    { run: 'sonnet-mcp',    href: 'https://gisthost.github.io/?4051629166b094536a29fbb9ebd90b27/index.html' },
-    { run: 'opus-no-mcp',   href: 'https://gisthost.github.io/?ea3dbb266159a430add48d3533f2b3d7/index.html' },
-    { run: 'opus-mcp',      href: 'https://gisthost.github.io/?3e4cc09bddf58665a39823f7c322fb66/index.html' },
+    { run: 'Haiku-no-MCP',  href: 'https://gisthost.github.io/?03739716d9df6893fd6bd28913d8c088/index.html' },
+    { run: 'Haiku-MCP',     href: 'https://gisthost.github.io/?62a38f4a4546d315204ebe189b9c47e6/index.html' },
+    { run: 'Sonnet-no-MCP', href: 'https://gisthost.github.io/?7f399efa2d7d90218e3747583bdf8550/index.html' },
+    { run: 'Sonnet-MCP',    href: 'https://gisthost.github.io/?4051629166b094536a29fbb9ebd90b27/index.html' },
+    { run: 'Opus-no-MCP',   href: 'https://gisthost.github.io/?ea3dbb266159a430add48d3533f2b3d7/index.html' },
+    { run: 'Opus-MCP',      href: 'https://gisthost.github.io/?3e4cc09bddf58665a39823f7c322fb66/index.html' },
   ]
   return (
     <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
@@ -176,14 +176,14 @@ const WORKFLOW_TABS = [
   {
     id: 'sonnet',
     label: 'Sonnet',
-    summary: 'Sonnet also started with the wrong environment, but recovered differently. It asked the API directly which environment the token belonged to, got an answer, and fixed it in one step. The MCP version followed the exact same path. Having queried the documentation server twice beforehand made no difference; sonnet already knew how to diagnose the problem.',
+    summary: 'Sonnet also started with the wrong environment, but recovered differently. It asked the API directly which environment the token belonged to, got an answer, and fixed it in one step. The MCP version followed the exact same path. Having queried the documentation server twice beforehand made no difference; Sonnet already knew how to diagnose the problem.',
     noCalls: SONNET_NO_MCP_CALLS,
     mcpCalls: SONNET_MCP_CALLS,
   },
   {
     id: 'opus',
     label: 'Opus',
-    summary: 'Opus wrote the correct environment address on the first attempt and never needed to debug. Both runs succeeded immediately. The MCP query in the MCP run returned an unreadable response; opus acknowledged it and proceeded exactly as it would have without it.',
+    summary: 'Opus wrote the correct environment address on the first attempt and never needed to debug. Both runs succeeded immediately. The MCP query in the MCP run returned an unreadable response; Opus acknowledged it and proceeded exactly as it would have without it.',
     noCalls: OPUS_NO_MCP_CALLS,
     mcpCalls: OPUS_MCP_CALLS,
   },
@@ -234,7 +234,7 @@ function WorkflowTabs() {
           </div>
           <div>
             <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">Stronger models had their own recovery strategies</p>
-            <p>Sonnet didn't search for documentation when things went wrong. It queried the API itself, which is a more reliable approach than looking up the answer, and it worked regardless of whether MCP was available. The documentation server was present in sonnet's MCP run and had no influence on the outcome.</p>
+            <p>Sonnet didn't search for documentation when things went wrong. It queried the API itself, which is a more reliable approach than looking up the answer, and it worked regardless of whether MCP was available. The documentation server was present in Sonnet's MCP run and had no influence on the outcome.</p>
           </div>
           <div>
             <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">At the top, there was nothing to fix</p>
@@ -297,7 +297,7 @@ function ToolContentSection() {
   return (
     <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
       <p>
-        Fixing the base URL problem required one of two things: find the sandbox address in documentation, or ask the API directly. The agents took different routes, and only one of those routes worked reliably.
+        Fixing the base URL problem required one of two things: finding the sandbox address in documentation, or asking the API directly. The agents took different routes, and only one of those routes worked reliably.
       </p>
 
       <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">Most agents skipped documentation entirely</h3>
@@ -310,7 +310,7 @@ function ToolContentSection() {
       </div>
 
       <p>
-        Sonnet hit the same 401 as haiku, but recovered in one step. Rather than searching for documentation, it called the DocuSign OAuth <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">userinfo</code> endpoint directly, asking the API which environment the token belonged to. That call returned the correct base URI immediately.
+        Sonnet hit the same <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">401</code> as Haiku, but recovered in one step. Rather than searching for documentation, it called the DocuSign OAuth <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">userinfo</code> endpoint directly, asking the API which environment the token belonged to. That call returned the correct base URI immediately.
       </p>
 
       <div className="my-6">
@@ -318,12 +318,12 @@ function ToolContentSection() {
       </div>
 
       <p>
-        Neither approach required documentation: opus already knew the answer, and sonnet asked the API.
+        Neither approach required documentation: Opus already knew the answer, and Sonnet asked the API.
       </p>
 
       <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">When web search was used, it didn't help</h3>
       <p>
-        Haiku-no-mcp was the only run to use web search. After the 401, it searched for DocuSign API authentication and fetched two official documentation pages.
+        Haiku-no-MCP was the only run to use web search. After the <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">401</code>, it searched for DocuSign API authentication and fetched two official documentation pages.
       </p>
 
       <div className="my-6">
@@ -331,7 +331,7 @@ function ToolContentSection() {
       </div>
 
       <p>
-        Both pages are legitimate: they cover bearer token authentication for the DocuSign REST API. Neither mentions <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">demo.docusign.net</code>. The sandbox URL is documented, but not on the authentication pages a developer reaches when debugging a 401. Haiku went to the right place and hit a documentation gap. It then spent 10 tool calls testing base URLs by trial and error before finding the right one.
+        Both pages were legitimate: they covered bearer token authentication for the DocuSign REST API. Neither mentioned <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">demo.docusign.net</code>. The sandbox URL is documented, but not on the authentication pages a developer reaches when debugging a <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">401</code>. Haiku went to the right place and hit a documentation gap. It then spent 10 tool calls testing base URLs by trial and error before finding the right one.
       </p>
 
       <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">The MCP server returned responses no agent could read</h3>
@@ -349,7 +349,7 @@ function ToolContentSection() {
 
       <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-          <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">MCP response — haiku-mcp, first query</span>
+          <span className="text-[10px] tracking-[0.25em] uppercase text-stone-600 dark:text-stone-400 font-sans font-semibold">MCP response — Haiku-MCP, first query</span>
         </div>
         <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`Output too large (64.6KB). Full output saved to: [path]/tool-results/toolu_016rcuSePhmDTmQEwtReiEuS.json
 
@@ -370,11 +370,11 @@ Preview (first 2KB):
       </div>
 
       <p>
-        That fragment may explain why haiku-mcp used the sandbox URL immediately, while haiku-no-mcp spent most of its session finding it. But it was a fragment, with no complete example or context. The agents that got the right answer without MCP (opus and sonnet) got there through other means entirely.
+        That fragment may explain why Haiku-MCP used the sandbox URL immediately, while Haiku-no-MCP spent most of its session finding it. But it was a fragment, with no complete example or context. The agents that got the right answer without MCP (Opus and Sonnet) got there through other means entirely.
       </p>
 
       <p className="text-[13px] text-stone-500 dark:text-stone-500 border-l-2 border-stone-200 dark:border-stone-700 pl-4">
-        This is a retrieval design problem. The server returns full page content for every matching result in one response. A server that returned one result at a time, or summaries with on-demand detail, would fit within the inline response limit. As built, the MCP server was queried in all four MCP runs and actionable in none of them.
+        This was a retrieval design problem. The server returned full page content for every matching result in one response. A server that returned one result at a time, or summaries with on-demand detail, would have fit within the inline response limit. As built, the MCP server was queried in all four MCP runs and actionable in none of them.
       </p>
     </div>
   )
@@ -416,7 +416,7 @@ function CodeBlock({ lines }: { lines: CodeLine[] }) {
 const CODE_TABS = [
   {
     id: 'haiku-no-mcp',
-    label: 'haiku — no MCP',
+    label: 'Haiku — no MCP',
     note: 'wrong URL · found by trial-and-error',
     lines: [
       { text: '# First script written — ran immediately', },
@@ -436,7 +436,7 @@ const CODE_TABS = [
   },
   {
     id: 'haiku-mcp',
-    label: 'haiku — MCP',
+    label: 'Haiku — MCP',
     note: 'correct URL from the start · MCP responses unreadable',
     lines: [
       { text: '# Three searchDocusignDocs calls returned 57–77KB each.' },
@@ -458,7 +458,7 @@ const CODE_TABS = [
   },
   {
     id: 'opus-no-mcp',
-    label: 'opus — no MCP',
+    label: 'Opus — no MCP',
     note: 'correct URL from training data · anchor-based tabs',
     lines: [
       { text: '# No MCP. Web search available but unused. Correct URL on the first write.' },
@@ -486,12 +486,12 @@ function CodeSection() {
   return (
     <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
       <p>
-        All six scripts sent a real envelope. But passing the task and writing production-ready code are different things. One detail in particular separates the runs cleanly: how each agent placed the signature field.
+        All six scripts sent a real envelope. But completing the task and writing production-ready code are different things. One detail in particular separated the runs cleanly: how each agent placed the signature field.
       </p>
 
       <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">Two approaches to the same problem</h3>
       <p>
-        Haiku and sonnet both placed the signature box at a fixed pixel coordinate on the page. That works until the document changes; if the text shifts, the box stays where it was. Opus took a different approach in both runs: it embedded a short marker string directly in the document body and told DocuSign to find it. The signature field follows the marker, wherever it ends up on the page. That's the approach DocuSign recommends for exactly this reason.
+        Haiku and Sonnet both placed the signature box at a fixed pixel coordinate on the page. That works until the document changes; if the text shifts, the box stays where it was. Opus took a different approach in both runs: it embedded a short marker string directly in the document body and told DocuSign to find it. The signature field follows the marker, wherever it ends up on the page. That's the approach DocuSign recommends for exactly this reason.
       </p>
 
       <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
@@ -518,15 +518,15 @@ function CodeSection() {
 
       <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">When a broken MCP made things worse</h3>
       <p>
-        Sonnet-no-MCP and sonnet-mcp followed identical debugging paths. Both hit the wrong environment, recovered the same way, and succeeded. But the scripts they produced were dramatically different.
+        Sonnet-no-MCP and Sonnet-MCP followed identical debugging paths. Both hit the wrong environment, recovered the same way, and succeeded. But the scripts they produced were dramatically different.
       </p>
       <p>
-        Sonnet-no-MCP produced a minimal, correct script. Sonnet-mcp produced a much larger one that hand-crafted a valid PDF from scratch, doing unnecessary work for a task that only required sending a contract. The surrounding code diverged significantly even though the API call was identical.
+        Sonnet-no-MCP produced a minimal, correct script. Sonnet-MCP produced a much larger one that hand-crafted a valid PDF from scratch, doing unnecessary work for a task that only required sending a contract. The surrounding code diverged significantly even though the API call was identical.
       </p>
 
       <div className="my-6 border border-stone-200 dark:border-stone-800 rounded-lg overflow-hidden">
         <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-900 border-b border-stone-200 dark:border-stone-800">
-          <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">sonnet-mcp — make_pdf_bytes()</span>
+          <span className="text-[10px] tracking-[0.25em] uppercase text-crimson font-sans font-semibold">Sonnet-MCP — make_pdf_bytes()</span>
         </div>
         <pre className="text-[12px] leading-relaxed font-mono m-0 bg-stone-950 text-stone-200 p-4 overflow-x-auto whitespace-pre-wrap">{`def make_pdf_bytes(text: str) -> bytes:
     """Create a minimal valid PDF containing the given text."""
@@ -546,7 +546,7 @@ function CodeSection() {
       </div>
 
       <p>
-        The MCP queries gave sonnet no help finding the right environment, since it already knew how to recover from that error. But the truncated preview it received appears to have included a fragment of a DocuSign documentation example showing PDF document construction. Unable to read the full response, sonnet appears to have treated that fragment as a hint about how documents should be prepared. The broken MCP was neutral for haiku, where the preview contained the right URL. For sonnet, it was actively disruptive, prompting unnecessary complexity while the API call itself went unchanged.
+        The MCP queries gave Sonnet no help finding the right environment, since it already knew how to recover from that error. But the truncated preview it received appears to have included a fragment of a DocuSign documentation example showing PDF document construction. Unable to read the full response, Sonnet appears to have treated that fragment as a hint about how documents should be prepared. The broken MCP was neutral for Haiku, where the preview contained the right URL. For Sonnet, it was actively disruptive, prompting unnecessary complexity while the API call itself went unchanged.
       </p>
       <p>
         Opus wrote the simplest and most correct script in both conditions. The quality difference came from what each model already knew.
@@ -576,10 +576,10 @@ export default function DocuSignReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              DocuSign has two separate environments with different base URLs, and credentials for one don't work with the other. It's exactly the kind of configuration detail that isn't reliably in training data. We ran six sessions across three models, each twice: once with web search only, once with a DocuSign MCP server added.
+              DocuSign has two separate environments with different base URLs, and credentials for one don't work with the other. It's exactly the kind of configuration detail that isn't reliably in LLM training data. To find out whether tooling could compensate for lacking training data, we ran three models on a task that exposed the gap directly: Write a Python script to send a contract document via the DocuSign API and print the envelope ID. Each model ran the task twice, once with web search only, and once with access to the DocuSign MCP server.
             </p>
             <p>
-              All six agents completed the task. The MCP server returned responses too large to read in full in every run, but even the truncated preview was enough to change haiku's first guess. Model capability was the clearest dividing line, not which tools were available.
+              The agents completed the task in all six runs, but encountered an unexpected issue in the MCP runs: The MCP server returned responses too large to read in full. Even this truncated preview was enough to help the agents. For example, it changed Haiku's first guess. That said, model capability was still the clearest dividing line, not which tools were available.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -588,17 +588,17 @@ export default function DocuSignReport() {
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">Model capability determined the outcome more than tooling</p>
-              <p>Opus used the correct sandbox URL on the first attempt in both conditions, sonnet hit one error and self-corrected in a single step, and haiku required an extended debugging loop. Within each model pair, no-MCP and MCP followed the same basic path.</p>
+              <p>Opus used the correct sandbox URL on the first attempt in both conditions, Sonnet hit one error and self-corrected in a single step, and Haiku required an extended debugging loop. For each model, the agent followed the same basic path both when it did and didn't have access to the MCP server.</p>
             </div>
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">A broken MCP server still helped</p>
-              <p>Every MCP response came back too large to read, so agents got a truncated preview and fell back on training data. Haiku-MCP still used the correct environment on the first attempt; haiku-no-MCP spent 27 tool calls finding it. The fragment in the preview was enough to change the outcome.</p>
+              <p>Every MCP response came back too large to read, so the agents only got a truncated preview and fell back on training data. However, the fragment in the preview was still enough to change the models' outcome. For example, while Haiku used the correct environment in both runs, it used more tool calls finding the right environment address when it didn't have access to the MCP server.</p>
             </div>
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">Web search went to the right place and came up empty</p>
-              <p>Haiku was the only model to use web search after hitting an error. It fetched two legitimate DocuSign authentication pages. Neither mentioned the sandbox URL it needed. The information existed in DocuSign's docs, just not on the pages a developer reaches when debugging a 401.</p>
+              <p>Haiku was the only model to use web search after hitting an error. It fetched two legitimate DocuSign authentication pages, but neither mentioned the sandbox URL it needed. While the sandbox URL was in DocuSign's docs, it wasn't on the pages a developer or agent reaches when debugging a <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">401</code>.</p>
             </div>
           </div>
         </Section>
@@ -611,11 +611,19 @@ export default function DocuSignReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The task was the same in every run: write a Python script that sends a DocuSign envelope to a recipient for signature, using credentials from a <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">.env</code> file, and print the envelope ID on success. No starter code, no context file, no hints about the environment.
+              The task was the same in every run: Write a Python script that sends a DocuSign envelope to a recipient for signature, using credentials from a <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">.env</code> file, and print the envelope ID on success. No starter code, no context file, no hints about the environment.
             </p>
-            <p>
-              Three models ran the task: Haiku 4.5, Sonnet 4.6, and Opus 4.6. Each ran twice: once with web search only, once with web search plus the DocuSign MCP server. The only difference between the two prompts was one sentence at the end.
-            </p>
+            <p>Three models ran the task:</p>
+            <ul className="list-disc list-inside space-y-1 pl-2 text-[15px]">
+              <li>Haiku 4.5</li>
+              <li>Sonnet 4.6</li>
+              <li>Opus 4.6</li>
+            </ul>
+            <p>Each ran twice. The only difference between the two prompts was one sentence at the end:</p>
+            <ul className="list-disc list-inside space-y-1 pl-2 text-[15px]">
+              <li>Once with access to web search only</li>
+              <li>Once with access to both web search and the DocuSign MCP server</li>
+            </ul>
 
             <TestEnvironmentCard model="Haiku 4.5 · Sonnet 4.6 · Opus 4.6" date="31 March 2026" />
 
@@ -648,21 +656,21 @@ export default function DocuSignReport() {
             </div>
 
             <p>
-              The DocuSign MCP server exposes 36 tools. In this benchmark, agents used it as a documentation source: querying <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">searchDocusignDocs</code> to look up API details before writing code.
+              The DocuSign MCP server exposes 36 tools. In this benchmark, the agents used it as a documentation source, querying <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">searchDocusignDocs</code> to look up API details before writing code.
             </p>
             <p>The design tested two things.</p>
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">Does MCP documentation access reduce configuration mistakes?</p>
-              <p>An agent with the server available should be less likely to start with the wrong environment and faster to recover when it does.</p>
+              <p>An agent with the MCP server available should be less likely to start with the wrong environment and able to recover faster when it does.</p>
             </div>
 
             <div>
               <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">Is a flawed MCP server still better than none?</p>
-              <p>The server used here had a significant limitation: its responses were too large for agents to read in full. If agents still performed better with it available, that says something about the value of partial context.</p>
+              <p>The DocuSign MCP server had a significant limitation: Its responses were too large for agents to read in full. If the agents still performed better when they had access to even a broken MCP server, that says something about the value of partial context.</p>
             </div>
             <p>
-              Each run was conducted in a fresh folder with its own git repository. No session history carried over between runs. Each condition has a published branch on GitHub and a full session transcript linked below.
+              We conducted each run in a fresh folder with its own Git repository and didn't carry over session history between runs. We've published a branch on GitHub for each configuration and linked the full session transcripts below.
             </p>
 
             <SessionLinks />
@@ -677,12 +685,12 @@ export default function DocuSignReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              All six agents completed the task. But the effort required varied dramatically, and the gap tracked model capability rather than whether the MCP server was available.
+              All six agents completed the task. But the effort required varied dramatically, and agent performance tracked model capability rather than whether the MCP server was available.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">Model capability was the clearest dividing line</h3>
             <p>
-              Opus succeeded on the first execution in both runs. Sonnet hit one error and recovered in a single diagnostic step. Haiku required extended debugging loops: 27 tool calls without MCP, 16 with. In each case, the no-MCP and MCP versions of the same model followed the same basic path.
+              Opus succeeded on the first execution in both runs. Sonnet hit one error and recovered in a single diagnostic step. Haiku required extended debugging loops, spending 27 tool calls when it didn't have access to the MCP server, and 16 tool calls when it did. In each case, the model followed the same basic path regardless of MCP access.
             </p>
 
             <div className="my-6 overflow-x-auto">
@@ -698,12 +706,12 @@ export default function DocuSignReport() {
                 </thead>
                 <tbody>
                   {[
-                    { run: 'haiku-no-mcp',  calls: 27, ctx: '23%', mcp: 0, first: false, note: 'Discovered sandbox URL by trial-and-error' },
-                    { run: 'haiku-mcp',     calls: 16, ctx: '26%', mcp: 3, first: false, note: 'MCP outputs unreadable; used sandbox URL from training data' },
-                    { run: 'sonnet-no-mcp', calls: 10, ctx: '12%', mcp: 0, first: false, note: 'Queried OAuth userinfo endpoint to find correct base URI' },
-                    { run: 'sonnet-mcp',    calls: 13, ctx: '14%', mcp: 2, first: false, note: 'MCP outputs unreadable; fell back to same userinfo approach' },
-                    { run: 'opus-no-mcp',   calls: 8,  ctx: '11%', mcp: 0, first: true,  note: 'Used correct sandbox URL immediately; no debugging required' },
-                    { run: 'opus-mcp',      calls: 7,  ctx: '11%', mcp: 1, first: true,  note: 'MCP output unreadable; succeeded on first real execution' },
+                    { run: 'Haiku-no-MCP',  calls: 27, ctx: '23%', mcp: 0, first: false, note: 'Discovered sandbox URL by trial-and-error' },
+                    { run: 'Haiku-MCP',     calls: 16, ctx: '26%', mcp: 3, first: false, note: 'MCP outputs unreadable; used sandbox URL from training data' },
+                    { run: 'Sonnet-no-MCP', calls: 10, ctx: '12%', mcp: 0, first: false, note: 'Queried OAuth userinfo endpoint to find correct base URI' },
+                    { run: 'Sonnet-MCP',    calls: 13, ctx: '14%', mcp: 2, first: false, note: 'MCP outputs unreadable; fell back to same userinfo approach' },
+                    { run: 'Opus-no-MCP',   calls: 8,  ctx: '11%', mcp: 0, first: true,  note: 'Used correct sandbox URL immediately; no debugging required' },
+                    { run: 'Opus-MCP',      calls: 7,  ctx: '11%', mcp: 1, first: true,  note: 'MCP output unreadable; succeeded on first real execution' },
                   ].map((row, i) => (
                     <tr key={row.run} className={i % 2 === 0 ? 'bg-stone-50/60 dark:bg-stone-800/20' : ''}>
                       <td className="py-2.5 pr-4 font-mono text-[12px] text-stone-600 dark:text-stone-400">{row.run}</td>
@@ -730,13 +738,13 @@ export default function DocuSignReport() {
 
             <h3 className="font-serif text-xl text-ink dark:text-white mt-8 mb-3">A broken MCP server still helped</h3>
             <p>
-              Every MCP agent queried the documentation server before writing code. Every response was too large to read in full, so agents received a truncated preview and fell back on training data. And yet haiku-mcp used the correct sandbox URL on the first attempt, while haiku-no-mcp spent most of its session finding it. The preview fragment was enough to change the outcome, even though no agent could read the full response.
+              Every MCP agent queried the documentation server before writing code. However, every response was too large to read in full, so the agents all received a truncated preview and fell back on their training data. And yet, when Haiku had access to this incomplete MCP content, it used the correct sandbox URL on its first attempt, performing better than when it didn't have access to the MCP server and spent most of its session finding the URL. The preview fragment was enough to change the outcome of Haiku's run, even though none of the agents could read the full response.
             </p>
             <p>
               The problem was a server that returned too much at once. Even in that broken state, partial context was better than none.
             </p>
             <p className="text-[13px] text-stone-500 dark:text-stone-500 border-l-2 border-stone-200 dark:border-stone-700 pl-4">
-              Context usage reflects total tokens at session end. Haiku carried a higher baseline than sonnet and opus because the full set of DocuSign MCP tools was pre-loaded into context on startup, rather than loaded on demand.
+              Context usage reflects total tokens at session end. Haiku carried a higher baseline than Sonnet and Opus, because the full set of DocuSign MCP tools was preloaded into its context on startup, rather than loaded on demand.
             </p>
           </div>
         </Section>
@@ -776,28 +784,28 @@ export default function DocuSignReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              All six agents completed the task. But completing a task and writing production-ready code are different things, and the gap tracked model capability more than tool access.
+              All six agents completed the task. But completing a task and writing production-ready code are two different things. The quality of the code generated by each run seemed to have more to do with which model was used than which tools that model could access.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-2">Model capability determined the outcome</h3>
             <p>
-              Opus succeeded immediately in both conditions. Sonnet hit one error and self-corrected in a single step. Haiku required extended debugging loops (27 tool calls without MCP, 16 with). Within each model pair, the no-MCP and MCP runs followed the same basic path. Code quality followed the same pattern. Haiku and sonnet placed signature fields the same way in both conditions, while opus used the approach DocuSign recommends, without being prompted.
+              Opus succeeded immediately in both runs, regardless of MCP access; Sonnet hit one error and self-corrected in a single step; and Haiku required extended debugging loops in both runs, but made fewer tool calls when it had MCP access. Across the six runs, each model followed the same sequence of actions whether it had access to MCP or not. Code quality followed the same pattern. Haiku and Sonnet placed signature fields the same way in both their runs, while Opus used DocuSign's recommended approach without being prompted to use the MCP server.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Web search and MCP failed differently</h3>
             <p>
-              Haiku was the only model to use web search after hitting an error. It found the right documentation pages, and neither mentioned the sandbox address it needed. The information existed in DocuSign's docs, just not on the pages a developer reaches when debugging a 401.
+              Haiku was the only model to use its web search capability when it hit an error. It successfully found DocuSign documentation pages, but those pages didn't mention the sandbox address it needed. Although the sandbox URL was elsewhere in DocuSign's docs, Haiku was unable to find it because it wasn't on the pages an agent typically reaches when debugging a <code className="text-[12px] font-mono bg-stone-100 dark:bg-stone-800 px-1 rounded">401</code>.
             </p>
             <p>
-              MCP failed differently. Every response came back too large to read, so agents got a truncated preview and fell back on training data. Haiku-mcp still reached the correct environment on the first attempt because the preview fragment mentioned the right address. That partial context was enough to change haiku's first guess.
+              The DocuSign MCP server failed differently. It returned responses too large for the agents to read, so they got only a preview of the content and largely had to rely on their training data instead. However, this abbreviated response still provided enough information (namely, the correct environment address) for Haiku to reach the correct environment on its first attempt when it had access to the MCP server. The partial context meant that Haiku performed better with access to the broken MCP server than without it.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">Partial context can help or hurt depending on the model</h3>
             <p>
-              The sonnet-mcp result complicates the simple "broken MCP still helped" story. For haiku, the preview fragment contained the right URL and changed the outcome for the better. For sonnet, the preview appears to have prompted unnecessary complexity in how the document was prepared, producing significantly more code for the same outcome. The API call went unchanged, but the broken MCP left a clear mark on everything around it.
+              The Sonnet runs complicated the simple "broken MCP still helped" story. For Haiku, the MCP server returned a preview fragment that contained the right URL and improved the model's outcome. For Sonnet, the preview unnecessarily complicated how the agent prepared the document, causing the model to produce significantly more code for the same outcome as its previous run. The API call went unchanged, but the broken MCP left a clear mark on everything around it.
             </p>
             <p>
-              A well-built MCP server is most valuable for smaller models, less familiar APIs, and configuration details that aren't reliably in training data. Stronger models find their way regardless. MCP matters most when model capability is lowest and training data coverage is thinnest. Above a certain capability threshold, the agent finds another way.
+              A well-built MCP server is most valuable for smaller models, unfamiliar APIs, and configuration details that aren't reliably included in training data. Stronger models find their way regardless. MCP matters most when model capability is lowest and training data coverage is thinnest. Above a certain capability threshold, the agent finds another way.
             </p>
           </div>
         </Section>
