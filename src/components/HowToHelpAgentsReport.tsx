@@ -95,38 +95,6 @@ function ComparisonBar({ label, noMcp, withMcp, max, format }: {
   )
 }
 
-// ── Highlighted finding block ────────────────────────────────────────────────
-
-function Highlight({ number, title, children }: { number: number; title: string; children: React.ReactNode }) {
-  return (
-    <div className="flex gap-4 py-5 px-4 border-b border-stone-100 dark:border-stone-800 last:border-0">
-      <div className="shrink-0 w-6 h-6 rounded-full bg-crimson text-white text-[11px] font-semibold flex items-center justify-center mt-0.5 font-sans">
-        {number}
-      </div>
-      <div className="space-y-1">
-        <p className="text-[14px] font-semibold text-ink dark:text-white">{title}</p>
-        <p className="text-[14px] text-stone-600 dark:text-stone-400 leading-relaxed">{children}</p>
-      </div>
-    </div>
-  )
-}
-
-function HighlightBox({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="my-6 border border-stone-200 dark:border-stone-800 rounded divide-y divide-stone-100 dark:divide-stone-800 bg-stone-50/50 dark:bg-stone-900/40">
-      {children}
-    </div>
-  )
-}
-
-function Callout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="my-5 border-l-2 border-crimson pl-5 py-1">
-      <p className="text-[14px] text-stone-700 dark:text-stone-300 leading-relaxed italic">{children}</p>
-    </div>
-  )
-}
-
 // ── Prompt block ─────────────────────────────────────────────────────────────
 
 function PromptBlock({ label, children }: { label: string; children: string }) {
@@ -196,29 +164,35 @@ export default function HowToHelpAgentsReport() {
               Private APIs present a different challenge from public ones. They aren't indexed,
               agents cannot browse their documentation, and the codebase itself becomes the
               only source of truth. We set up a restaurant enterprise with internal microservices
-              and asked Claude to build a new dashboard twice: once with no documentation, and
-              once with an MCP documentation server.
+              and gave Claude the same task twice: build a new admin dashboard in Next.js with
+              live order management, revenue analytics, and per-customer data, each requiring
+              data from the correct backend service. In the first run, we gave Claude no documentation;
+              in the second, we gave it an MCP server documenting each microservice.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              Without documentation, the agent explored for 54 minutes and still got the architecture wrong
+              Key findings
             </h3>
-            <p>
-              Without access to MCP docs server, the agent spent 54 minutes reading through the codebase,
-              reverse-engineering the service structure from source files and using 11.6 million cache reads. It
-              built a working dashboard, but routed all requests through a single endpoint and ignored
-              the service architecture entirely. Analytics, client data, and order management all
-              went through the orders endpoint.
-            </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              With MCP, it planned first, built correctly, and finished in 18 minutes
-            </h3>
-            <p>
-              With access to the MCP server, the agent queried the documentation before writing any code,
-              mapped the service boundaries, and built the dashboard with correct per-service
-              routing. It finished in 18 minutes using 2.5 million cache reads instead of 11.6 million.
-            </p>
+            <div>
+              <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">Without documentation, the agent explored for 54 minutes and still got the architecture wrong</p>
+              <p>
+                Without access to an MCP docs server, the agent spent 54 minutes reading through the codebase,
+                reverse-engineering the service structure from source files and using 11.6 million cache reads. It
+                built a working dashboard, but routed all requests through a single endpoint and ignored
+                the service architecture entirely. Analytics, client data, and order management all
+                went through the Orders endpoint.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">With MCP, it planned first, built correctly, and finished in 18 minutes</p>
+              <p>
+                With access to the MCP server, the agent queried the documentation before writing any code,
+                mapped the service boundaries, and built the dashboard with correct per-service
+                routing. It finished in 18 minutes using 2.5 million cache reads instead of 11.6 million.
+              </p>
+            </div>
           </div>
         </Section>
 
@@ -230,11 +204,11 @@ export default function HowToHelpAgentsReport() {
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               How we set up the demo API
             </h3>
-            <p>We created a restaurant enterprise with five services:</p>
+            <p>We created a restaurant enterprise with four services:</p>
             <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
               <li>The Orders API creates, manages, and updates orders.</li>
               <li>The Jobs API validates orders and flags fraudulent or inconsistent entries.</li>
-              <li>The Analytics API: retrieves analytical data about restaurant operations.</li>
+              <li>The Analytics API retrieves analytical data about restaurant operations.</li>
               <li>The BFF (backend for frontend) routes requests between the frontend and the backend services.</li>
             </ul>
             <p>
@@ -277,8 +251,9 @@ export default function HowToHelpAgentsReport() {
 
             <p>
               The gap between the BFF and the original frontend is what makes
-              the experiment meaningful. We want to measure how efficiently the agent
-              discovers and uses the BFF's hidden capabilities when it explores on its own,
+              the experiment meaningful. By asking the agent to create a new dashboard, we
+              can measure how efficiently it discovers and uses the BFF's hidden
+              capabilities when it explores on its own,
               compared to when it has documentation served through an MCP server.
             </p>
 
@@ -291,7 +266,7 @@ export default function HowToHelpAgentsReport() {
             </p>
             <ul className="list-disc list-inside space-y-4 pl-2 text-[14px]">
               <li>
-                <span>The terminal shows the time elapsed after each prompt run</span>
+                <span>The terminal shows the time elapsed after each prompt run:</span>
                 <div className="mt-3 ml-2">
                   <img
                     src="https://i.ritzastatic.com/static/edb536a4f752084541bf142b51a6f9c6/terminal-elapsed-time.png"
@@ -301,7 +276,7 @@ export default function HowToHelpAgentsReport() {
                 </div>
               </li>
               <li>
-                <span>Tools like ccusage analyze Claude Code usage by session but don't report tool call counts</span>
+                <span>Tools like <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">ccusage</code> analyze Claude Code usage by session but don't report tool call counts</span>
                 <div className="mt-3 ml-2">
                   <img
                     src="https://i.ritzastatic.com/static/556d2f75548b4e2087ebf14a0de23737/ccusage-session-stats.png"
@@ -313,13 +288,13 @@ export default function HowToHelpAgentsReport() {
             </ul>
 
             <p>
-              We ran all benchmarks in Conductor, a macOS application for orchestrating agentic
+              We ran all sessions in Conductor, a macOS application for orchestrating agentic
               work. Conductor stores run data locally in a SQLite database, including the tokens consumed
               per session, elapsed time, and MCP tools called. We queried this database directly
               at <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">/Library/Application Support/com.conductor.app/conductor.db</code>.
             </p>
             <p>
-              We used Claude Sonnet 4.6 for all the runs. We had installed
+              We used Claude Sonnet 4.6 for all the runs. We'd installed
               the <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">dev-browser</code> plugin
               in the environment, so Claude Code could access browser interfaces, and browse and interact with
               them. It's essential for exploration, as well as for testing.
@@ -334,19 +309,19 @@ export default function HowToHelpAgentsReport() {
               The two runs
             </h3>
             <p>
-              We ran the same task twice using Claude Sonnet 4.6:
+              We ran the same task twice:
             </p>
             <ul className="list-disc list-inside space-y-1 pl-2 text-[14px]">
               <li>In the first run, Claude had no API documentation and had to discover the service structure by exploring the existing dashboard.</li>
-              <li>In the second run, Claude had access to an MCP server providing structured documentation for each microservice.</li>
+              <li>In the second run, we granted Claude access to an MCP server providing structured documentation for each microservice.</li>
             </ul>
 
             <p>
-              The only difference between the two runs was that the first prompt didn't mention MCP, whereas the second prompt instructed the agent to use a rely on the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP server:
+              The only difference between the two runs was that the first prompt didn't mention MCP, whereas the second prompt instructed the agent to rely on the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP server:
             </p>
 
             <div className="my-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-            <PromptBlock label="Run 1 — No MCP">
+            <PromptBlock label="Prompt 1 — No MCP">
 {`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. Here are the features it should have:
 ### Live Order Board
 - Orders displayed as cards in four columns: New, Preparing, Ready, Served
@@ -379,7 +354,7 @@ http://localhost:3001 for the existing dashboard.
 Only rely on the dashboard. This is what we have, as in a real scenario, you don't have access to the running server or directories. Only rely on the dashboard testing and findings.`}
             </PromptBlock>
 
-            <PromptBlock label="Run 2 — With MCP">
+            <PromptBlock label="Prompt 2 — With MCP">
 {`We want to build a new dashboard with Next.js, Shadcn, and Tailwind for a restaurant enterprise. To build the dashboard, we have no documentation; however, we have access to a dashboard you can analyze to see how to implement the new dashboard. You also have access to a docs MCP server where you can ask everything you need about the services and the endpoints: orderify-docs
 . Here are the features it should have:
 ### Live Order Board
@@ -413,6 +388,9 @@ http://localhost:3001 for the existing dashboard.
 Only rely on the orderify-docs MCP server. This is what we have, as in a real scenario, you don't have access to the running server or directories. Before implementing any API call, query the orderify-docs MCP server to get the exact endpoint path, parameter names, identifier types, and request/response schema. Do not assume: look it up first.`}
             </PromptBlock>
             </div>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              How we created the MCP server
+            </h3>
             <p>
               We created the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP server
               using <a href="https://github.com/speakeasy-api/docs-mcp" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">Speakeasy Docs MCP</a>,
@@ -427,7 +405,7 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
             <p>
               The indexer chunks markdown by heading level, attaches metadata to each chunk, and builds
               a local <a href="https://lancedb.github.io/lancedb/" target="_blank" rel="noopener noreferrer" className="text-crimson hover:underline">LanceDB</a> index.
-              At runtime the server runs locally with no external API calls. The agent searches
+              At runtime, the server runs locally with no external API calls. The agent searches
               the corpus the same way it would search any other MCP tool: by calling
               <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono mx-1">search_docs</code>
               with a natural-language query and following up with
@@ -435,7 +413,7 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               retrieve the full content of relevant chunks.
             </p>
             <p>
-              For this benchmark we pointed it at the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">README.md</code> file
+              For this benchmark, we pointed it at the <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">README.md</code> file
               from each of the four microservice directories. Each README documented that service's
               endpoints, request/response shapes, and data model. The result was an <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> MCP
               server that the agent could query instead of exploring the running services at runtime.
@@ -481,12 +459,13 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
         </Section>
 
         {/* ─── RESULTS ─── */}
-               <Section id="results" chapterLabel="Results" headline="How the agent performed without access to an MCP server">
+        <Section id="results" chapterLabel="Results" headline="How the agent performed without access to an MCP server">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-            <h3 className="font-serif text-xl text-ink dark:text-white mb-3">Run 1: Without MCP docs</h3>
             <p>
-              The run completed in 54 minutes and 11 seconds. The following table breaks down the
-              token consumption:
+              The run took 54 minutes and 139 tool calls, generating 11.6 million cache read tokens.
+              The dashboard loaded and navigated correctly, but order status updates didn't work, and
+              every data request was routed through the Orders endpoint regardless of which service
+              was responsible.
             </p>
 
             <TokenTable rows={[
@@ -525,14 +504,13 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               ]}
             />
 
-            <p>
-              On the qualitative side, the dashboard Claude built without MCP documentation had
-              mixed results.
-            </p>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Exploration is not the same as understanding
+            </h3>
             <p>
               Login worked correctly, and the main interface loaded as expected: the client list,
-              order views, and navigation were all accessible. However, order status updates didn't work,
-               and while the board displayed orders, clicking to move an order to the next status had no effect.
+              order views, and navigation were all accessible. But order status updates didn't work —
+              clicking to move an order to the next status had no effect.
             </p>
 
             <img
@@ -554,8 +532,12 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
             />
 
             <p>
-              When that was not enough, it attempted to brute-force endpoint paths directly, trying
-              variations until something responded.
+              When reading the chunk files was not enough, it attempted to brute-force endpoint paths directly, trying
+              variations until something responded. The agent navigated the dashboard, read chunk files,
+              and brute-forced endpoints until it had enough to build a functional system — but
+              functional is not correct. The resulting dashboard used one endpoint for everything:
+              analytics, client data, and order views all came from the same source, regardless of
+              which service was responsible.
             </p>
 
             <img
@@ -564,37 +546,24 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               className="rounded border border-stone-200 dark:border-stone-800 max-w-full my-2"
             />
 
-            <Callout>
-              Both strategies led to the same conclusion: Claude collapsed the entire data layer
-              onto a single endpoint, using the orders endpoint as the source for analytics, client
-              data, and everything else.
-            </Callout>
-
-            <p className="font-semibold text-ink dark:text-white pt-2">What can we learn from this run?</p>
-            <HighlightBox>
-              <Highlight number={1} title="Exploration is not the same as understanding.">
-                The agent navigated the dashboard, read chunk files, and brute-forced endpoints until
-                it had enough to build a functional system. <strong>Functional is not correct.</strong>
-                The resulting dashboard used one endpoint for everything, meaning analytics, client
-                data, and order views all came from the same source, regardless of which service was
-                responsible for that data. Despite the long duration and high number of cache reads,
-                the exploration still produced an architecturally wrong result.
-              </Highlight>
-              <Highlight number={2} title="Environment conditions matter.">
-                This run worked because the server ran in development mode, where Next.js serves
-                readable chunk files. In a production build with obfuscated code, the
-                reverse-engineering strategy would have failed. The agent would have had fewer
-                signals, and the output would likely have been worse.
-              </Highlight>
-            </HighlightBox>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Environment conditions matter
+            </h3>
+            <p>
+              This run worked because the server ran in development mode, where Next.js serves
+              readable chunk files. In a production build with obfuscated code, the
+              reverse-engineering strategy would have failed. The agent would have had fewer
+              signals, and the output would likely have been worse.
+            </p>
           </div>
         </Section>
         
         <Section id="results" chapterLabel="Results" headline="How the agent performed with access to an MCP server">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The run completed in 18 minutes and 24 seconds. The following table breaks down
-              the token consumption:
+              The run took 18 minutes and 121 tool calls across a main session and two subagents.
+              The dashboard worked correctly across all tested features, with each request routed
+              to the correct service.
             </p>
 
             <TokenTable rows={[
@@ -662,14 +631,14 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               ]}
             />
 
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              Queryable documentation changes agent behavior, not just speed
+            </h3>
             <p>
-              On the qualitative side, the dashboard Claude built with the MCP documentation worked
-              correctly across all tested features.
-            </p>
-            <p>
-              Login worked, the main interface loaded, and the client list and order views were all
-              accessible. Order status updates worked as well: we could click to update and move an order to
-              the next status, a feature that didn't work in the no-MCP run.
+              The agent didn't explore blindly. It queried <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> before
+              writing any API calls, which means it built on the correct information from the start
+              rather than correcting mistakes after the fact. Login worked, the main interface loaded,
+              and order status updates worked as well — a feature that didn't work in the no-MCP run.
             </p>
 
             <img
@@ -681,40 +650,31 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
             <p>
               The more significant finding was architectural. Claude used the BFF correctly, routing
               each request to the service responsible for that data rather than collapsing everything
-              onto the orders endpoint. The analytics came from the Analytics API, order validation
+              onto the Orders endpoint. The analytics came from the Analytics API, order validation
               went through the Jobs API, and order management used the Orders API as intended.
             </p>
-            <Callout>
-              The result was a correct dashboard, built in 18 minutes instead of 50 minutes, using
-              2.5 million cache reads instead of 11.6 million cache reads.
-            </Callout>
 
-            <p className="font-semibold text-ink dark:text-white pt-2">What can we learn from this run?</p>
-            <HighlightBox>
-              <Highlight number={1} title="Queryable documentation changes agent behavior, not just speed.">
-                The agent didn't explore blindly. It
-                queried <code className="text-[12px] bg-stone-100 dark:bg-stone-800 px-1 py-0.5 rounded font-mono">orderify-docs</code> before
-                writing any API calls, which means it built on the correct information from the start
-                rather than correcting mistakes after the fact. The shorter runtime and lower number of cache
-                reads reflect that directness.
-              </Highlight>
-              <Highlight number={2} title="The agent decomposed the work naturally.">
-                With reliable documentation available, Claude split the task toward two subagents:
-                one for research, and one for implementation. This separation did not come from the
-                prompt. It emerged because the agent had enough information to plan before building.
-                Without documentation, the agent skipped a planning phase and went straight to exploration.
-              </Highlight>
-            </HighlightBox>
+            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
+              The agent decomposed the work naturally
+            </h3>
+            <p>
+              With reliable documentation available, Claude split the task into two subagents:
+              one for research, and one for implementation. This separation did not come from the
+              prompt. It emerged because the agent had enough information to plan before building.
+              Without documentation, the agent skipped a planning phase and went straight to exploration.
+            </p>
           </div>
         </Section>
 
 
         {/* ─── RUN COMPARISON ─── */}
-        <Section id="comparison" chapterLabel="Analysis" headline="Run Comparison">
+        <Section id="comparison" chapterLabel="Analysis" headline="Run comparison">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
-              The two runs targeted the same features, used the same model (Claude Sonnet 4.6), and
-              started from the same codebase.
+              We gave the agent the same task, the same model, and the same codebase in both runs. In both cases,
+              it loaded the surface features (login, navigation, and orders) correctly. Where it diverged was in
+              the features that required knowing which service to call: without documentation, it didn't route
+              requests to the correct services.
             </p>
 
             {/* Quantitative bar charts */}
@@ -754,33 +714,24 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
               </table>
             </div>
 
-            <Callout>
-              The surface features worked in both runs. Login, navigation, and order views loaded
-              correctly either way. The difference appeared in the features that required knowing
-              which service to use for the right data.
-            </Callout>
             <p>
-              Without documentation, the agent spent 54 minutes exploring, reverse-engineering chunk
-              files, and brute-forcing endpoints, and still produced a dashboard where analytics,
-              client data, and order management all routed through a single endpoint.
-            </p>
-            <p>
-              With documentation, the agent
-              queried <code className="text-[13px] bg-stone-100 dark:bg-stone-800 px-1.5 py-0.5 rounded font-mono">orderify-docs</code> before
-              writing any API call, used each service correctly, and finished in 18 minutes.
+              The time and cache read differences were symptoms of the same underlying gap. Without
+              documentation, the agent explored until it had enough to build something functional —
+              but exploration didn't produce a correct architecture, just a slow path to the wrong one.
+              With documentation, it knew the service boundaries before writing any code.
             </p>
           </div>
         </Section>
 
         {/* ─── WHAT THIS MEANS ─── */}
-        <Section id="takeaways" chapterLabel="Conclusions" headline="What this means for API providers">
+        <Section id="takeaways" chapterLabel="Conclusion" headline="What this means for API providers">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
-            <Callout>
+            <p>
               For the sake of agent experience, ship an MCP server alongside your API, or even
-              better, a MCP documentation server. As agents can code faster, exploration easily
-              increases the margin of errors and assumptions, and correctness may separate a
-              working integration from a silent failure.
-            </Callout>
+              better, an MCP documentation server. Because agents work quickly, undocumented
+              exploration increases the margin for errors and false assumptions, and correctness
+              may separate a working integration from a silent failure.
+            </p>
           </div>
         </Section>
 
