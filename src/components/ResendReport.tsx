@@ -48,47 +48,46 @@ export default function ResendReport() {
               that is a stronger result than testing against something obscure.
             </p>
 
-
             <p>
-              We chose to use the Resent API because it is well represented in LLM training
-              data, which gives the non-MCP runs a reasonable chance of performing well
-              Resend is a widely used email platform with well-maintained documentation,
-              a clean SDK, and an official MCP server. If MCP still adds value to an API the
-              agent already knows, that is a stronger result than testing against an obscure
-              API with poor training coverage.
+              The task was the same in every session:
             </p>
-
+            <p>
+              Write a Node.js script that sends a personalized broadcast email to a group of premium contacts, using several Resend API features that are non-obvious to compose correctly.
+            </p>
             <p>
               We ran six sessions using three tooling configurations and two prompt
-              styles to get the agent to complete the same task. The headline finding was behavioral.
-              In three non-MCP runs, the agent invented API constraints that didn't exist,
+              styles. The headline finding was behavioral.
+              In the three non-MCP runs, the agent invented API constraints that didn't exist,
               wrote them into code comments as documented behavior, and built workarounds
               for them. When it had access to a tool for verifying a claim, the agent checked the tool.
               When it didn't, it guessed and moved on.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP eliminated fabrication
+              Key findings
             </h3>
-            <p>
-              In every non-MCP run, the agent produced at least one fabricated constraint. The agent
-              claimed CID inline images were unsupported by Resend broadcasts. In
-              the SDK runs, it claimed that the SDK did not support <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code>
-              on attachments. Both claims were false, but the agent stated both with confidence,
-              them into comments, and created workarounds for them. None of runs when it had access
-              to the MCP server resulted in any fabricated constraints.
-            </p>
 
-            <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              A more detailed prompt did not help
-            </h3>
-            <p>
-              We ran each tooling configuration with two prompts: a simple natural-language
-              description, and a detailed developer-style prompt with numbered steps and
-              explicit output requirements. The complex prompt improved scores in some runs,
-              but it didn't prevent fabrication. When the agent hit the edge of what it
-              knew, it invented an answer regardless of how specific the instructions were.
-            </p>
+            <div>
+              <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">MCP eliminated fabrication</p>
+              <p>
+                In the non-MCP runs, the agent produced at least one fabricated constraint. The agent
+                claimed CID inline images were unsupported by Resend broadcasts. In
+                the SDK runs, it claimed that the SDK didn't support <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">contentId</code>
+                on attachments. Both claims were false, but the agent stated both with confidence and developed alternative approaches.
+                None of the runs where it had access to the MCP server resulted in any fabricated constraints.
+              </p>
+            </div>
+
+            <div>
+              <p className="font-sans font-semibold text-[14px] text-ink dark:text-white mb-1">A more detailed prompt did not help</p>
+              <p>
+                We ran each tooling configuration with two prompts: a simple natural-language
+                description, and a detailed developer-style prompt with numbered steps and
+                explicit output requirements. The complex prompt improved scores in some runs,
+                but it didn't prevent fabrication. When the agent hit the edge of what it
+                knew, it invented an answer regardless of how specific the instructions were.
+              </p>
+            </div>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
               What we were testing
@@ -121,8 +120,8 @@ export default function ResendReport() {
               and write HTTP requests directly. No SDK or MCP was installed.
             </p>
             <p>
-              <b>SDK</b> added the Resend Node.js SDK on top of Raw HTTP: a typed library with named methods and
-              known response shapes. Web search remained available.
+              <b>SDK</b> added the Resend Node.js SDK on top of Raw HTTP, giving the agent access to a typed library 
+              with named methods and known response shapes. Web search remained available.
             </p>
             <p>
               <b>SDK + MCP</b> added the Resend docs MCP server on top of the SDK,
@@ -147,10 +146,10 @@ export default function ResendReport() {
             <ConceptMappingTable />
 
             <p>
-              Resend documents each feature individually. What mad the task difficult was the
+              Resend documents each feature individually. What made the task difficult was the
               composition: The agent had to recognize all six mappings, implement them in the
               correct order, and know that some required multi-step flows that aren't 
-              visible from the method names alone. None of this was stated in the prompts.
+              visible from the method names alone. We didn't state any of this in the prompts.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -188,18 +187,18 @@ export default function ResendReport() {
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
-              The agent uses training data and web search, without an installed library or live documentation.
+              The agent used training data and web search, without an installed library or live documentation.
             </p>
 
             <p>
-              The raw HTTP configuration is the baseline, with no SDK or MCP. The
-              agent writes HTTP requests directly and draws entirely on what it knows
-              from training data. The two runs in this section show what that looks like
+              The raw HTTP configuration was the agent's baseline tool setup, with no SDK or MCP. The
+              agent wrote HTTP requests directly and drew entirely on what it knew
+              from training data. The two runs in this section show what that looked like
               in practice:
             </p>
             <ul>
-              <li>Where training data is strong, the agent produces correct implementations confidently and quickly.</li>
-              <li>Where training data is thin or wrong, the agent produces confident wrong answers with no indication that anything went sideways.</li>
+              <li>Where its training data was strong, the agent produced correct implementations confidently and quickly.</li>
+              <li>Where its training data was thin or wrong, the agent produced confident wrong answers with no indication that anything went sideways.</li>
             </ul>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -246,7 +245,7 @@ export default function ResendReport() {
             </h3>
             <p>
               The table below scores each run, concept by concept. These are the six
-              features the task required. Each is scored Yes, Partial, or No based on
+              features the task required. Each is scored <strong>Yes</strong>, <strong>Partial</strong>, or <strong>No</strong> based on
               whether the agent implemented it correctly.
             </p>
 
@@ -271,8 +270,8 @@ export default function ResendReport() {
             </h4>
             <p>
               The agent dispatched a subagent to fetch the Resend docs, got the real API
-              documentation back from the subagent, and wrote the script. Where training data was strong,
-              it moved fast and got things right. The inline logo was handled correctly using{' '}
+              documentation back from the subagent, and wrote the script. Where its training data was strong,
+              it moved fast and got things right. It handled the inline logo correctly, using{' '}
               <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>{' '}
               and a <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">cid:</code>{' '}
               reference. The broadcast and idempotency key were both correct.
@@ -280,7 +279,7 @@ export default function ResendReport() {
             <p>
               Where the agent didn't know the correct approach, it substituted the nearest
               plausible one and kept moving. Nothing in the output indicated a gap had been
-              filled. For example, contact metadata landed in the wrong place entirely: The
+              filled. For example, contact metadata landed in the wrong place entirely. The
               agent used a generic field rather than the dedicated API, annotating it as{' '}
               <span className="italic">"stores arbitrary key/value metadata on the contact"</span>{''}
               as if that were the intended pattern. It also assumed the premium segment
@@ -291,7 +290,7 @@ export default function ResendReport() {
               Complex prompt (4.0/6)
             </h4>
             <p>
-              The complex prompt produced a more complete implementation: Where the prompt named
+              The complex prompt produced a more complete implementation. Where the prompt named
               a feature explicitly, the agent delivered it. But when the agent hit a gap
               in its knowledge, extra specificity made things worse, not better. Rather
               than flagging uncertainty, it treated an ambiguous research result as
@@ -338,7 +337,7 @@ export default function ResendReport() {
 
             <p>
               Both runs scored similarly. The simple prompt got 4.5/6 and the complex prompt got 4.0/6.
-              The complex prompt did not improve the score. It produced a more complete
+              The complex prompt didn't improve the score. It produced a more complete
               implementation in some areas, while creating a more confident incorrect answer
               in others.
             </p>
@@ -346,7 +345,7 @@ export default function ResendReport() {
               <li>
                 <strong className="text-ink dark:text-white">Simple:</strong>{' '}
                 This run was mostly correct, but the agent filled gaps silently. It reached for
-                familiar patterns without searching for what it did not know.
+                familiar patterns without searching for what it didn't know.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Complex:</strong>{' '}
@@ -356,8 +355,8 @@ export default function ResendReport() {
               </li>
             </ul>
             <p>
-              Without live documentation access, the ceiling is set entirely by training
-              data coverage. The agent will not tell you when it has reached that ceiling.
+              Without live documentation access, the ceiling was set entirely by training
+              data coverage. The agent won't tell you when it has reached that ceiling.
             </p>
 
             <RunSummaryCards
@@ -385,19 +384,19 @@ export default function ResendReport() {
         <Section
           id="sdk-only"
           chapterLabel="Results — SDK"
-          headline="SDK: typed library, no MCP"
+          headline="SDK: Typed library, no MCP"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
-              The Resend Node.js SDK is pre-installed. The agent uses training data, web search, and SDK types, but no live documentation.
+              The Resend Node.js SDK was pre-installed. The agent used training data, web search, and SDK types, but no live documentation.
             </p>
 
             <p>
-              The SDK gives the agent a typed, installable interface: with method names,
+              The SDK gave the agent a typed, installable interface, with method names,
               response shapes, and parameter structures encoded in the library. The
-              question is whether this static scaffolding closes the gaps that raw HTTP
-              leaves open, or whether the agent still relies on training data for anything
-              it cannot derive from the types alone. These two runs give a clear answer: The
+              question is whether this static scaffolding closed the gaps that the raw HTTP
+              runs left open, or whether the agent still relied on training data for anything
+              it couldn't derive from the types alone. These two runs gave a clear answer: The
               SDK amplifies whatever the prompt provides, making things worse with a simple
               prompt and significantly better with a complex one.
             </p>
@@ -483,8 +482,8 @@ export default function ResendReport() {
               the tier lives in your data layer)"
             </div>
             <p>
-              This was written as a design decision, not a limitation. The Contact
-              Properties API exists and would have been the correct approach.
+              This was written as a design decision, not a limitation. Using the existing Contact
+              Properties API would have been the correct approach.
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
@@ -492,7 +491,7 @@ export default function ResendReport() {
             </h4>
             <p>
               Where the simple prompt let the agent default to what it knew, the complex
-              prompt named what it needed to do. The agent followed those references and
+              prompt named what it needed to do. The agent followed these references and
               the core architecture came out correctly. This is the clearest example in the
               benchmark of developer knowledge substituting for tooling: When the prompt
               was specific enough, the agent delivered.
@@ -508,8 +507,9 @@ export default function ResendReport() {
               inline logo in the HTML body, which works without attachments."
             </div>
             <p>
-              The agent wrote it as fact and built around it as if documented, without
-               making any checks. The correct approach was available in the SDK.
+              The agent wrote the apparent lack of support as fact and built around it 
+              as if it were documented, without making any checks. The correct approach was
+              available in the SDK.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -524,9 +524,9 @@ export default function ResendReport() {
             <p>
               Both runs followed the same pattern as their raw HTTP counterparts: More
               instructions produced more internal context retrieval, all bounded by
-              training data. Neither run queried any external sources, despite them being
-              available. The additional agent actions over the raw HTTP runs reflect SDK method
-              exploration happening entirely within training data.
+              training data. The agent didn't query any external sources in either run, despite sources being
+              available. The additional agent actions over the raw HTTP runs reflect that the agent's SDK method
+              exploration happened entirely within training data.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -534,20 +534,20 @@ export default function ResendReport() {
             </h3>
 
             <p>
-              The SDK acts as a multiplier of prompt quality, not a floor. The 2.5-point gap
+              The SDK acted as a multiplier of prompt quality, not a floor. The 2.5-point gap
               between the simple and complex prompts is the largest delta of any configuration
               in the benchmark.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
               <li>
                 <strong className="text-ink dark:text-white">Simple:</strong>{' '}
-                Worse than raw HTTP with the same prompt. The SDK's familiar entry points
-                led the agent away from broadcast-specific methods rather than toward them.
+                The agent produced a worse output than it did in the raw HTTP session with the same prompt.
+                The SDK's familiar entry points led the agent away from broadcast-specific methods rather than toward them.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Complex:</strong>{' '}
-                Better than raw HTTP with the same prompt. Named methods unlocked SDK
-                features that the simple prompt never found. The fabrication problem
+                The agent produced a better output than it did in the raw HTTP session with the same prompt.
+                Named methods unlocked SDK features that the simple prompt never found. The fabrication problem
                 persisted regardless.
               </li>
             </ul>
@@ -582,21 +582,21 @@ export default function ResendReport() {
         <Section
           id="sdk-mcp"
           chapterLabel="Results — SDK + MCP"
-          headline="SDK + MCP: typed library and live documentation server"
+          headline="SDK + MCP: Typed library and live documentation server"
         >
           <div className="space-y-5 text-stone-700 dark:text-stone-300 text-[15px] leading-relaxed">
             <p className="text-stone-600 dark:text-stone-400 italic text-[13px]">
-              The Resend Node.js SDK is pre-installed, and the Resend MCP server is active. The agent can query live API documentation.
+              The Resend Node.js SDK was pre-installed, and the Resend MCP server was active. The agent could query live API documentation.
             </p>
 
             <p>
               With MCP active, the agent had a third source to draw on beyond training
               data and SDK types. It could query the Resend MCP server mid-session to look
-              up documentation. Both runs show MCP functioning as a discovery tool, letting
+              up documentation. Both runs show the MCP server functioning as a discovery tool, letting
               the agent find correct API patterns it would otherwise have guessed at. The
-              question is not whether it helped, but how. In the complex run, it went further:
-              The agent executed the code, hit real errors, and iterated against live API
-              responses, something no other run in the benchmark did.
+              question is not whether it helped, but how. In the complex run, the agent went further:
+              It executed the code, hit real errors, and iterated against live API
+              responses, something it did in no other run in the benchmark.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -604,8 +604,8 @@ export default function ResendReport() {
             </h3>
             <p>
               The prompts were identical to the SDK runs. No additional configuration was
-              needed. The MCP server was present in the environment, but the agent was
-              not instructed to use it. In both runs, the agent discovered and used
+              needed. The MCP server was present in the environment, but the agent wasn't
+              instructed to use it. In both runs, the agent discovered and used
               the MCP server independently.
             </p>
 
@@ -663,16 +663,16 @@ export default function ResendReport() {
               Simple prompt (5.0/6)
             </h4>
             <p>
-              Adding the MCP server changed the agent's behaviour before it wrote a single line.
+              Adding the MCP server changed the agent's behavior before it wrote a single line.
               Instead of defaulting to what it knew, it queried the documentation four times,
               discovering the correct APIs for broadcast sending, contact grouping, and
-              profile data storage that the simple SDK run had missed entirely.
+              profile data storage, which it had missed entirely in the simple SDK run.
               It implemented the multi-step contact properties flow correctly, which was something
               no non-MCP run managed.
             </p>
             <p>
               The one miss was the inline logo. The agent had the tooling to look up the
-              correct approach but did not use it, falling back to a data URI instead.
+              correct approach but didn't use it, falling back to a data URI instead.
             </p>
 
             <h4 className="font-sans font-semibold text-[14px] text-ink dark:text-white pt-2">
@@ -683,7 +683,7 @@ export default function ResendReport() {
               Where every other run wrote code and stopped, this one treated execution
               as part of the task. It ran the script against the live API, read real
               error responses, and corrected the implementation more than 20 times in total.
-              When it hit a gap, it verified rather than guessed.
+              When it hit a gap, it verified rather than guessing.
             </p>
             <p>
               For example, when the SDK didn't expose a Segments method, the agent
@@ -696,8 +696,8 @@ export default function ResendReport() {
             <p>
               It ran a live introspection command, confirmed the gap, fell back to
               Audiences as a documented alternative, and noted the limitation explicitly
-              in its output. The gap was real, acknowledged, and worked around with
-              visible reasoning rather than invented around with a false constraint.
+              in its output. The gap was real, acknowledged, and the agent worked around it with
+              visible reasoning rather than inventing a false constraint.
             </p>
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
@@ -713,7 +713,7 @@ export default function ResendReport() {
               The numbers reflect two fundamentally different working modes:
             </p>
             <ul>
-              <li>The simple run was more active than any non-MCP run, but still recognisable in shape: 19 agent actions, MCP queries mid-session, and then done.</li>
+              <li>The simple run was more active than any non-MCP run, but still recognizable in shape: 19 agent actions, MCP queries mid-session, and then done.</li>
               <li>The complex run was in a different category: 55 agent actions and 2.2M cache read tokens driven by the iterative cycle of run, fail, read error, correct, and re-run.</li>
             </ul>
 
@@ -722,9 +722,9 @@ export default function ResendReport() {
             </h3>
 
             <p>
-              MCP changed how the agent worked. The non-MCP runs wrote code and stopped.
-              The MCP runs researched, wrote, and in the complex case, ran and iterated
-              against live API responses. MCP also compressed the effect of prompt quality
+              MCP changed how the agent worked. In the non-MCP runs, the agent wrote code and stopped.
+              In the MCP runs, it researched, wrote, and in the complex prompt case, ran and iterated
+              against live API responses. MCP access also compressed the effect of prompt quality
               to its smallest value in the benchmark.
             </p>
             <ul className="space-y-2 pl-5 list-disc">
@@ -777,8 +777,8 @@ export default function ResendReport() {
 
             <p>
               The three individual sections show each configuration in isolation. Placing
-              all six runs side by side reveals a pattern only visible at this scale,
-              showing which API features no non-MCP run ever got right, which fabrications
+              all six runs side by side reveals a pattern only visible at this scale.
+              We can see which API features the agent got wrong in every non-MCP run, which fabrications
               appeared across multiple runs, and how dramatically prompt precision affected
               results depending on the available tooling.
             </p>
@@ -787,13 +787,16 @@ export default function ResendReport() {
               Concept coverage across all six runs
             </h3>
             <p>
-              Contact Properties was the only feature that no non-MCP run implemented correctly.
+              Contact Properties was the only feature that none of the non-MCP runs implemented correctly.
               The two-step create-then-assign flow is not well covered in training data
-              and the agent consistently guessed the wrong shape or skipped it entirely. Inline logo handling split along the fabrication
-              fault line: the two runs that got it right either happened to know the correct
-              approach from training data (simple-raw-api) or confirmed it via MCP
-              (complex-sdk-mcp). The three that got it wrong all invented a constraint to
-              justify a fallback.
+              and the agent consistently guessed the wrong shape or skipped it entirely.
+            </p>
+            <p>
+              Inline logo handling split along the fabrication fault line: In the runs where
+              the agent handled the logo correctly, it either happened to know the right
+              approach from its training data (simple-raw-api) or confirmed the approach via MCP
+              (complex-sdk-mcp). In all three runs where the agent handled inline logos incorrectly,
+              it invented a constraint to justify a fallback.
             </p>
 
             <ConceptScoreTable
@@ -820,27 +823,31 @@ export default function ResendReport() {
               Without MCP, the agent fabricated constraints rather than admitting uncertainty
             </h3>
             <p>
-              Across three non-MCP runs, the agent made incorrect claims about API
+              Across three of the non-MCP runs, the agent made incorrect claims about API
               capabilities and wrote them into code comments as if they were documented
               behavior. In each case, the agent invented a constraint, cited it, and built
               around it without asking a clarifying question or querying an external source.
-              The MCP runs did not produce this pattern: When the agent had a tool to verify
-              a claim, it used it.
+              In the MCP runs that didn't produce this pattern, the agent had a tool for verifying
+              claims and used it.
             </p>
 
             <FabricationTable />
 
             <h3 className="font-serif text-xl text-ink dark:text-white pt-4">
-              MCP is necessary for some features, optional for others
+              MCP is necessary for some features, but optional for others
             </h3>
             <p>
-              MCP proved necessary for two categories of feature: those requiring API
-              patterns not well-covered in training data (the Contact Properties two-step
-              flow), and those where the agent would otherwise fabricate a false constraint
-              (inline images via{' '}
-              <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code>).
+              MCP proved necessary for two categories of feature:
+            </p>
+            <ul>
+              <li>Features requiring API patterns that aren't well covered in training data, like the Contact Properties two-step
+              flow</li>
+              <li>Features for which the agent would otherwise fabricate a false constraint, like inline images
+              via{' '} <code className="bg-stone-100 dark:bg-stone-800 px-1 rounded text-[13px]">content_id</code></li>
+              </ul>
+            <p>
               For features the agent already knew well (broadcast flow, idempotency keys,
-              template variables), MCP added verification but not correctness.
+              and template variables), MCP added verification but not correctness.
             </p>
 
             <FeatureCategoryTable />
@@ -849,10 +856,10 @@ export default function ResendReport() {
               MCP improved correctness at a real cost in tokens and agent actions
             </h3>
             <p>
-              The simple-sdk-mcp run used roughly four times as many actions as simple-raw-api.
-              The complex-sdk-mcp run is in a different category: 55 actions and 2.2M cache
-              read tokens driven by an iterative cycle of run, fail, read error, correct,
-              and re-run. Every non-MCP run wrote a file and stopped without executing it.
+              With a simple prompt, the agent used roughly four times as many actions in the SDK + MCP run as it did in the Raw HTTP run.
+              With a complex prompt, the SDK + MCP run was in a different category: with 55 agent actions and 2.2M cache
+              read tokens, driven by an iterative cycle of run, fail, read error, correct,
+              and re-run. In every non-MCP run, the agent wrote a file and stopped without executing it.
               Whether that cost is worth it depends on how much correctness matters
               over plausibility.
             </p>
@@ -867,8 +874,8 @@ export default function ResendReport() {
             <p>
               Prompt detail most affected the SDK configuration, where a complex
               prompt added 2.5 concept score points over a simple one. It had the least impact
-              on the MCP configuration, where the delta was only 0.5 points. The simple-raw-api run
-              actually outscored complex-raw-api by 0.5 points: More specificity created
+              on the MCP configuration, where the delta was only 0.5 points. In the Raw HTTP runs, the simple prompt
+              actually outscored the complex prompt by 0.5 points. More specificity created
               more opportunities for confident wrong answers, demonstrating that prompt detail
               changes what the agent attempts, but not whether it knows when it's wrong.
             </p>
@@ -885,14 +892,14 @@ export default function ResendReport() {
             <ul className="space-y-2 pl-5 list-disc">
               <li>
                 <strong className="text-ink dark:text-white">Instruct agents to use MCP tools explicitly:</strong>{' '}
-                Both MCP runs discovered and used the MCP server without being told to,
-                but this is not guaranteed behaviour. Explicitly mentioning available tools
+                In both our MCP runs, the agent discovered and used the MCP server without being told to,
+                but this isn't guaranteed behavior. Explicitly mentioning available tools
                 in the prompt reduces the chance of the agent overlooking them.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Use SDK + MCP for multi-step flows and features with sparse training coverage:</strong>{' '}
-                The Contact Properties result is the clearest example: Without MCP, no run
-                got this right. With MCP, both did.
+                The Contact Properties result provides the clearest example: Without MCP, the agent didn't get Contact
+                Properties right in any of its runs. With MCP, the agent got it right with both prompts.
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Use complex prompts when MCP is not available, but treat them as a partial fix:</strong>{' '}
@@ -901,7 +908,7 @@ export default function ResendReport() {
               </li>
               <li>
                 <strong className="text-ink dark:text-white">Expect MCP runs to cost more:</strong>{' '}
-                The complex-sdk-mcp run was the most expensive and the most correct. The
+                The SDK + MCP run with the complex prompt was the most expensive and the most correct. The
                 agent was doing more work, not just generating more tokens.
               </li>
             </ul>
