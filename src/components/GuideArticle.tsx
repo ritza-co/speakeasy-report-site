@@ -13,6 +13,21 @@ const SECTIONS = [
   { id: 'reports',        label: 'Read the reports' },
 ]
 
+const FIRST_SECTION: Record<string, string> = {
+  docusign: 'hypothesis',
+  vercel:   'hypothesis',
+  resend:   'hypothesis',
+  agents:   'introduction',
+}
+
+function navigateTo(tab: string, onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'agents' | 'docusign') => void) {
+  onNavigate(tab as 'resend' | 'vercel' | 'guide' | 'agents' | 'docusign')
+  requestAnimationFrame(() => {
+    const el = document.getElementById(FIRST_SECTION[tab])
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  })
+}
+
 interface GuideArticleProps {
   onNavigate: (tab: 'resend' | 'vercel' | 'guide' | 'agents' | 'docusign') => void
 }
@@ -57,7 +72,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
               ]).map(b => (
                 <div key={b.tab} className="border border-stone-200 dark:border-stone-800 rounded-lg px-4 py-3 space-y-1">
                   <button
-                    onClick={() => { onNavigate(b.tab); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+                    onClick={() => navigateTo(b.tab, onNavigate)}
                     className="font-semibold text-[14px] text-crimson hover:underline font-sans text-left"
                   >
                     {b.name}
@@ -166,10 +181,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </p>
 
             <button
-              onClick={() => {
-                onNavigate('docusign')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
+              onClick={() => navigateTo('docusign', onNavigate)}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
               Model capability beats tooling →
@@ -217,10 +229,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </p>
 
             <button
-              onClick={() => {
-                onNavigate('vercel')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
+              onClick={() => navigateTo('vercel', onNavigate)}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
               SDKs can mislead agents →
@@ -268,10 +277,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </p>
 
             <button
-              onClick={() => {
-                onNavigate('resend')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
+              onClick={() => navigateTo('resend', onNavigate)}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
               Docs don't stop hallucinations →
@@ -328,10 +334,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
             </div>
 
             <button
-              onClick={() => {
-                onNavigate('agents')
-                window.scrollTo({ top: 0, behavior: 'smooth' })
-              }}
+              onClick={() => navigateTo('agents', onNavigate)}
               className="text-[13px] font-semibold text-crimson hover:underline font-sans"
             >
               No docs, no chance →
@@ -389,10 +392,7 @@ export default function GuideArticle({ onNavigate }: GuideArticleProps) {
                     {report.description}
                   </p>
                   <button
-                    onClick={() => {
-                      onNavigate(report.tab)
-                      window.scrollTo({ top: 0, behavior: 'smooth' })
-                    }}
+                    onClick={() => navigateTo(report.tab, onNavigate)}
                     className="text-[12px] font-semibold text-crimson hover:underline font-sans"
                   >
                     Read report →

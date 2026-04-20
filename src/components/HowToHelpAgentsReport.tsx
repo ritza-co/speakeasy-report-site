@@ -4,11 +4,12 @@ import MermaidDiagram from './MermaidDiagram'
 import { useScrollSpy } from '../hooks/useScrollSpy'
 
 const SECTIONS = [
-  { id: 'introduction', label: 'Introduction' },
-  { id: 'setup',        label: 'Setup' },
-  { id: 'results',      label: 'Results' },
-  { id: 'comparison',   label: 'Run comparison' },
-  { id: 'takeaways',    label: 'What this means for API providers' },
+  { id: 'introduction',     label: 'Introduction' },
+  { id: 'setup',            label: 'Setup' },
+  { id: 'results-no-mcp',   label: 'Results: without MCP' },
+  { id: 'results-with-mcp', label: 'Results: with MCP' },
+  { id: 'comparison',       label: 'Run comparison' },
+  { id: 'takeaways',        label: 'What this means for API providers' },
 ]
 
 const ARCH_DIAGRAM = `graph TD
@@ -459,7 +460,7 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
         </Section>
 
         {/* ─── RESULTS ─── */}
-        <Section id="results" chapterLabel="Results" headline="How the agent performed without access to an MCP server">
+        <Section id="results-no-mcp" chapterLabel="Results" headline="How the agent performed without access to an MCP server">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
               The run took 54 minutes and 139 tool calls, generating 11.6 million cache read tokens.
@@ -558,7 +559,7 @@ Only rely on the orderify-docs MCP server. This is what we have, as in a real sc
           </div>
         </Section>
         
-        <Section id="results" chapterLabel="Results" headline="How the agent performed with access to an MCP server">
+        <Section id="results-with-mcp" chapterLabel="Results" headline="How the agent performed with access to an MCP server">
           <div className="space-y-5 text-stone-700 dark:text-stone-300 leading-relaxed text-[15px]">
             <p>
               The run took 18 minutes and 121 tool calls across a main session and two subagents.
