@@ -31,7 +31,7 @@ export default function PromptCards({ simple, complexIntro, complexSteps, comple
               <li key={i} className="text-[13px] font-mono text-ink dark:text-stone-200 leading-relaxed">{step}</li>
             ))}
           </ol>
-          <p className="text-[13px] font-mono text-ink dark:text-stone-200 leading-relaxed">{complexOutro}</p>
+          <p className="text-[13px] font-mono text-ink dark:text-stone-200 leading-relaxed">"{complexOutro}"</p>
         </div>
       </div>
     </div>

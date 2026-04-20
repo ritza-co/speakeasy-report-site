@@ -55,7 +55,7 @@ function buildFindings(): Finding[] {
     {
       prefix: '', value: Math.abs(sdkNicheDelta), suffix: ' pts', decimals: 0,
       label: 'SDK improvement over bare on niche APIs',
-      detail: `Metabase and PandaDoc both produced an ${nicheBarePct}% success rate with bare and with SDK. Static documentation injection made no difference. The agent absorbed the SDK and continued making the same errors.`,
+      detail: `Metabase and PandaDoc both produced a ${nicheBarePct}% success rate with bare and with SDK. Static documentation injection made no difference. The agent absorbed the SDK and continued making the same errors.`,
       color: '#7c3aed',
     },
     {

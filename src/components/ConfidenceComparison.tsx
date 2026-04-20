@@ -155,13 +155,13 @@ export default function ConfidenceComparison() {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className={`text-[10px] tracking-[0.2em] uppercase font-sans mb-1 ${comp.isMatch ? 'text-emerald-600 dark:text-emerald-500' : 'text-red-400'}`}>
-                    {comp.isMatch ? 'What the agent wrote' : 'What the agent wrote'}
+                    What the agent wrote
                   </p>
                   <pre className={`text-[11px] font-mono bg-stone-100 dark:bg-stone-900 px-3 py-3 rounded leading-relaxed overflow-x-auto whitespace-pre-wrap ${comp.isMatch ? 'text-ink dark:text-white' : 'text-stone-600 dark:text-stone-400'}`}>{comp.produced}</pre>
                 </div>
                 <div>
                   <p className="text-[10px] tracking-[0.2em] uppercase text-emerald-600 dark:text-emerald-500 font-sans mb-1">
-                    {comp.isMatch ? 'Correct v6 pattern' : 'Correct v6 pattern'}
+                    Correct v6 pattern
                   </p>
                   <pre className="text-[11px] font-mono bg-stone-100 dark:bg-stone-900 text-ink dark:text-white px-3 py-3 rounded leading-relaxed overflow-x-auto whitespace-pre-wrap">{comp.correct}</pre>
                 </div>
